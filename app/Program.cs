@@ -43,6 +43,7 @@ namespace OHelper
         // The main entry point for the application
         public static void Main(string[] args)
         {
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
 
             string action = "";
             if (args.Length > 0) action = args[0];
