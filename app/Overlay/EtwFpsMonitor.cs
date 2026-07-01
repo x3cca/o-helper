@@ -1,13 +1,14 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace OHelper.Overlay
+namespace GHelper.Overlay
 {
     public sealed class EtwFpsMonitor : IDisposable
     {
-        // -- ETW Constants --------------------------------------------------------
+        // ── ETW Constants ────────────────────────────────────────────────────────
         private const uint ERROR_SUCCESS = 0;
         private const uint EVENT_CONTROL_CODE_ENABLE_PROVIDER = 1;
+        private const uint EVENT_CONTROL_CODE_DISABLE_PROVIDER = 0;
         private const uint EVENT_TRACE_CONTROL_FLUSH = 3; // ControlTrace code — deliver buffers now
         private const byte TRACE_LEVEL_INFORMATION = 4;
         private const uint PROCESS_TRACE_MODE_REAL_TIME = 0x00000100;
@@ -44,7 +45,7 @@ namespace OHelper.Overlay
 
         private const string SessionName = "FpsMonitorSession";
 
-        // -- P/Invoke Structures --------------------------------------------------
+        // ── P/Invoke Structures ──────────────────────────────────────────────────
 
         [StructLayout(LayoutKind.Sequential)]
         private struct WNODE_HEADER
@@ -149,14 +150,14 @@ namespace OHelper.Overlay
             public uint   FilterDescCount;
         }
 
-        // -- EVENT_TRACE_LOGFILE — explicit layout with correct 64-bit offsets ---
+        // ── EVENT_TRACE_LOGFILE — explicit layout with correct 64-bit offsets ───
         //
         // Native field map (x64):
         //   offset 0   : LPWSTR LogFileName
         //   offset 8   : LPWSTR LoggerName
         //   offset 16  : LONGLONG CurrentTime
         //   offset 24  : ULONG BuffersRead
-        //   offset 28  : ULONG ProcessTraceMode  ? we set this
+        //   offset 28  : ULONG ProcessTraceMode  ← we set this
         //   offset 32  : EVENT_TRACE CurrentEvent (88 bytes)
         //   offset 120 : TRACE_LOGFILE_HEADER LogfileHeader (280 bytes)
         //   offset 400 : PTR BufferCallback
@@ -164,7 +165,7 @@ namespace OHelper.Overlay
         //   offset 412 : ULONG Filled
         //   offset 416 : ULONG EventsLost
         //   offset 420 : (4-byte pad)
-        //   offset 424 : PTR EventRecordCallback  ? we set this
+        //   offset 424 : PTR EventRecordCallback  ← we set this
         //   offset 432 : ULONG IsKernelTrace
         //   offset 436 : (4-byte pad)
         //   offset 440 : PVOID Context
@@ -184,7 +185,7 @@ namespace OHelper.Overlay
         // Callback delegate — must match PEVENT_RECORD_CALLBACK signature exactly
         private delegate void EventRecordCallback([In] ref EVENT_RECORD eventRecord);
 
-        // -- P/Invoke Functions ---------------------------------------------------
+        // ── P/Invoke Functions ───────────────────────────────────────────────────
         [DllImport("advapi32.dll", CharSet = CharSet.Unicode)]
         private static extern uint StartTrace(out long sessionHandle,
             string sessionName, ref EVENT_TRACE_PROPERTIES properties);
@@ -193,7 +194,7 @@ namespace OHelper.Overlay
         private static extern uint StopTrace(long sessionHandle,
             string sessionName, ref EVENT_TRACE_PROPERTIES properties);
 
-        // EVENT_TRACE_CONTROL_FLUSH ? deliver buffered events now, not on the kernel's ~1 s timer.
+        // EVENT_TRACE_CONTROL_FLUSH → deliver buffered events now, not on the kernel's ~1 s timer.
         [DllImport("advapi32.dll", CharSet = CharSet.Unicode)]
         private static extern uint ControlTrace(long sessionHandle,
             string? sessionName, ref EVENT_TRACE_PROPERTIES properties, uint controlCode);
@@ -214,15 +215,15 @@ namespace OHelper.Overlay
         [DllImport("advapi32.dll")]
         private static extern uint CloseTrace(long traceHandle);
 
-        // -- State ----------------------------------------------------------------
+        // ── State ────────────────────────────────────────────────────────────────
         private long _sessionHandle;
         private long _traceHandle;
 
         private const int FlushIntervalMs = 200; // flush cadence while a game renders
         private const int MinFlushFps = 10;      // below this fps = idle/browsing, flush only 1×/s
         private System.Threading.Timer? _flushTimer;
-        private long _lastFlushTick;             // =1 s flush floor
-        private volatile int _targetPid;  // written by overlay timer thread, read by ETW callback thread
+        private long _lastFlushTick;             // ≥1 s flush floor
+        private volatile int _targetPid = -1;
         private int _lastTargetPid;       // detects PID switches so the window can be reset
 
         // When a game fires DXGI event 42, we prefer it over DxgKrnl to avoid double-counting.
@@ -257,13 +258,22 @@ namespace OHelper.Overlay
             {
                 if (_targetPid == value) return;
                 _targetPid = value;
+                if (_sessionHandle == 0) return;
                 // Push the kernel-side filter on every foreground PID change. One-shot
                 // doesn't work: if the user launches a game while the overlay is already
                 // open, the kernel filter would stay pinned to the previous foreground
                 // and events from the new game would be dropped before reaching us.
-                if (value != 0 && _sessionHandle != 0)
+                if (value == 0)
+                    PauseProviders();
+                else
                     ApplyKernelFilters(value);
             }
+        }
+
+        private void PauseProviders()
+        {
+            EnableTraceEx2(_sessionHandle, DxgiProviderId,    EVENT_CONTROL_CODE_DISABLE_PROVIDER, 0, 0, 0, 0, IntPtr.Zero);
+            EnableTraceEx2(_sessionHandle, DxgKrnlProviderId, EVENT_CONTROL_CODE_DISABLE_PROVIDER, 0, 0, 0, 0, IntPtr.Zero);
         }
 
         private void ApplyKernelFilters(int pid)
@@ -340,14 +350,13 @@ namespace OHelper.Overlay
             }
         }
 
-        // -- Public API -----------------------------------------------------------
+        // ── Public API ───────────────────────────────────────────────────────────
 
         /// <summary>
         /// Starts the ETW session. Blocks the calling thread — always run via Task.Run.
         /// Requires Administrator privileges.
         /// </summary>
-        /// <param name="targetPid">Process ID to monitor. 0 (default) = set later via TargetPid.</param>
-        public void Start(int targetPid = 0)
+        public void Start(int targetPid = -1)
         {
             _targetPid = targetPid;
 
@@ -431,7 +440,7 @@ namespace OHelper.Overlay
             if (_sessionHandle == 0) return;
 
             long now = Stopwatch.GetTimestamp();
-            bool idleFlushDue = now - _lastFlushTick >= Stopwatch.Frequency; // =1 s since last flush
+            bool idleFlushDue = now - _lastFlushTick >= Stopwatch.Frequency; // ≥1 s since last flush
             if (SampleFps() < MinFlushFps && !idleFlushDue) return;
 
             _lastFlushTick = now;
@@ -441,7 +450,7 @@ namespace OHelper.Overlay
 
         public void Dispose() => Stop();
 
-        // -- Internal -------------------------------------------------------------
+        // ── Internal ─────────────────────────────────────────────────────────────
 
         private void OnEventRecord(ref EVENT_RECORD record)
         {
@@ -508,7 +517,7 @@ namespace OHelper.Overlay
             int head = _frameHead;
             long newest = _frameTimes[(head - 1 + RollingWindowSize) % RollingWindowSize];
 
-            // No frame in the last second ? not rendering; blank instead of showing a stale value.
+            // No frame in the last second → not rendering; blank instead of showing a stale value.
             if (Stopwatch.GetTimestamp() - newest > freq) return 0;
 
             // Average over the last second of frames only.
@@ -528,7 +537,7 @@ namespace OHelper.Overlay
             return (count - 1) / elapsed;
         }
 
-        // Logs ETW delivery latency (now - Present) and the max delivery gap, once per second.
+        // Logs ETW delivery latency (now − Present) and the max delivery gap, once per second.
         private void LogFpsDiagnostics(long presentTick)
         {
             long freq = Stopwatch.Frequency;
@@ -572,7 +581,7 @@ namespace OHelper.Overlay
             LogFileNameOffset = 0,
             LoggerNameOffset = (uint)Marshal.OffsetOf<EVENT_TRACE_PROPERTIES>(
                 nameof(EVENT_TRACE_PROPERTIES.LoggerName)),
-            // Flush drains buffers, so 64 KB base only needs to cover the ~1 s idle?game transition.
+            // Flush drains buffers, so 64 KB base only needs to cover the ~1 s idle→game transition.
             BufferSize = 8,           // KB per buffer
             MinimumBuffers = 8,
             MaximumBuffers = 16,
