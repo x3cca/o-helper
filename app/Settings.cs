@@ -704,6 +704,12 @@ namespace OHelper
 
         private void SettingsForm_Resize(object? sender, EventArgs e)
         {
+            if (WindowState != FormWindowState.Normal)
+            {
+                WindowState = FormWindowState.Normal;
+                return;
+            }
+
             Left = Screen.FromControl(this).WorkingArea.Width - 10 - Width;
             Top = Screen.FromControl(this).WorkingArea.Height - 10 - Height;
         }

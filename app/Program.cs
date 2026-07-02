@@ -421,6 +421,8 @@ namespace OHelper
                 var screen = Screen.PrimaryScreen;
                 if (screen is null) screen = Screen.FromControl(settingsForm);
 
+                settingsForm.WindowState = FormWindowState.Normal;
+
                 settingsForm.Location = screen.WorkingArea.Location;
                 settingsForm.Left = screen.WorkingArea.Width - 10 - settingsForm.Width;
                 settingsForm.Top = screen.WorkingArea.Height - 10 - settingsForm.Height;
