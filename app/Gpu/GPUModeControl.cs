@@ -135,6 +135,8 @@ namespace OHelper.Gpu
             {
                 try
                 {
+                    Program.modeControl.WaitForApply();
+
                     int targetMode = eco == 1 ? HpACPI.GPUModeEco : HpACPI.GPUModeStandard;
 
                     if (eco == 1)

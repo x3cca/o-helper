@@ -64,6 +64,7 @@ namespace OHelper.Mode
         static CancellationTokenSource _modeCts = new();
         static CancellationTokenSource _autoModeCts = new();
         private static int _stopped;
+        static Task _modeTask = Task.CompletedTask;
 
         public ModeControl()
         {
@@ -150,6 +151,11 @@ namespace OHelper.Mode
             }, ct);
         }
 
+        public void WaitForApply()
+        {
+            try { _modeTask.Wait(5000); } catch { }
+        }
+
         public void AutoPerformance(bool powerChanged = false)
         {
             if (powerChanged && AppConfig.Is("auto_mode_enabled") && !AppConfig.Is("manual_mode"))
@@ -203,7 +209,7 @@ namespace OHelper.Mode
             _modeCts = new CancellationTokenSource();
             var ct = _modeCts.Token;
 
-            Task.Run(async () =>
+            _modeTask = Task.Run(async () =>
             {
                 try
                 {
