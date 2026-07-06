@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace GHelper.Overlay
+namespace OHelper.Overlay
 {
     public sealed class EtwFpsMonitor : IDisposable
     {
