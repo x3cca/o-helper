@@ -413,7 +413,7 @@ namespace OHelper.Overlay
                     _lastFgPid = fgPid;
                     _currentFps = 0;
                     _fgDesktop = IsDesktopApp(fgPid);
-                    _fps.TargetPid = _fgDesktop ? 0 : fgPid;
+                    _fps.TargetPid = _gameOnly && _fgDesktop ? 0 : fgPid;
                 }
                 else
                 {
