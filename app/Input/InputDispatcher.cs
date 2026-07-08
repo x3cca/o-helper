@@ -981,10 +981,7 @@ namespace OHelper.Input
             if (string.IsNullOrEmpty(command)) return;
             try
             {
-                if (command.StartsWith("shutdown"))
-                    ProcessHelper.RunCMD("cmd", "/C " + command);
-                else
-                    RestrictedProcessHelper.RunAsRestrictedUser(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe"), "/C " + command);
+                RestrictedProcessHelper.RunAsRestrictedUser(command);
             }
             catch (Exception ex)
             {
