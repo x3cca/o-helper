@@ -478,21 +478,17 @@ namespace OHelper
 
         public void VisualiseBrightness()
         {
-            Invoke(delegate
-            {
-                sliderGammaIgnore = true;
-                sliderGamma.Value = VisualControl.GetBrightness();
-                labelGamma.Text = sliderGamma.Value + "%";
-                sliderGammaIgnore = false;
-            });
+            if (InvokeRequired) { Invoke(VisualiseBrightness); return; }
+            sliderGammaIgnore = true;
+            sliderGamma.Value = VisualControl.GetBrightness();
+            labelGamma.Text = sliderGamma.Value + "%";
+            sliderGammaIgnore = false;
         }
 
         public void VisualiseAmdOled(bool status = false)
         {
-            Invoke(delegate
-            {
-                buttonAmdOled.Visible = status;
-            });
+            if (InvokeRequired) { Invoke(() => VisualiseAmdOled(status)); return; }
+            buttonAmdOled.Visible = status;
         }
 
         public void VisualiseDisabled()
@@ -502,10 +498,8 @@ namespace OHelper
 
         public void VisualiseGamut()
         {
-            Invoke(delegate
-            {
-                if (comboGamut.Items.Count > 0) comboGamut.SelectedIndex = 0;
-            });
+            if (InvokeRequired) { Invoke(VisualiseGamut); return; }
+            if (comboGamut.Items.Count > 0) comboGamut.SelectedIndex = 0;
         }
 
         private void SliderGamma_ValueChanged(object? sender, EventArgs e)
@@ -1846,17 +1840,15 @@ namespace OHelper
 
         public void LockGPUModes(string? text = null)
         {
-            Invoke(delegate
-            {
-                if (text is null) text = Properties.Strings.GPUMode + ": " + Properties.Strings.GPUChanging + " ...";
+            if (InvokeRequired) { Invoke(() => LockGPUModes(text)); return; }
+            if (text is null) text = Properties.Strings.GPUMode + ": " + Properties.Strings.GPUChanging + " ...";
 
-                ButtonEnabled(buttonOptimized, false);
-                ButtonEnabled(buttonEco, false);
-                ButtonEnabled(buttonStandard, false);
-                ButtonEnabled(buttonUltimate, false);
+            ButtonEnabled(buttonOptimized, false);
+            ButtonEnabled(buttonEco, false);
+            ButtonEnabled(buttonStandard, false);
+            ButtonEnabled(buttonUltimate, false);
 
-                labelGPU.Text = text;
-            });
+            labelGPU.Text = text;
         }
 
         public void VisualiseGPUMode(int GPUMode = -1)
