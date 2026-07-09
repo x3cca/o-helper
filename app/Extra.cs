@@ -468,6 +468,15 @@ namespace OHelper
             sliderBrightness.AccessibleName = Properties.Strings.LaptopBacklight + ": " + sliderBrightness.Value;
         }
 
+        public void VisualiseBacklight(int backlight)
+        {
+            if (InvokeRequired) { Invoke(() => VisualiseBacklight(backlight)); return; }
+            sliderBrightness.ValueChanged -= SliderBrightness_ValueChanged;
+            sliderBrightness.Value = backlight;
+            sliderBrightness.AccessibleName = Properties.Strings.LaptopBacklight + ": " + sliderBrightness.Value;
+            sliderBrightness.ValueChanged += SliderBrightness_ValueChanged;
+        }
+
         private void CheckGpuApps_CheckedChanged(object? sender, EventArgs e)
         {
             AppConfig.Set("kill_gpu_apps", (checkGpuApps.Checked ? 1 : 0));
