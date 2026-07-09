@@ -159,7 +159,7 @@ public class Startup
         {
 
             td.RegistrationInfo.Description = "O-Helper Auto Start";
-            td.Triggers.Add(new LogonTrigger { Delay = TimeSpan.FromSeconds(1) });
+            td.Triggers.Add(new LogonTrigger { UserId = WindowsIdentity.GetCurrent().Name, Delay = TimeSpan.FromSeconds(1) });
             td.Actions.Add(strExeFilePath);
 
             td.Principal.LogonType = TaskLogonType.InteractiveToken;
@@ -173,6 +173,7 @@ public class Startup
             try
             {
                 TaskService.Instance.RootFolder.RegisterTaskDefinition(taskName, td);
+                Logger.WriteLine("Startup task scheduled: " + strExeFilePath);
             }
             catch (Exception ex)
             {
@@ -182,8 +183,6 @@ public class Startup
                 else
                     ProcessHelper.RunAsAdmin();
             }
-
-            Logger.WriteLine("Startup task scheduled: " + strExeFilePath);
         }
 
         ScheduleCharge();
