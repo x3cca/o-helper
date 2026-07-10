@@ -239,6 +239,17 @@ public static class AppConfig
             || GetModelCapabilities().SupportsIndependentFanCurves == false;
     }
 
+    public static bool SupportsFanCurves()
+    {
+        var knownCapabilities = ModelCapabilityDatabase.GetPreferredCapabilities(GetProductId(), GetModel());
+        if (knownCapabilities is not null)
+            return knownCapabilities.SupportsFanCurves;
+
+        // Unknown systems must prove support with the read-only fan capability probe
+        // before the software curve path is allowed to control the firmware.
+        return OHelper.Program.acpi?.IsSupported(HpACPI.DevsCPUFanCurve) == true;
+    }
+
     public static OmenModelFamily GetModelFamily()
     {
         return GetModelCapabilities().Family;

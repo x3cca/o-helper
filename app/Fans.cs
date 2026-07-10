@@ -284,7 +284,7 @@ namespace OHelper
 
             ToggleNavigation(0);
 
-            if (!Program.acpi.IsSupported(HpACPI.DevsCPUFanCurve)) buttonCalibrate.Visible = false;
+            ConfigureFanCurveControls();
 
             FormClosed += Fans_FormClosed;
             Activated  += (_, _) => VisualiseAdvanced();
@@ -475,8 +475,24 @@ namespace OHelper
 
         private void ButtonCalibrate_Click(object? sender, EventArgs e)
         {
+            if (!AppConfig.SupportsFanCurves()) return;
+
             buttonCalibrate.Enabled = false;
             fanSensorControl.StartCalibration();
+        }
+
+        private void ConfigureFanCurveControls()
+        {
+            if (AppConfig.SupportsFanCurves())
+            {
+                buttonCalibrate.Visible = Program.acpi.IsSupported(HpACPI.DevsCPUFanCurve);
+                return;
+            }
+
+            panelFans.Visible = false;
+            checkApplyFans.Checked = false;
+            checkApplyFans.Enabled = false;
+            buttonCalibrate.Visible = false;
         }
 
         private void ChartCPU_MouseClick(object? sender, MouseEventArgs e)
@@ -1175,6 +1191,14 @@ namespace OHelper
             if (sender is null) return;
             CheckBox chk = (CheckBox)sender;
 
+            if (!AppConfig.SupportsFanCurves())
+            {
+                chk.Checked = false;
+                AppConfig.SetMode("auto_apply", 0);
+                AppConfig.Flush();
+                return;
+            }
+
             AppConfig.SetMode("auto_apply", chk.Checked ? 1 : 0);
             modeControl.SetPerformanceMode();
 
@@ -1328,6 +1352,12 @@ namespace OHelper
 
         public void InitFans()
         {
+
+            if (!AppConfig.SupportsFanCurves())
+            {
+                checkApplyFans.Checked = false;
+                return;
+            }
 
             int chartCount = 2;
 
