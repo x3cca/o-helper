@@ -43,6 +43,7 @@ namespace OHelper.UI
         public Color borderColor = RForm.buttonMain;
 
         public List<int> supportedValues = new();
+        public bool SnapToSupportedValues { get; set; }
 
         public event EventHandler ValueChanged;
 
@@ -256,16 +257,26 @@ namespace OHelper.UI
                 thumbX = _barPos.X + _barSize.Width;
             }
 
-            if (_moving)
-            {
-                _dragX = thumbX;
-                Invalidate();
-            }
-
             float t = (thumbX - _barPos.X) / _barSize.Width;
-            Value = (int)Math.Round(Exponential
+            int value = (int)Math.Round(Exponential
                 ? Min * MathF.Pow((float)Max / Min, t)
                 : Min + t * (Max - Min));
+
+            if (SnapToSupportedValues && supportedValues.Count > 0)
+            {
+                value = supportedValues
+                    .OrderBy(v => Math.Abs(v - value))
+                    .ThenByDescending(v => v)
+                    .First();
+            }
+
+            Value = value;
+
+            if (_moving)
+            {
+                _dragX = SnapToSupportedValues && supportedValues.Count > 0 ? ValueToX(Value) : thumbX;
+                Invalidate();
+            }
 
         }
 

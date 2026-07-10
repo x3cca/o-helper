@@ -62,7 +62,7 @@ namespace OHelper
             InitializeComponent();
             batteryLimitBackend = AppConfig.GetBatteryChargeLimitBackend();
             panelBattery.Visible = batteryLimitBackend != BatteryChargeLimitBackendKind.None;
-            sliderBattery.Visible = batteryLimitBackend != BatteryChargeLimitBackendKind.HpBatteryCare;
+            sliderBattery.Visible = batteryLimitBackend != BatteryChargeLimitBackendKind.None;
             InitTheme(true);
             InitDynamicRefreshButton();
 
@@ -258,12 +258,20 @@ namespace OHelper
             buttonUpdates.Click += ButtonUpdates_Click;
             // ASUS models keep the driver/BIOS update form; O-Helper models use this as a static releases link.
 
-            if (batteryLimitBackend != BatteryChargeLimitBackendKind.HpBatteryCare)
+            if (batteryLimitBackend != BatteryChargeLimitBackendKind.None)
             {
                 sliderBattery.MouseUp += SliderBattery_MouseUp;
                 sliderBattery.KeyUp += SliderBattery_KeyUp;
                 sliderBattery.ValueChanged += SliderBattery_ValueChanged;
-                if (AppConfig.IsChargeLimit6080()) sliderBattery.supportedValues = new() { 60, 65, 70, 75, 80, 100 };
+                if (batteryLimitBackend == BatteryChargeLimitBackendKind.HpBatteryCare)
+                {
+                    sliderBattery.Min = BatteryControl.HpBatteryCareLimit;
+                    sliderBattery.Max = BatteryControl.FullChargeLimit;
+                    sliderBattery.supportedValues = new() { BatteryControl.HpBatteryCareLimit, BatteryControl.FullChargeLimit };
+                    sliderBattery.SnapToSupportedValues = true;
+                }
+                else if (AppConfig.IsChargeLimit6080())
+                    sliderBattery.supportedValues = new() { 60, 65, 70, 75, 80, 100 };
             }
 
             sensorTimer = new System.Timers.Timer(AppConfig.Get("sensor_timer", 1000));
@@ -2492,11 +2500,8 @@ namespace OHelper
         public void VisualiseBattery(int limit)
         {
             VisualiseBatteryTitle(limit);
-            if (batteryLimitBackend != BatteryChargeLimitBackendKind.HpBatteryCare)
-            {
-                sliderBattery.Value = limit;
-                sliderBattery.AccessibleName = Properties.Strings.BatteryChargeLimit + ": " + limit.ToString() + "%";
-            }
+            sliderBattery.Value = limit;
+            sliderBattery.AccessibleName = Properties.Strings.BatteryChargeLimit + ": " + limit.ToString() + "%";
             //sliderBattery.AccessibilityObject.Select(AccessibleSelection.TakeFocus);
 
             VisualiseBatteryFull();
@@ -2505,7 +2510,12 @@ namespace OHelper
         public void VisualiseBatteryFull()
         {
             if (batteryLimitBackend == BatteryChargeLimitBackendKind.HpBatteryCare)
-                VisualiseBatteryTitle(BatteryControl.chargeFull ? BatteryControl.FullChargeLimit : BatteryControl.HpBatteryCareLimit);
+            {
+                int limit = BatteryControl.chargeFull ? BatteryControl.FullChargeLimit : BatteryControl.HpBatteryCareLimit;
+                VisualiseBatteryTitle(limit);
+                sliderBattery.Value = limit;
+                sliderBattery.AccessibleName = Properties.Strings.BatteryChargeLimit + ": " + limit.ToString() + "%";
+            }
 
             if (BatteryControl.chargeFull)
             {
