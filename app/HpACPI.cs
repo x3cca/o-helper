@@ -341,6 +341,8 @@ public class HpACPI
     private bool _useLegacyWmi;
     private int _consecutiveFailures;
     private const int MAX_CONSECUTIVE_FAILURES = 5;
+    private static readonly TimeSpan WMI_RECOVERY_COOLDOWN = TimeSpan.FromSeconds(30);
+    private DateTime _wmiRetryAfterUtc = DateTime.MinValue;
     private DateTime _lastErrorLog = DateTime.MinValue;
     private static readonly TimeSpan ERROR_LOG_INTERVAL = TimeSpan.FromSeconds(30);
 
@@ -359,7 +361,11 @@ public class HpACPI
         return _connected;
     }
 
-    public bool IsWmiReady() => _wmiInitialized && !_wmiDisabled;
+    public bool IsWmiReady()
+    {
+        TryRecoverWmiAfterCooldown();
+        return _wmiInitialized && !_wmiDisabled;
+    }
 
     public HpACPI()
     {
@@ -475,6 +481,7 @@ public class HpACPI
 
     public WmiBiosResult ExecuteBiosCommand(uint command, int commandType, byte[] inputData, int returnDataSize)
     {
+        TryRecoverWmiAfterCooldown();
         if (_wmiDisabled)
             return WmiBiosResult.Failure(returnDataSize);
 
@@ -511,7 +518,10 @@ public class HpACPI
                     }
 
                     int returnCode = Convert.ToInt32(outData["rwReturnCode"]);
-                    byte[] returnData = CopyReturnData(outData["Data"] as byte[], returnDataSize);
+                    // Do not pad short replies. The WMI data object's Size field is
+                    // the firmware's response length; callers use Data.Length to
+                    // validate that the bytes required for a command were returned.
+                    byte[] returnData = CopyReturnData(outData["Data"] as byte[], GetResponseDataSize(outData), returnDataSize);
 
                     OnCommandSuccess();
                     return new WmiBiosResult(true, returnCode, returnData);
@@ -534,6 +544,7 @@ public class HpACPI
     private void OnCommandSuccess()
     {
         _consecutiveFailures = 0;
+        _wmiRetryAfterUtc = DateTime.MinValue;
         if (_wmiDisabled)
         {
             _wmiDisabled = false;
@@ -547,7 +558,8 @@ public class HpACPI
         if (_consecutiveFailures >= MAX_CONSECUTIVE_FAILURES && !_wmiDisabled)
         {
             _wmiDisabled = true;
-            Logger.WriteLine($"HpACPI: WMI disabled after {MAX_CONSECUTIVE_FAILURES} consecutive transport failures");
+            _wmiRetryAfterUtc = DateTime.UtcNow + WMI_RECOVERY_COOLDOWN;
+            Logger.WriteLine($"HpACPI: WMI disabled after {MAX_CONSECUTIVE_FAILURES} consecutive transport failures; retry after {_wmiRetryAfterUtc:O}");
             return;
         }
 
@@ -566,13 +578,59 @@ public class HpACPI
         return "hpqBIOSInt4096";
     }
 
-    private static byte[] CopyReturnData(byte[] source, int returnDataSize)
+    private void TryRecoverWmiAfterCooldown()
     {
-        if (returnDataSize <= 0) return Array.Empty<byte>();
-        byte[] result = new byte[returnDataSize];
-        if (source == null || source.Length == 0) return result;
-        Array.Copy(source, result, Math.Min(source.Length, result.Length));
-        return result;
+        if (!_wmiDisabled || DateTime.UtcNow < _wmiRetryAfterUtc) return;
+
+        lock (this)
+        {
+            if (!_wmiDisabled || DateTime.UtcNow < _wmiRetryAfterUtc) return;
+
+            Logger.WriteLine("HpACPI: WMI recovery cooldown elapsed; reconnecting");
+            try { _wmiMethodsObject?.Dispose(); } catch { }
+            try { _wmiDataClass?.Dispose(); } catch { }
+            _wmiMethodsObject = null;
+            _wmiDataClass = null;
+            _wmiScope = null;
+            _wmiInitialized = false;
+            _useLegacyWmi = false;
+            _wmiDisabled = false;
+            _consecutiveFailures = 0;
+            InitializeWmi();
+
+            if (!_wmiInitialized)
+            {
+                _wmiDisabled = true;
+                _wmiRetryAfterUtc = DateTime.UtcNow + WMI_RECOVERY_COOLDOWN;
+                Logger.WriteLine($"HpACPI: WMI reconnect failed; retry after {_wmiRetryAfterUtc:O}");
+            }
+        }
+    }
+
+    private static int? GetResponseDataSize(ManagementBaseObject outData)
+    {
+        try
+        {
+            object? size = outData["Size"];
+            if (size is not null)
+            {
+                int value = Convert.ToInt32(size);
+                if (value >= 0) return value;
+            }
+        }
+        catch { }
+
+        return null;
+    }
+
+    private static byte[] CopyReturnData(byte[]? source, int? responseDataSize, int requestedSize)
+    {
+        if (source is null || source.Length == 0 || requestedSize <= 0) return Array.Empty<byte>();
+
+        int length = Math.Min(source.Length, requestedSize);
+        if (responseDataSize.HasValue)
+            length = Math.Min(length, responseDataSize.Value);
+        return source[..length];
     }
 
     #endregion
@@ -1437,19 +1495,9 @@ public class HpACPI
 
     private int SetPowerLimit(uint deviceId, int value)
     {
-        if (!IsWmiReady()) return 0;
-
-        try
-        {
-            var result = ExecuteBiosCommand(
-                (uint)HpBiosCommand.Default,
-                (int)HpBiosCommandType.Tpptdp,
-                new byte[] { 0xFF, 0xFF, 0xFF, (byte)value },
-                4);
-            return result.Success && result.ReturnCode == 0 ? 1 : 0;
-        }
-        catch { }
-
+        // 0x41 has no confirmed selector for these legacy device IDs. Sending it
+        // would make every ostensibly independent control change the same setting.
+        Logger.WriteLine($"HpACPI: PPT control 0x{deviceId:X} is unavailable because HP WMI does not expose a distinct selector");
         return 0;
     }
 
@@ -1707,12 +1755,9 @@ public class HpACPI
             || deviceId == PPT_CPUB0 || deviceId == PPT_CPUB1
             || deviceId == PPT_GPUC0 || deviceId == PPT_GPUC2)
         {
-            var result = ExecuteBiosCommand(
-                (uint)HpBiosCommand.Default,
-                (int)HpBiosCommandType.Tpptdp,
-                new byte[] { 0xFF, 0xFF, 0xFF, 0 },
-                4);
-            return result.Success && result.ReturnCode == 0;
+            // Tpptdp (0x41) is a setter and has no confirmed read-only probe or
+            // per-control selector. Do not use it for capability detection.
+            return false;
         }
 
         return false;
@@ -1739,20 +1784,26 @@ public class HpACPI
         }
         catch { }
 
-        try
+        // Keep diagnostics strictly to confirmed read-only commands. Never scan a
+        // numeric range: that range contains firmware setters.
+        var probes = new (string Name, uint Command, HpBiosCommandType Type, byte[] Input, int OutputSize)[]
         {
-            for (int cmdType = 0x10; cmdType <= 0x50; cmdType++)
+            ("SystemGetData", (uint)HpBiosCommand.Default, HpBiosCommandType.SystemGetData, Array.Empty<byte>(), 128),
+            ("SystemDesignData", (uint)HpBiosCommand.Default, HpBiosCommandType.SystemDesignData, Array.Empty<byte>(), 128),
+            ("OverdriveGet", (uint)HpBiosCommand.Default, HpBiosCommandType.OverdriveGet, Array.Empty<byte>(), 4),
+            ("GpuModeGet", (uint)HpBiosCommand.Legacy, HpBiosCommandType.GpuModeGet, Array.Empty<byte>(), 4)
+        };
+
+        foreach (var probe in probes)
+        {
+            try
             {
-                var result = ExecuteBiosCommand(
-                    (uint)HpBiosCommand.Default,
-                    cmdType,
-                    new byte[4],
-                    4);
-                if (result.Success && result.ReturnCode == 0)
-                    sb.AppendLine($"CMD 0x{cmdType:X2}: OK ({BitConverter.ToString(result.Data)})");
+                var result = ExecuteBiosCommand(probe.Command, (int)probe.Type, probe.Input, probe.OutputSize);
+                sb.AppendLine($"{probe.Name}: success={result.Success} rc={result.ReturnCode} len={result.Data.Length}" +
+                    (result.Data.Length > 0 ? $" ({BitConverter.ToString(result.Data)})" : string.Empty));
             }
+            catch { }
         }
-        catch { }
 
         return sb.ToString();
     }
@@ -2107,8 +2158,7 @@ public class HpACPI
 
         public static WmiBiosResult Failure(int returnDataSize)
         {
-            return new WmiBiosResult(false, -1,
-                returnDataSize > 0 ? new byte[returnDataSize] : Array.Empty<byte>());
+            return new WmiBiosResult(false, -1, Array.Empty<byte>());
         }
     }
 

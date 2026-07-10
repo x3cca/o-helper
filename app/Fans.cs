@@ -1213,8 +1213,8 @@ namespace OHelper
         public void InitPower()
         {
 
-            bool modeA = Program.acpi.IsSupported(HpACPI.PPT_APUA0) || CpuInfo.IsAMD;
-            bool modeB0 = Program.acpi.IsAllAmdPPT();
+            bool modeA = Program.acpi.IsSupported(HpACPI.PPT_APUA0);
+            bool modeB0 = Program.acpi.IsAllAmdPPT() && Program.acpi.IsSupported(HpACPI.PPT_CPUB0);
             bool modeC1 = Program.acpi.IsSupported(HpACPI.PPT_APUC1);
 
             panelTotal.Visible = modeA;

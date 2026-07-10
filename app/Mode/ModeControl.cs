@@ -633,7 +633,7 @@ namespace OHelper.Mode
                 }
             }
 
-            if (allAMD) // CPU limit all amd models
+            if (allAMD && Program.acpi.IsSupported(HpACPI.PPT_CPUB0)) // CPU limit all amd models
             {
                 if (IsValidPowerLimit(limit_cpu, HpACPI.MinCPU, HpACPI.MaxCPU))
                 {
@@ -712,7 +712,7 @@ namespace OHelper.Mode
                 Program.acpi.DeviceSet(HpACPI.PPT_GPUC2, gpu_temp, "PowerLimit C2 (GPU TEMP)");
 
             // Fallback
-            if (boostResult == 0)
+            if (boostResult == 0 && Program.acpi.IsSupported(HpACPI.PPT_GPUC0))
                 Program.acpi.DeviceSet(HpACPI.PPT_GPUC0, gpu_boost, "PowerLimit C0");
 
         }
