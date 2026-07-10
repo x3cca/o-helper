@@ -384,7 +384,13 @@ public static class HardwareControl
         if (fullCapacity > 0 && chargeCapacity > 0)
         {
             batteryCapacity = Math.Min(100, (decimal)chargeCapacity / (decimal)fullCapacity * 100);
-            if (batteryCapacity > 99 && BatteryControl.chargeFull) BatteryControl.UnSetBatteryLimitFull();
+            // HP Battery Care's 100% position is a persistent binary setting.
+            // Only legacy backends treat "full" as a one-time override that
+            // automatically restores the lower limit after reaching 100%.
+            if (batteryCapacity > 99
+                && BatteryControl.chargeFull
+                && AppConfig.GetBatteryChargeLimitBackend() != BatteryChargeLimitBackendKind.HpBatteryCare)
+                BatteryControl.UnSetBatteryLimitFull();
             batteryCharge = chargeWatt
                 ? Math.Round((decimal)chargeCapacity / 1000, 1) + "Wh"
                 : Math.Round(batteryCapacity, 1) + "%";
