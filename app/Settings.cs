@@ -257,7 +257,8 @@ namespace OHelper
             sliderBattery.MouseUp += SliderBattery_MouseUp;
             sliderBattery.KeyUp += SliderBattery_KeyUp;
             sliderBattery.ValueChanged += SliderBattery_ValueChanged;
-            if (AppConfig.IsChargeLimit6080()) sliderBattery.supportedValues = new() { 60, 65, 70, 75, 80, 100 };
+            if (AppConfig.IsHP()) sliderBattery.supportedValues = new() { BatteryControl.HpBatteryCareLimit, BatteryControl.FullChargeLimit };
+            else if (AppConfig.IsChargeLimit6080()) sliderBattery.supportedValues = new() { 60, 65, 70, 75, 80, 100 };
 
             sensorTimer = new System.Timers.Timer(AppConfig.Get("sensor_timer", 1000));
             sensorTimer.Elapsed += OnTimedEvent;
@@ -379,6 +380,18 @@ namespace OHelper
 
         private void SliderBattery_ValueChanged(object? sender, EventArgs e)
         {
+            if (AppConfig.IsHP())
+            {
+                int normalizedLimit = sliderBattery.Value >= 90
+                    ? BatteryControl.FullChargeLimit
+                    : BatteryControl.HpBatteryCareLimit;
+                if (sliderBattery.Value != normalizedLimit)
+                {
+                    sliderBattery.Value = normalizedLimit;
+                    return;
+                }
+            }
+
             VisualiseBatteryTitle(sliderBattery.Value);
         }
 
