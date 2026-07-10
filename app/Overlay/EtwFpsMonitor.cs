@@ -218,6 +218,8 @@ namespace OHelper.Overlay
         // ── State ────────────────────────────────────────────────────────────────
         private long _sessionHandle;
         private long _traceHandle;
+        private readonly object _cleanupLock = new();
+        private int _stopRequested;
 
         private const int FlushIntervalMs = 200; // flush cadence while a game renders
         private const int MinFlushFps = 10;      // below this fps = idle/browsing, flush only 1×/s
@@ -359,24 +361,28 @@ namespace OHelper.Overlay
         public void Start(int targetPid = -1)
         {
             _targetPid = targetPid;
-
-            // Kill any stale session left by a previous unclean exit. Otherwise StartTrace
-            // returns ERROR_ALREADY_EXISTS without populating sessionHandle, EnableTraceEx2
-            // silently fails against the invalid handle, and FPS stays at "--" until the
-            // user hides/shows the overlay (Stop() finds the orphaned session by name).
-            var stopProps = BuildSessionProperties();
-            StopTrace(0, SessionName, ref stopProps);
-
-            // 1. Create the real-time ETW session
-            var props = BuildSessionProperties();
-            uint hr = StartTrace(out _sessionHandle, SessionName, ref props);
-            if (hr == 0xB7 /*ERROR_ALREADY_EXISTS*/)
+            long traceHandle = 0;
+            try
             {
+                // Kill any stale session left by a previous unclean exit. Otherwise StartTrace
+                // returns ERROR_ALREADY_EXISTS without populating sessionHandle, EnableTraceEx2
+                // silently fails against the invalid handle, and FPS stays at "--" until the
+                // user hides/shows the overlay (Stop() finds the orphaned session by name).
+                var stopProps = BuildSessionProperties();
                 StopTrace(0, SessionName, ref stopProps);
-                hr = StartTrace(out _sessionHandle, SessionName, ref props);
-            }
-            if (hr != ERROR_SUCCESS)
-                throw new InvalidOperationException($"StartTrace failed: 0x{hr:X}");
+
+                // 1. Create the real-time ETW session
+                var props = BuildSessionProperties();
+                uint hr = StartTrace(out long sessionHandle, SessionName, ref props);
+                if (hr == 0xB7 /*ERROR_ALREADY_EXISTS*/)
+                {
+                    StopTrace(0, SessionName, ref stopProps);
+                    hr = StartTrace(out sessionHandle, SessionName, ref props);
+                }
+                if (hr != ERROR_SUCCESS)
+                    throw new InvalidOperationException($"StartTrace failed: 0x{hr:X}");
+                SetSessionHandle(sessionHandle);
+                ThrowIfStopRequested();
 
             // 2a. Subscribe to the DXGI provider (DX11 + DX12 games that go through
             //     the user-mode DXGI swapchain — fires event ID 42 per frame).
@@ -410,7 +416,10 @@ namespace OHelper.Overlay
                     EventRecordCallback = Marshal.GetFunctionPointerForDelegate(_callbackRef),
                 };
 
-                _traceHandle = OpenTrace(ref logfile);
+                traceHandle = OpenTrace(ref logfile);
+                if (traceHandle == -1)
+                    throw new InvalidOperationException("OpenTrace failed");
+                SetTraceHandle(traceHandle);
             }
             finally
             {
@@ -419,19 +428,75 @@ namespace OHelper.Overlay
             }
 
             // 4. Force prompt delivery — kernel otherwise batches events to ~1×/s.
-            _flushTimer = new System.Threading.Timer(_ => FlushSession(), null, FlushIntervalMs, FlushIntervalMs);
+            SetFlushTimer(new System.Threading.Timer(_ => FlushSession(), null, FlushIntervalMs, FlushIntervalMs));
+            ThrowIfStopRequested();
 
             // 5. Blocking pump — returns when CloseTrace() is called from Stop()/Dispose()
-            ProcessTrace(new[] { _traceHandle }, 1, IntPtr.Zero, IntPtr.Zero);
+            ProcessTrace(new[] { traceHandle }, 1, IntPtr.Zero, IntPtr.Zero);
+            }
+            finally
+            {
+                Cleanup();
+            }
         }
 
         public void Stop()
         {
-            _flushTimer?.Dispose();
-            _flushTimer = null;
-            CloseTrace(_traceHandle);
-            var props = BuildSessionProperties();
-            StopTrace(_sessionHandle, SessionName, ref props);
+            Interlocked.Exchange(ref _stopRequested, 1);
+            Cleanup();
+        }
+
+        private void ThrowIfStopRequested()
+        {
+            if (Volatile.Read(ref _stopRequested) != 0)
+                throw new OperationCanceledException("ETW FPS monitor stopped during startup");
+        }
+
+        private void SetSessionHandle(long sessionHandle)
+        {
+            lock (_cleanupLock)
+                _sessionHandle = sessionHandle;
+        }
+
+        private void SetTraceHandle(long traceHandle)
+        {
+            lock (_cleanupLock)
+                _traceHandle = traceHandle;
+        }
+
+        private void SetFlushTimer(System.Threading.Timer flushTimer)
+        {
+            bool disposeTimer;
+            lock (_cleanupLock)
+            {
+                disposeTimer = Volatile.Read(ref _stopRequested) != 0;
+                if (!disposeTimer) _flushTimer = flushTimer;
+            }
+            if (disposeTimer) flushTimer.Dispose();
+        }
+
+        private void Cleanup()
+        {
+            System.Threading.Timer? flushTimer;
+            long traceHandle;
+            long sessionHandle;
+            lock (_cleanupLock)
+            {
+                flushTimer = _flushTimer;
+                _flushTimer = null;
+                traceHandle = _traceHandle;
+                _traceHandle = 0;
+                sessionHandle = _sessionHandle;
+                _sessionHandle = 0;
+            }
+
+            flushTimer?.Dispose();
+            if (traceHandle != 0) CloseTrace(traceHandle);
+            if (sessionHandle != 0)
+            {
+                var props = BuildSessionProperties();
+                StopTrace(sessionHandle, SessionName, ref props);
+            }
         }
 
         // Flush fast while a game renders, else once a second (the floor keeps the gate unstuck).

@@ -56,6 +56,7 @@ namespace OHelper.Mode
         static System.Timers.Timer modeToggleTimer = default!;
         static CancellationTokenSource _modeCts = new();
         static CancellationTokenSource _autoModeCts = new();
+        private static int _stopped;
 
         public ModeControl()
         {
@@ -88,12 +89,14 @@ namespace OHelper.Mode
 
         private void ReapplyTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
+            if (Volatile.Read(ref _stopped) != 0) return;
             SetCPUTemp(AppConfig.GetMode("cpu_temp"));
             SetRyzenPower();
         }
 
         public void ApplyAutoModeForPowerSource(bool notify = true, bool force = false)
         {
+            if (Volatile.Read(ref _stopped) != 0) return;
             if (!AppConfig.Is("auto_mode_enabled") || AppConfig.Is("manual_mode")) return;
 
             PowerLineStatus powerLineStatus = SystemInformation.PowerStatus.PowerLineStatus;
@@ -119,6 +122,7 @@ namespace OHelper.Mode
 
         private void ScheduleAutoModeForPowerSource()
         {
+            if (Volatile.Read(ref _stopped) != 0) return;
             if (!AppConfig.Is("auto_mode_enabled") || AppConfig.Is("manual_mode")) return;
 
             _autoModeCts.Cancel();
@@ -176,6 +180,7 @@ namespace OHelper.Mode
 
         public void SetPerformanceMode(int mode = -1, bool notify = false)
         {
+            if (Volatile.Read(ref _stopped) != 0) return;
 
             int oldMode = Modes.GetCurrent();
             if (mode < 0) mode = oldMode;
@@ -269,6 +274,7 @@ namespace OHelper.Mode
 
         public void CyclePerformanceMode(bool back = false)
         {
+            if (Volatile.Read(ref _stopped) != 0) return;
             int delay = AppConfig.Get("mode_delay", 1000);
 
             if (modeToggleTimer is null)
@@ -863,6 +869,29 @@ namespace OHelper.Mode
         {
             if (!AppConfig.IsShutdownReset()) return;
             Program.acpi.DeviceSet(HpACPI.PerformanceMode,HpACPI.PerformanceBalanced, "Mode Reset");
+        }
+
+        public void Stop()
+        {
+            if (Interlocked.Exchange(ref _stopped, 1) != 0) return;
+
+            _modeCts.Cancel();
+            _autoModeCts.Cancel();
+            reapplyTimer?.Stop();
+            reapplyTimer?.Dispose();
+            modeToggleTimer?.Stop();
+            modeToggleTimer?.Dispose();
+            lock (fanCurveLock)
+            {
+                fanCurveTimer?.Stop();
+                fanCurveTimer?.Dispose();
+                fanCurveTimer = null;
+            }
+            lock (_smuLock)
+            {
+                _smu?.Dispose();
+                _smu = null;
+            }
         }
 
         public void SleepReset()

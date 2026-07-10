@@ -172,11 +172,12 @@ namespace OHelper.Overlay
         private Task? _fpsTask;
         private volatile int _currentFps;
         private int _lastFgPid;
-        private bool _active;
+        private volatile bool _active;
         private bool _gameOnly;
         private bool _showNames;
         private bool _showFps, _showTemp, _showFans, _showChart, _showPower, _showUsage, _showRam;
         private bool _hidden;
+        private int _uiThreadId;
         private int _shownPid;
         private bool _fgDesktop;
         private IntPtr _fgHook;
@@ -206,7 +207,18 @@ namespace OHelper.Overlay
         public HardwareOverlay()
         {
             Alpha = 255;
-            _timer.Elapsed += (_, _) => Tick();
+            _timer.Elapsed += (_, _) => QueueTick();
+        }
+
+        // System.Timers.Timer callbacks run on a worker thread. Queue all overlay work to
+        // the form thread so native window state, painting, and resource disposal share one
+        // serialized execution context.
+        private void QueueTick()
+        {
+            var form = Program.settingsForm;
+            if (!_active || form is null || form.IsDisposed || !form.IsHandleCreated) return;
+            try { form.BeginInvoke((Action)Tick); }
+            catch (InvalidOperationException) { }
         }
 
         private const int WM_NCDESTROY = 0x0082;
@@ -384,6 +396,7 @@ namespace OHelper.Overlay
 
         private void Tick()
         {
+            if (!_active) return;
             // Drag-mode detection: only activate when the cursor is already over the
             // overlay, preventing CTRL+SHIFT+ALT used in games from toggling drag mode.
             bool mouseOver = new Rectangle(Location, Size).Contains(Cursor.Position);
@@ -479,6 +492,14 @@ namespace OHelper.Overlay
         {
             if (!_active || !_gameOnly)
                 return;
+
+            if (Environment.CurrentManagedThreadId != _uiThreadId)
+            {
+                var form = Program.settingsForm;
+                try { form?.BeginInvoke((Action)OnForegroundChanged); }
+                catch (InvalidOperationException) { }
+                return;
+            }
 
             GetWindowThreadProcessId(GetForegroundWindow(), out uint fgPidRaw);
             int fgPid = (int)fgPidRaw;
@@ -880,8 +901,12 @@ namespace OHelper.Overlay
         {
             if (_fps != null || !(_showFps || _gameOnly)) return;
             _currentFps = 0;
-            _fps = new EtwFpsMonitor();
-            _fpsTask = Task.Run(() => _fps.Start());
+            var monitor = new EtwFpsMonitor();
+            _fps = monitor;
+            _fpsTask = Task.Run(() => monitor.Start());
+            _ = _fpsTask.ContinueWith(task =>
+                Logger.WriteLine("ETW FPS monitor stopped: " + task.Exception?.GetBaseException().Message),
+                TaskContinuationOptions.OnlyOnFaulted);
         }
 
         // Re-anchor the overlay after the user changes resolution or swaps the primary
@@ -912,6 +937,7 @@ namespace OHelper.Overlay
 
         public void StartOverlay()
         {
+            _uiThreadId = Environment.CurrentManagedThreadId;
             _active = true;
             _lastFgPid = 0;
             _gameOnly = AppConfig.IsOverlayGameOnly();
