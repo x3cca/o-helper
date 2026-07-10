@@ -1237,12 +1237,14 @@ public class HpACPI
 
     public int SetFanRange(HpFan device, byte[] curve)
     {
+        if (!AppConfig.SupportsFirmwareFanCurves()) return 0;
         Logger.WriteLine("SetFanRange unsupported by confirmed HP WMI command; software fan loop will write target blobs");
         return 0;
     }
 
     public int SetFanCurve(HpFan device, byte[] curve)
     {
+        if (!AppConfig.SupportsFirmwareFanCurves()) return 0;
         Logger.WriteLine("SetFanCurve unsupported by confirmed HP WMI command; software fan loop will write target blobs");
         return 0;
     }
@@ -1350,6 +1352,8 @@ public class HpACPI
     }
     public byte[] GetFanCurve(HpFan device, int mode = 0)
     {
+        if (!AppConfig.SupportsFirmwareFanCurves()) return new byte[16];
+
         // Return default fan curve for the model and mode
         // This should be expanded to fetch actual stored curves from WMI or config
         var modelCaps = AppConfig.GetModelCapabilities();

@@ -143,9 +143,10 @@ namespace OHelper.Fan
         public void StartCalibration()
         {
 
-            if (!AppConfig.SupportsFanCurves())
+            if (!AppConfig.SupportsFirmwareFanCurves()
+                || !Program.acpi.IsSupported(HpACPI.DevsCPUFanCurve))
             {
-                Logger.WriteLine("Fan calibration blocked: custom fan curves are unsupported");
+                Logger.WriteLine("Fan calibration blocked: firmware-stored fan curves are unsupported");
                 return;
             }
 

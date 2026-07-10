@@ -309,7 +309,7 @@ namespace OHelper.Mode
         {
             customFans = false;
 
-            if (!AppConfig.SupportsFanCurves())
+            if (!AppConfig.SupportsSoftwareFanCurves())
             {
                 if (AppConfig.IsApplyFans())
                 {
@@ -341,25 +341,33 @@ namespace OHelper.Mode
 #pragma warning restore CS0618
                 }
 
-                int cpuResult = Program.acpi.SetFanCurve(HpFan.CPU, AppConfig.GetFanConfig(HpFan.CPU));
-                int gpuResult = Program.acpi.SetFanCurve(HpFan.GPU, AppConfig.GetFanConfig(HpFan.GPU));
-
-                if (AppConfig.Is("mid_fan"))
-                    Program.acpi.SetFanCurve(HpFan.Mid, AppConfig.GetFanConfig(HpFan.Mid));
-
-
-                // Alternative way to set fan curve
-                if (cpuResult != 1 || gpuResult != 1)
+                if (AppConfig.SupportsFirmwareFanCurves())
                 {
-                    cpuResult = Program.acpi.SetFanRange(HpFan.CPU, AppConfig.GetFanConfig(HpFan.CPU));
-                    gpuResult = Program.acpi.SetFanRange(HpFan.GPU, AppConfig.GetFanConfig(HpFan.GPU));
+                    int cpuResult = Program.acpi.SetFanCurve(HpFan.CPU, AppConfig.GetFanConfig(HpFan.CPU));
+                    int gpuResult = Program.acpi.SetFanCurve(HpFan.GPU, AppConfig.GetFanConfig(HpFan.GPU));
 
-                    // Something went wrong, resetting to default profile
+                    if (AppConfig.Is("mid_fan"))
+                        Program.acpi.SetFanCurve(HpFan.Mid, AppConfig.GetFanConfig(HpFan.Mid));
+
+                    // Alternative way to set fan curve
                     if (cpuResult != 1 || gpuResult != 1)
                     {
-                        StartFanCurveLoop();
-                        settings.LabelFansResult(Properties.Strings.SoftwareFanCurveActive);
-                        customFans = true;
+                        cpuResult = Program.acpi.SetFanRange(HpFan.CPU, AppConfig.GetFanConfig(HpFan.CPU));
+                        gpuResult = Program.acpi.SetFanRange(HpFan.GPU, AppConfig.GetFanConfig(HpFan.GPU));
+
+                        // Something went wrong, resetting to default profile
+                        if (cpuResult != 1 || gpuResult != 1)
+                        {
+                            StartFanCurveLoop();
+                            settings.LabelFansResult(Properties.Strings.SoftwareFanCurveActive);
+                            customFans = true;
+                        }
+                        else
+                        {
+                            StopFanCurveLoop(false);
+                            settings.LabelFansResult("");
+                            customFans = true;
+                        }
                     }
                     else
                     {
@@ -370,8 +378,8 @@ namespace OHelper.Mode
                 }
                 else
                 {
-                    StopFanCurveLoop(false);
-                    settings.LabelFansResult("");
+                    StartFanCurveLoop();
+                    settings.LabelFansResult(Properties.Strings.SoftwareFanCurveActive);
                     customFans = true;
                 }
 
@@ -403,7 +411,7 @@ namespace OHelper.Mode
 
         private static void StartFanCurveLoop()
         {
-            if (!AppConfig.SupportsFanCurves())
+            if (!AppConfig.SupportsSoftwareFanCurves())
             {
                 Logger.WriteLine("ModeControl: software fan curve loop blocked (unsupported model)");
                 return;
@@ -439,7 +447,7 @@ namespace OHelper.Mode
                 softwareFanCurveAutoMode = true;
             }
 
-            if (restoreAuto && AppConfig.SupportsFanCurves() && Program.acpi is not null)
+            if (restoreAuto && AppConfig.SupportsSoftwareFanCurves() && Program.acpi is not null)
             {
                 Program.acpi.SetFanMode(0x30);
                 Program.acpi.DeviceSet(HpACPI.PerformanceMode, Modes.GetCurrentBase(), "Restore Mode");
@@ -454,7 +462,7 @@ namespace OHelper.Mode
 
         private static void ApplySoftwareFanCurve()
         {
-            if (!AppConfig.SupportsFanCurves() || _fanMaxActive || !AppConfig.IsApplyFans())
+            if (!AppConfig.SupportsSoftwareFanCurves() || _fanMaxActive || !AppConfig.IsApplyFans())
             {
                 StopFanCurveLoop(!_fanMaxActive);
                 return;

@@ -20,7 +20,17 @@ public class ModelCapabilities
 
     public bool SupportsFanControlWmi { get; set; } = true;
     public bool SupportsFanControlEc { get; set; } = true;
+    // Legacy name retained for the firmware-stored curve path. False means that
+    // firmware curve read/write and calibration support is not confirmed.
     public bool SupportsFanCurves { get; set; } = true;
+    private bool? _supportsSoftwareFanCurves;
+    public bool SupportsSoftwareFanCurves
+    {
+        // Preserve existing WMI-capable model entries until they explicitly
+        // split the software target loop from firmware-stored curve support.
+        get => _supportsSoftwareFanCurves ?? (SupportsFanCurves && SupportsFanControlWmi);
+        set => _supportsSoftwareFanCurves = value;
+    }
     public bool SupportsIndependentFanCurves { get; set; } = true;
     public bool SupportsRpmReadback { get; set; } = true;
     public int FanZoneCount { get; set; } = 2;
@@ -389,6 +399,7 @@ public static class ModelCapabilityDatabase
             SupportsFanControlWmi = true,
             SupportsFanControlEc = false,
             SupportsFanCurves = false,
+            SupportsSoftwareFanCurves = true,
             SupportsIndependentFanCurves = false,
             FanZoneCount = 1,
             MaxFanLevel = 65,
@@ -398,7 +409,7 @@ public static class ModelCapabilityDatabase
             HasPerKeyRgb = false,
             SupportsUndervolt = false,
             UserVerified = false,
-            Notes = "Transcend 14-fb1xxx. Windows field report confirms WMI V1 behavior; use WMI BIOS paths, avoid legacy EC writes or custom curves."
+            Notes = "Transcend 14-fb1xxx. Windows field report confirms WMI V1 behavior; use the software WMI fan target loop, avoid legacy EC writes and firmware-stored curve operations."
         });
 
         AddModel(new ModelCapabilities
@@ -678,6 +689,7 @@ public static class ModelCapabilityDatabase
                     SupportsFanControlWmi = model.SupportsFanControlWmi,
                     SupportsFanControlEc = model.SupportsFanControlEc,
                     SupportsFanCurves = model.SupportsFanCurves,
+                    SupportsSoftwareFanCurves = model.SupportsSoftwareFanCurves,
                     SupportsIndependentFanCurves = model.SupportsIndependentFanCurves,
                     SupportsRpmReadback = model.SupportsRpmReadback,
                     FanZoneCount = model.FanZoneCount,

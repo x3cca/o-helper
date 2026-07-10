@@ -239,15 +239,26 @@ public static class AppConfig
             || GetModelCapabilities().SupportsIndependentFanCurves == false;
     }
 
-    public static bool SupportsFanCurves()
+    public static bool SupportsFirmwareFanCurves()
     {
         var knownCapabilities = ModelCapabilityDatabase.GetPreferredCapabilities(GetProductId(), GetModel());
         if (knownCapabilities is not null)
             return knownCapabilities.SupportsFanCurves;
 
-        // Unknown systems must prove support with the read-only fan capability probe
-        // before the software curve path is allowed to control the firmware.
-        return OHelper.Program.acpi?.IsSupported(HpACPI.DevsCPUFanCurve) == true;
+        // Unknown systems must not enable firmware-stored curve operations without
+        // an explicit model capability entry.
+        return false;
+    }
+
+    public static bool SupportsSoftwareFanCurves()
+    {
+        var knownCapabilities = ModelCapabilityDatabase.GetPreferredCapabilities(GetProductId(), GetModel());
+        if (knownCapabilities is not null)
+            return knownCapabilities.SupportsSoftwareFanCurves;
+
+        // A read-only fan probe does not prove that target writes are accepted.
+        // Unknown systems stay hidden until a model entry explicitly opts in.
+        return false;
     }
 
     public static OmenModelFamily GetModelFamily()

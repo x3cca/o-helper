@@ -475,7 +475,8 @@ namespace OHelper
 
         private void ButtonCalibrate_Click(object? sender, EventArgs e)
         {
-            if (!AppConfig.SupportsFanCurves()) return;
+            if (!AppConfig.SupportsFirmwareFanCurves()
+                || !Program.acpi.IsSupported(HpACPI.DevsCPUFanCurve)) return;
 
             buttonCalibrate.Enabled = false;
             fanSensorControl.StartCalibration();
@@ -483,11 +484,10 @@ namespace OHelper
 
         private void ConfigureFanCurveControls()
         {
-            if (AppConfig.SupportsFanCurves())
-            {
-                buttonCalibrate.Visible = Program.acpi.IsSupported(HpACPI.DevsCPUFanCurve);
-                return;
-            }
+            buttonCalibrate.Visible = AppConfig.SupportsFirmwareFanCurves()
+                && Program.acpi.IsSupported(HpACPI.DevsCPUFanCurve);
+
+            if (AppConfig.SupportsSoftwareFanCurves()) return;
 
             panelFans.Visible = false;
             checkApplyFans.Checked = false;
@@ -1191,7 +1191,7 @@ namespace OHelper
             if (sender is null) return;
             CheckBox chk = (CheckBox)sender;
 
-            if (!AppConfig.SupportsFanCurves())
+            if (!AppConfig.SupportsSoftwareFanCurves())
             {
                 chk.Checked = false;
                 AppConfig.SetMode("auto_apply", 0);
@@ -1353,7 +1353,7 @@ namespace OHelper
         public void InitFans()
         {
 
-            if (!AppConfig.SupportsFanCurves())
+            if (!AppConfig.SupportsSoftwareFanCurves())
             {
                 checkApplyFans.Checked = false;
                 return;
@@ -1447,7 +1447,9 @@ namespace OHelper
 
             if (reset || HpACPI.IsInvalidCurve(curve))
             {
-                curve = Program.acpi.GetFanCurve(device, Modes.GetCurrentBase());
+                curve = AppConfig.SupportsFirmwareFanCurves()
+                    ? Program.acpi.GetFanCurve(device, Modes.GetCurrentBase())
+                    : AppConfig.GetDefaultCurve(device);
                 Logger.WriteLine($"Default Curve: {device} - {BitConverter.ToString(curve)}");
                 if (HpACPI.IsInvalidCurve(curve))
                     curve = AppConfig.GetDefaultCurve(device);
