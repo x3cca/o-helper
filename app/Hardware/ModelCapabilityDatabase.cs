@@ -10,6 +10,13 @@ public enum OmenModelFamily
     Legacy
 }
 
+public enum BatteryChargeLimitBackendKind
+{
+    None = 0,
+    HpBatteryCare,
+    AsusRegistry
+}
+
 public class ModelCapabilities
 {
     public string ProductId { get; set; } = "";
@@ -49,6 +56,7 @@ public class ModelCapabilities
 
     public bool SupportsUndervolt { get; set; } = true;
     public bool SupportsPowerLimits { get; set; } = true;
+    public BatteryChargeLimitBackendKind BatteryChargeLimitBackend { get; set; } = BatteryChargeLimitBackendKind.None;
 
     public int? PerformanceCpuPl1Watts { get; set; }
     public int? PerformanceCpuPl2Watts { get; set; }
@@ -407,6 +415,7 @@ public static class ModelCapabilityDatabase
             SupportsGpuPowerBoost = true,
             HasFourZoneRgb = true,
             HasPerKeyRgb = false,
+            BatteryChargeLimitBackend = BatteryChargeLimitBackendKind.HpBatteryCare,
             SupportsUndervolt = false,
             UserVerified = false,
             Notes = "Transcend 14-fb1xxx. Windows field report confirms WMI V1 behavior; use the software WMI fan target loop, avoid legacy EC writes and firmware-stored curve operations."

@@ -501,6 +501,9 @@ namespace OHelper
         {
             try
             {
+                var backend = AppConfig.GetBatteryChargeLimitBackend();
+                if (backend == BatteryChargeLimitBackendKind.None) return;
+
                 int limit = AppConfig.Get("charge_limit");
                 if (limit > 0)
                 {
@@ -508,7 +511,7 @@ namespace OHelper
                     Logger.WriteLine($"Connecting to ACPI");
                     acpi = new HpACPI();
                     Logger.WriteLine($"Setting Limit");
-                    if (AppConfig.IsHP())
+                    if (backend == BatteryChargeLimitBackendKind.HpBatteryCare)
                     {
                         bool fullCharge = AppConfig.Is("charge_full") || limit >= BatteryControl.FullChargeLimit;
                         acpi.DeviceSet(HpACPI.BatteryLimit, fullCharge ? 0 : 1, "Limit");
@@ -518,7 +521,7 @@ namespace OHelper
                         AppConfig.Set("charge_full", fullCharge ? 1 : 0);
                         AppConfig.Flush();
                     }
-                    else if (limit < BatteryControl.FullChargeLimit)
+                    else if (backend == BatteryChargeLimitBackendKind.AsusRegistry && limit < BatteryControl.FullChargeLimit)
                     {
                         acpi.DeviceSet(HpACPI.BatteryLimit, limit, "Limit");
                     }

@@ -233,6 +233,12 @@ public static class AppConfig
         return caps ?? ModelCapabilityDatabase.GetCapabilities(GetProductId());
     }
 
+    public static BatteryChargeLimitBackendKind GetBatteryChargeLimitBackend()
+    {
+        if (IsASUS()) return BatteryChargeLimitBackendKind.AsusRegistry;
+        return GetModelCapabilities().BatteryChargeLimitBackend;
+    }
+
     public static bool HasLinkedFanCurves()
     {
         return IsOmenTranscend14()

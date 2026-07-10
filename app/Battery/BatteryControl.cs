@@ -26,14 +26,23 @@ namespace OHelper.Battery
 
         public static void ToggleBatteryLimitFull()
         {
-            if (chargeFull) SetBatteryChargeLimit(AppConfig.IsHP() ? HpBatteryCareLimit : -1);
+            if (chargeFull)
+            {
+                int limit = AppConfig.GetBatteryChargeLimitBackend() == BatteryChargeLimitBackendKind.HpBatteryCare
+                    ? HpBatteryCareLimit
+                    : -1;
+                SetBatteryChargeLimit(limit);
+            }
             else SetBatteryLimitFull();
         }
 
         public static void SetBatteryLimitFull()
         {
+            var backend = AppConfig.GetBatteryChargeLimitBackend();
+            if (backend == BatteryChargeLimitBackendKind.None) return;
+
             chargeFull = true;
-            if (AppConfig.IsHP())
+            if (backend == BatteryChargeLimitBackendKind.HpBatteryCare)
             {
                 AppConfig.Set("charge_limit", FullChargeLimit);
                 Program.acpi.DeviceSet(HpACPI.BatteryLimit, 0, "BatteryLimit");
@@ -48,8 +57,11 @@ namespace OHelper.Battery
 
         public static void UnSetBatteryLimitFull()
         {
+            var backend = AppConfig.GetBatteryChargeLimitBackend();
+            if (backend == BatteryChargeLimitBackendKind.None) return;
+
             chargeFull = false;
-            if (AppConfig.IsHP())
+            if (backend == BatteryChargeLimitBackendKind.HpBatteryCare)
             {
                 AppConfig.Set("charge_limit", HpBatteryCareLimit);
                 Program.acpi.DeviceSet(HpACPI.BatteryLimit, 1, "BatteryLimit");
@@ -65,6 +77,8 @@ namespace OHelper.Battery
 
         public static void AutoBattery(bool init = false)
         {
+            if (AppConfig.GetBatteryChargeLimitBackend() == BatteryChargeLimitBackendKind.None) return;
+
             if (chargeFull && !init) SetBatteryLimitFull();
             else SetBatteryChargeLimit();
         }
@@ -86,13 +100,16 @@ namespace OHelper.Battery
 
         public static void SetBatteryChargeLimit(int setLimit = -1)
         {
+            var backend = AppConfig.GetBatteryChargeLimitBackend();
+            if (backend == BatteryChargeLimitBackendKind.None) return;
+
             int limit = setLimit;
             if (limit < 0) limit = AppConfig.Get("charge_limit");
             if (limit < 40 || limit > 100) return;
 
-            if (AppConfig.IsHP())
+            if (backend == BatteryChargeLimitBackendKind.HpBatteryCare)
             {
-                // Battery Care is binary on HP systems. Keep only the two UI/config states
+                // Battery Care is binary on supported HP models. Keep only the two UI/config states
                 // that accurately describe the firmware operation.
                 limit = limit >= FullChargeLimit ? FullChargeLimit : HpBatteryCareLimit;
                 bool batteryCareEnabled = limit != FullChargeLimit;
