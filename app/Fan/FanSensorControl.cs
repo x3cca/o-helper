@@ -143,6 +143,12 @@ namespace OHelper.Fan
         public void StartCalibration()
         {
 
+            if (!AppConfig.SupportsFanCurves())
+            {
+                Logger.WriteLine("Fan calibration blocked: custom fan curves are unsupported");
+                return;
+            }
+
             measuredMax = new int[] { 0, 0, 0 };
             timer.Enabled = true;
 

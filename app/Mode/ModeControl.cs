@@ -303,6 +303,20 @@ namespace OHelper.Mode
         {
             customFans = false;
 
+            if (!AppConfig.SupportsFanCurves())
+            {
+                if (AppConfig.IsApplyFans())
+                {
+                    AppConfig.SetMode("auto_apply", 0);
+                    AppConfig.Flush();
+                    Logger.WriteLine("ModeControl: custom fan curves are unsupported; persisted curve apply was disabled");
+                }
+
+                StopFanCurveLoop(false);
+                settings.LabelFansResult("");
+                return;
+            }
+
             if (_fanMaxActive)
             {
                 Logger.WriteLine("ModeControl: AutoFans skipped (Max Fans active)");
@@ -383,6 +397,12 @@ namespace OHelper.Mode
 
         private static void StartFanCurveLoop()
         {
+            if (!AppConfig.SupportsFanCurves())
+            {
+                Logger.WriteLine("ModeControl: software fan curve loop blocked (unsupported model)");
+                return;
+            }
+
             lock (fanCurveLock)
             {
                 fanCurveTimer ??= new System.Timers.Timer(5000);
@@ -413,7 +433,7 @@ namespace OHelper.Mode
                 softwareFanCurveAutoMode = true;
             }
 
-            if (restoreAuto && Program.acpi is not null)
+            if (restoreAuto && AppConfig.SupportsFanCurves() && Program.acpi is not null)
             {
                 Program.acpi.SetFanMode(0x30);
                 Program.acpi.DeviceSet(HpACPI.PerformanceMode, Modes.GetCurrentBase(), "Restore Mode");
@@ -428,7 +448,7 @@ namespace OHelper.Mode
 
         private static void ApplySoftwareFanCurve()
         {
-            if (_fanMaxActive || !AppConfig.IsApplyFans())
+            if (!AppConfig.SupportsFanCurves() || _fanMaxActive || !AppConfig.IsApplyFans())
             {
                 StopFanCurveLoop(!_fanMaxActive);
                 return;
