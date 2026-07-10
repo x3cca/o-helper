@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 namespace OHelper.Input
 {
 
-    public class InputDispatcher
+    public class InputDispatcher : IDisposable
     {
         System.Timers.Timer timer = new System.Timers.Timer(AppConfig.Get("keyboard_timeout_refresh", 1000));
         public static bool backlightActivity = true;
@@ -57,6 +57,7 @@ namespace OHelper.Input
 
         private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
+            if (Program.IsExiting) return;
             if (!AppConfig.IsKeyboardLightingControlEnabled()) return;
             if (GetBacklight() == 0) return;
 
@@ -1332,6 +1333,13 @@ namespace OHelper.Input
         public static void ShutdownStatusLed()
         {
             if (AppConfig.IsAutoStatusLed()) SetStatusLED(false);
+        }
+
+        public void Dispose()
+        {
+            timer.Stop();
+            timer.Dispose();
+            hook.Dispose();
         }
 
         static void LaunchProcess(string command = "")

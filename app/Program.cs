@@ -39,11 +39,14 @@ namespace OHelper
 
         private static long lastAuto;
         public static InputDispatcher? inputDispatcher;
+        private static int _isExiting;
+        internal static bool IsExiting => Volatile.Read(ref _isExiting) != 0;
 
         // The main entry point for the application
         public static void Main(string[] args)
         {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.ApplicationExit += OnExit;
 
             string action = "";
             if (args.Length > 0) action = args[0];
@@ -221,6 +224,7 @@ namespace OHelper
 
         private static void SystemEvents_SessionEnding(object sender, SessionEndingEventArgs e)
         {
+            if (IsExiting) return;
             gpuControl.StandardModeFix();
             modeControl.ShutdownReset();
             BatteryControl.AutoBattery();
@@ -229,6 +233,7 @@ namespace OHelper
 
         private static void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
+            if (IsExiting) return;
             if (e.Reason == SessionSwitchReason.SessionLogon || e.Reason == SessionSwitchReason.SessionUnlock)
             {
                 Logger.WriteLine("Session:" + e.Reason.ToString());
@@ -251,6 +256,7 @@ namespace OHelper
 
         static void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
+            if (IsExiting) return;
 
             switch (e.Category)
             {
@@ -289,6 +295,7 @@ namespace OHelper
 
         public static bool SetAutoModes(bool powerChanged = false, bool init = false, bool wakeup = false)
         {
+            if (IsExiting) return false;
             int skipDelay = wakeup ? 10000 : 3000;
 
             if (init) gpuControl.CaptureNvBootState();
@@ -362,7 +369,7 @@ namespace OHelper
 
         public static void SchedulePowerCheck()
         {
-            if (AppConfig.Is("disable_power_event")) return;
+            if (IsExiting || AppConfig.Is("disable_power_event")) return;
             powerSettleTimer.Interval = Math.Max(AppConfig.Get("charger_delay"), 2000);
             powerSettleTimer.Stop();
             powerSettleTimer.Start();
@@ -370,6 +377,7 @@ namespace OHelper
 
         private static void OnPowerSettled(object? sender, System.Timers.ElapsedEventArgs e)
         {
+            if (IsExiting) return;
             PowerSource source = ReadPowerSource();
             if (source == currentSource) return;
 
@@ -382,6 +390,7 @@ namespace OHelper
 
         private static void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
         {
+            if (IsExiting) return;
             if (e.Mode == PowerModes.Suspend)
             {
                 Logger.WriteLine("Power Mode Changed:" + e.Mode.ToString());
@@ -455,19 +464,37 @@ namespace OHelper
 
         static void OnExit(object sender, EventArgs e)
         {
+            if (Interlocked.Exchange(ref _isExiting, 1) != 0) return;
+
+            TryExitCleanup(() => { powerSettleTimer.Stop(); powerSettleTimer.Dispose(); }, "power timer");
+            TryExitCleanup(() => SystemEvents.PowerModeChanged -= SystemEvents_PowerModeChanged, "power events");
+            TryExitCleanup(() => SystemEvents.UserPreferenceChanged -= SystemEvents_UserPreferenceChanged, "preference events");
+            TryExitCleanup(() => SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch, "session events");
+            TryExitCleanup(() => SystemEvents.SessionEnding -= SystemEvents_SessionEnding, "session ending events");
+            TryExitCleanup(() => hardwareOverlay?.StopOverlay(), "overlay");
+            TryExitCleanup(() => modeControl?.Stop(), "mode control");
+            TryExitCleanup(() => inputDispatcher?.Dispose(), "input dispatcher");
+            TryExitCleanup(HardwareControl.DisposeGpuControl, "GPU control");
+            TryExitCleanup(HardwareControl.Dispose, "hardware control");
+            TryExitCleanup(HardwareMonitor.Stop, "hardware monitor");
+            TryExitCleanup(() => acpi?.Close(), "ACPI");
+            TryExitCleanup(PeripheralsProvider.UnregisterForDeviceEvents, "device events");
+            TryExitCleanup(() => clamshellControl?.UnregisterDisplayEvents(), "display events");
+            TryExitCleanup(() => NativeMethods.UnregisterPowerSettingNotification(unRegPowerNotify), "display power notification");
+            TryExitCleanup(() => NativeMethods.UnregisterPowerSettingNotification(unRegPowerNotifyLid), "lid power notification");
+            TryExitCleanup(() => NativeMethods.UnregisterSuspendResumeNotification(unRegSuspendResume), "suspend notification");
+
             if (trayIcon is not null)
             {
-                trayIcon.Visible = false;
-                trayIcon.Dispose();
+                TryExitCleanup(() => { trayIcon.Visible = false; trayIcon.Dispose(); }, "tray icon");
             }
+            TryExitCleanup(AppConfig.Flush, "configuration flush");
+        }
 
-            PeripheralsProvider.UnregisterForDeviceEvents();
-            clamshellControl.UnregisterDisplayEvents();
-            NativeMethods.UnregisterPowerSettingNotification(unRegPowerNotify);
-            NativeMethods.UnregisterPowerSettingNotification(unRegPowerNotifyLid);
-            NativeMethods.UnregisterSuspendResumeNotification(unRegSuspendResume);
-            AppConfig.Flush();
-            Application.Exit();
+        private static void TryExitCleanup(Action cleanup, string name)
+        {
+            try { cleanup(); }
+            catch (Exception ex) { Logger.WriteLine($"Exit cleanup ({name}) error: {ex.Message}"); }
         }
 
         static void BatteryLimit()
