@@ -6,6 +6,9 @@ namespace OHelper.Battery
 {
     public static class BatteryControl
     {
+        // HP exposes Battery Care as an on/off firmware feature, not a percentage limit.
+        public const int HpBatteryCareLimit = 80;
+        public const int FullChargeLimit = 100;
 
         static bool _chargeFull = AppConfig.Is("charge_full");
         public static bool chargeFull
@@ -23,20 +26,39 @@ namespace OHelper.Battery
 
         public static void ToggleBatteryLimitFull()
         {
-            if (chargeFull) SetBatteryChargeLimit();
+            if (chargeFull) SetBatteryChargeLimit(AppConfig.IsHP() ? HpBatteryCareLimit : -1);
             else SetBatteryLimitFull();
         }
 
         public static void SetBatteryLimitFull()
         {
             chargeFull = true;
-            Program.acpi.DeviceSet(HpACPI.BatteryLimit, 100, "BatteryLimit");
+            if (AppConfig.IsHP())
+            {
+                AppConfig.Set("charge_limit", FullChargeLimit);
+                Program.acpi.DeviceSet(HpACPI.BatteryLimit, 0, "BatteryLimit");
+                AppConfig.Flush();
+            }
+            else
+            {
+                Program.acpi.DeviceSet(HpACPI.BatteryLimit, FullChargeLimit, "BatteryLimit");
+            }
             Program.settingsForm.VisualiseBatteryFull();
         }
 
         public static void UnSetBatteryLimitFull()
         {
             chargeFull = false;
+            if (AppConfig.IsHP())
+            {
+                AppConfig.Set("charge_limit", HpBatteryCareLimit);
+                Program.acpi.DeviceSet(HpACPI.BatteryLimit, 1, "BatteryLimit");
+                AppConfig.Flush();
+                Logger.WriteLine("Battery Care enabled after full charge");
+                Program.settingsForm.Invoke(() => Program.settingsForm.VisualiseBattery(HpBatteryCareLimit));
+                return;
+            }
+
             Logger.WriteLine("Battery fully charged");
             Program.settingsForm.Invoke(Program.settingsForm.VisualiseBatteryFull);
         }
@@ -67,6 +89,23 @@ namespace OHelper.Battery
             int limit = setLimit;
             if (limit < 0) limit = AppConfig.Get("charge_limit");
             if (limit < 40 || limit > 100) return;
+
+            if (AppConfig.IsHP())
+            {
+                // Battery Care is binary on HP systems. Keep only the two UI/config states
+                // that accurately describe the firmware operation.
+                limit = limit >= FullChargeLimit ? FullChargeLimit : HpBatteryCareLimit;
+                bool batteryCareEnabled = limit != FullChargeLimit;
+
+                Program.acpi.DeviceSet(HpACPI.BatteryLimit, batteryCareEnabled ? 1 : 0, "BatteryLimit");
+
+                AppConfig.Set("charge_limit", limit);
+                chargeFull = !batteryCareEnabled;
+                AppConfig.Flush();
+
+                Program.settingsForm.VisualiseBattery(limit);
+                return;
+            }
 
             if (AppConfig.IsChargeLimit6080())
             {

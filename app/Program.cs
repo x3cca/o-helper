@@ -502,13 +502,26 @@ namespace OHelper
             try
             {
                 int limit = AppConfig.Get("charge_limit");
-                if (limit > 0 && limit < 100)
+                if (limit > 0)
                 {
                     Logger.WriteLine($"------- Startup Battery Limit {limit} -------");
                     Logger.WriteLine($"Connecting to ACPI");
                     acpi = new HpACPI();
                     Logger.WriteLine($"Setting Limit");
-                    acpi.DeviceSet(HpACPI.BatteryLimit, limit, "Limit");
+                    if (AppConfig.IsHP())
+                    {
+                        bool fullCharge = AppConfig.Is("charge_full") || limit >= BatteryControl.FullChargeLimit;
+                        acpi.DeviceSet(HpACPI.BatteryLimit, fullCharge ? 0 : 1, "Limit");
+
+                        // Migrate old percentage values to the two HP firmware states.
+                        AppConfig.Set("charge_limit", fullCharge ? BatteryControl.FullChargeLimit : BatteryControl.HpBatteryCareLimit);
+                        AppConfig.Set("charge_full", fullCharge ? 1 : 0);
+                        AppConfig.Flush();
+                    }
+                    else if (limit < BatteryControl.FullChargeLimit)
+                    {
+                        acpi.DeviceSet(HpACPI.BatteryLimit, limit, "Limit");
+                    }
                 }
             }
             catch (Exception ex)
