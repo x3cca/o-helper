@@ -553,7 +553,7 @@ namespace OHelper.Input
 
         static void ToggleTouchpad()
         {
-            KeyboardHook.KeyKeyKeyPress(Keys.LWin, Keys.LControlKey, Keys.F24, 50);
+            KeyboardHook.KeyKeyKeyPress(Keys.LWin, Keys.LControlKey, Keys.F24, 50, 50);
 
         }
 
