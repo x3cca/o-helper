@@ -19,7 +19,15 @@ namespace OHelper.Mode
         private static int lastGpuFanLevel = -1;
         private static float? cpuFanAnchorTemp;
         private static float? gpuFanAnchorTemp;
-        private static bool softwareFanCurveAutoMode = true;
+        private static bool softwareFanCurveAutoMode;
+        private static int softwareFanCurveTickActive;
+        private static int cpuHotSampleCount;
+        private const double FanCurveIntervalMs = 2000;
+        private const float CpuFanBoostTemp = 90f;
+        private const float CpuFanMaxTemp = 97f;
+        private const float CpuImmediateMaxTemp = 100f;
+        private const int CpuHotFanFloorPercent = 70;
+        private const int CpuHotSamplesRequired = 2;
 
         private int _cpuUV = 0;
         private int _igpuUV = 0;
@@ -329,7 +337,10 @@ namespace OHelper.Mode
                 return;
             }
 
-            if (AppConfig.IsApplyFans() || force)
+            bool applyCustomCurve = AppConfig.IsApplyFans();
+            bool monitorUnleashedThermals = Modes.GetCurrentBase() == HpACPI.PerformanceManual;
+
+            if (applyCustomCurve || monitorUnleashedThermals || force)
             {
 
                 bool xgmFan = false;
@@ -359,8 +370,8 @@ namespace OHelper.Mode
                         if (cpuResult != 1 || gpuResult != 1)
                         {
                             StartFanCurveLoop();
-                            settings.LabelFansResult(Properties.Strings.SoftwareFanCurveActive);
-                            customFans = true;
+                            settings.LabelFansResult(applyCustomCurve ? Properties.Strings.SoftwareFanCurveActive : "");
+                            customFans = applyCustomCurve;
                         }
                         else
                         {
@@ -379,8 +390,8 @@ namespace OHelper.Mode
                 else
                 {
                     StartFanCurveLoop();
-                    settings.LabelFansResult(Properties.Strings.SoftwareFanCurveActive);
-                    customFans = true;
+                    settings.LabelFansResult(applyCustomCurve ? Properties.Strings.SoftwareFanCurveActive : "");
+                    customFans = applyCustomCurve;
                 }
 
                 int hystUp = AppConfig.GetMode("hysteresis_up");
@@ -419,7 +430,7 @@ namespace OHelper.Mode
 
             lock (fanCurveLock)
             {
-                fanCurveTimer ??= new System.Timers.Timer(5000);
+                fanCurveTimer ??= new System.Timers.Timer(FanCurveIntervalMs);
                 fanCurveTimer.Elapsed -= FanCurveTimer_Elapsed;
                 fanCurveTimer.Elapsed += FanCurveTimer_Elapsed;
                 fanCurveTimer.AutoReset = true;
@@ -428,7 +439,9 @@ namespace OHelper.Mode
                 lastGpuFanLevel = -1;
                 cpuFanAnchorTemp = null;
                 gpuFanAnchorTemp = null;
-                softwareFanCurveAutoMode = true;
+                // Force one auto write on the first tick to clear any stale max-fan latch.
+                softwareFanCurveAutoMode = false;
+                Volatile.Write(ref cpuHotSampleCount, 0);
             }
 
             Logger.WriteLine("ModeControl: software fan curve loop started");
@@ -445,11 +458,12 @@ namespace OHelper.Mode
                 cpuFanAnchorTemp = null;
                 gpuFanAnchorTemp = null;
                 softwareFanCurveAutoMode = true;
+                Volatile.Write(ref cpuHotSampleCount, 0);
             }
 
             if (restoreAuto && AppConfig.SupportsSoftwareFanCurves() && Program.acpi is not null)
             {
-                Program.acpi.SetFanMode(0x30);
+                Program.acpi.SetFanLevel(0, 0);
                 Program.acpi.DeviceSet(HpACPI.PerformanceMode, Modes.GetCurrentBase(), "Restore Mode");
                 Logger.WriteLine("ModeControl: software fan curve loop stopped, BIOS auto restored");
             }
@@ -462,7 +476,23 @@ namespace OHelper.Mode
 
         private static void ApplySoftwareFanCurve()
         {
-            if (!AppConfig.SupportsSoftwareFanCurves() || _fanMaxActive || !AppConfig.IsApplyFans())
+            if (Interlocked.CompareExchange(ref softwareFanCurveTickActive, 1, 0) != 0) return;
+
+            try
+            {
+                ApplySoftwareFanCurveCore();
+            }
+            finally
+            {
+                Volatile.Write(ref softwareFanCurveTickActive, 0);
+            }
+        }
+
+        private static void ApplySoftwareFanCurveCore()
+        {
+            bool applyCustomCurve = AppConfig.IsApplyFans();
+            bool monitorUnleashedThermals = Modes.GetCurrentBase() == HpACPI.PerformanceManual;
+            if (!AppConfig.SupportsSoftwareFanCurves() || _fanMaxActive || (!applyCustomCurve && !monitorUnleashedThermals))
             {
                 StopFanCurveLoop(!_fanMaxActive);
                 return;
@@ -471,11 +501,15 @@ namespace OHelper.Mode
             try
             {
                 float? cpuTemp = HardwareControl.GetCPUTemp();
-                float? gpuTemp = HardwareControl.GetGPUTemp();
-                int cpuLevel = EvaluateFanCurve(AppConfig.GetFanConfig(HpFan.CPU), cpuTemp);
-                int gpuLevel = EvaluateFanCurve(AppConfig.GetFanConfig(HpFan.GPU), gpuTemp);
-                cpuLevel = ApplySoftwareHysteresis(cpuLevel, cpuTemp, ref cpuFanAnchorTemp, lastCpuFanLevel);
-                gpuLevel = ApplySoftwareHysteresis(gpuLevel, gpuTemp, ref gpuFanAnchorTemp, lastGpuFanLevel);
+                float? gpuTemp = applyCustomCurve ? HardwareControl.GetGPUTemp() : null;
+                int cpuLevel = applyCustomCurve ? EvaluateFanCurve(AppConfig.GetFanConfig(HpFan.CPU), cpuTemp) : 0;
+                int gpuLevel = applyCustomCurve ? EvaluateFanCurve(AppConfig.GetFanConfig(HpFan.GPU), gpuTemp) : 0;
+                if (applyCustomCurve)
+                {
+                    cpuLevel = ApplySoftwareHysteresis(cpuLevel, cpuTemp, ref cpuFanAnchorTemp, lastCpuFanLevel);
+                    gpuLevel = ApplySoftwareHysteresis(gpuLevel, gpuTemp, ref gpuFanAnchorTemp, lastGpuFanLevel);
+                }
+                bool thermalSafetyActive = ApplyCpuThermalSafetyFloor(ref cpuLevel, ref gpuLevel, cpuTemp);
                 bool linkedFans = AppConfig.HasLinkedFanCurves();
 
                 if (linkedFans)
@@ -489,7 +523,12 @@ namespace OHelper.Mode
                 {
                     if (!softwareFanCurveAutoMode)
                     {
-                        Program.acpi.SetFanMode(0x30);
+                        Program.acpi.SetFanLevel(0, 0);
+                        // HP firmware can retain the last direct RPM target even after
+                        // max-fan is disabled and the automatic fan mode is requested.
+                        // Reapplying the active performance mode clears that target and
+                        // hands fan control back to the BIOS curve.
+                        Program.acpi.DeviceSet(HpACPI.PerformanceMode, Modes.GetCurrentBase(), "Software Fan Auto Restore");
                         softwareFanCurveAutoMode = true;
                         lastCpuFanLevel = 0;
                         lastGpuFanLevel = 0;
@@ -497,7 +536,10 @@ namespace OHelper.Mode
                     return;
                 }
 
-                if (cpuLevel == lastCpuFanLevel && gpuLevel == lastGpuFanLevel) return;
+                if (cpuLevel == lastCpuFanLevel && gpuLevel == lastGpuFanLevel)
+                {
+                    return;
+                }
 
                 if (softwareFanCurveAutoMode)
                 {
@@ -510,6 +552,8 @@ namespace OHelper.Mode
                 {
                     lastCpuFanLevel = cpuLevel;
                     lastGpuFanLevel = gpuLevel;
+                    if (thermalSafetyActive)
+                        Logger.WriteLine($"Software fan thermal safety applied: cpuTemp={cpuTemp:0.#} cpuLevel={cpuLevel} gpuLevel={gpuLevel}");
                     if (linkedFans)
                         Logger.WriteLine($"Software fan curve linked target applied: cpuTemp={cpuTemp:0.#} gpuTemp={gpuTemp:0.#} level={cpuLevel}");
                 }
@@ -543,6 +587,39 @@ namespace OHelper.Mode
             }
 
             return ScaleFanLevel(curve[15]);
+        }
+
+        private static bool ApplyCpuThermalSafetyFloor(ref int cpuLevel, ref int gpuLevel, float? cpuTemp)
+        {
+            if (cpuTemp is null || cpuTemp.Value < CpuFanBoostTemp)
+            {
+                Volatile.Write(ref cpuHotSampleCount, 0);
+                return false;
+            }
+
+            int maxLevel = Program.acpi.MaxFanLevel;
+            if (cpuTemp.Value >= CpuImmediateMaxTemp)
+            {
+                Volatile.Write(ref cpuHotSampleCount, CpuHotSamplesRequired);
+                cpuLevel = maxLevel;
+                gpuLevel = maxLevel;
+                return true;
+            }
+
+            if (Interlocked.Increment(ref cpuHotSampleCount) < CpuHotSamplesRequired) return false;
+
+            if (cpuTemp.Value >= CpuFanMaxTemp)
+            {
+                // HP's dedicated maximum-fan command is used only when both targets are maxed.
+                cpuLevel = maxLevel;
+                gpuLevel = maxLevel;
+                return true;
+            }
+
+            float ratio = (cpuTemp.Value - CpuFanBoostTemp) / (CpuFanMaxTemp - CpuFanBoostTemp);
+            int floorPercent = (int)Math.Round(CpuHotFanFloorPercent + ((100 - CpuHotFanFloorPercent) * ratio));
+            cpuLevel = Math.Max(cpuLevel, ScaleFanLevel(floorPercent));
+            return true;
         }
 
         private static int ScaleFanLevel(int percent)

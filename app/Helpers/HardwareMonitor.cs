@@ -42,15 +42,14 @@ public static class HardwareMonitor
                 {
                     IsCpuEnabled = true,
                     IsGpuEnabled = true,
-                    IsMemoryEnabled = true,
-                    IsStorageEnabled = true,
-                    IsMotherboardEnabled = true,
+                    IsMemoryEnabled = false,
+                    IsStorageEnabled = false,
+                    IsMotherboardEnabled = false,
                     IsNetworkEnabled = false,
                     IsBatteryEnabled = false,
                     IsControllerEnabled = false
                 };
                 _computer.Open();
-                _computer.Accept(new UpdateVisitor());
                 Logger.WriteLine("HardwareMonitor: LibreHardwareMonitor started");
             }
             catch (Exception ex)
@@ -83,11 +82,10 @@ public static class HardwareMonitor
         {
             try
             {
-                hw.Accept(new UpdateVisitor());
-
                 foreach (IHardware hardware in hw.Hardware)
                 {
                     if (hardware.HardwareType != HardwareType.Cpu) continue;
+                    hardware.Accept(new UpdateVisitor());
 
                     var allCoreSensors = hardware.Sensors
                         .Where(s => s.SensorType == SensorType.Temperature && s.Value.HasValue && s.Value.Value > 0)
@@ -96,22 +94,21 @@ public static class HardwareMonitor
                     if (allCoreSensors.Count == 0)
                         continue;
 
-                    // Try to find individual core temperature sensors (e.g. "Core #1", "Core #2", ...)
-                    // and average the hottest ones for a stable representative temperature.
+                    // Use the hottest pair: averaging every core can conceal a real hotspot,
+                    // while one briefly boosted core is too noisy to drive the fans by itself.
                     var coreSensors = allCoreSensors
                         .Where(s => s.Name.StartsWith("Core #", StringComparison.OrdinalIgnoreCase))
                         .OrderByDescending(s => s.Value!.Value)
-                        .Take(6)
+                        .Take(2)
                         .ToList();
 
                     float temp;
                     string sensorName;
 
-                    if (coreSensors.Count >= 2)
+                    if (coreSensors.Count > 0)
                     {
-                        // Average the hottest 6 (or fewer) cores — much more stable than single-core
                         temp = coreSensors.Average(s => s.Value!.Value);
-                        sensorName = $"Avg of {coreSensors.Count} hottest cores";
+                        sensorName = $"Average of {coreSensors.Count} hottest cores";
                     }
                     else
                     {
@@ -172,13 +169,12 @@ public static class HardwareMonitor
         {
             try
             {
-                hw.Accept(new UpdateVisitor());
-
                 foreach (IHardware hardware in hw.Hardware)
                 {
                     if (hardware.HardwareType != HardwareType.GpuNvidia &&
                         hardware.HardwareType != HardwareType.GpuAmd &&
                         hardware.HardwareType != HardwareType.GpuIntel) continue;
+                    hardware.Accept(new UpdateVisitor());
 
                     ISensor? sensor = GetSensor(hardware, SensorType.Temperature, "GPU Core")
                         ?? GetSensor(hardware, SensorType.Temperature, "Core")
