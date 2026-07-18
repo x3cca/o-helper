@@ -183,6 +183,7 @@ namespace OHelper.Overlay
         private IntPtr _fgHook;
         private WinEventProc? _fgHookProc;
         private const int MinGameFps = 6;
+        private int _gameTicks;
 
         private static readonly HashSet<string> DesktopApps = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -480,7 +481,8 @@ namespace OHelper.Overlay
 
         private void UpdateGameVisibility(int fgPid)
         {
-            if (_currentFps >= MinGameFps && !_fgDesktop) _shownPid = fgPid;
+            _gameTicks = _currentFps >= MinGameFps && !_fgDesktop ? _gameTicks + 1 : 0;
+            if (_gameTicks >= 2) _shownPid = fgPid;
             bool show = fgPid == _shownPid;
             if (show != _hidden) return;
             _hidden = !show;
