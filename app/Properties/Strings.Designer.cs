@@ -1848,6 +1848,15 @@ namespace OHelper.Properties {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Restarting NV Services....
+        /// </summary>
+        internal static string RestartingNVServices {
+            get {
+                return ResourceManager.GetString("RestartingNVServices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to RPM.
         /// </summary>
         internal static string RPM {
