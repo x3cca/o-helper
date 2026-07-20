@@ -201,7 +201,7 @@ namespace OHelper
         private static void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
             if (IsExiting) return;
-            if (e.Reason == SessionSwitchReason.SessionLogon || e.Reason == SessionSwitchReason.SessionUnlock)
+            if (e.Reason == SessionSwitchReason.SessionLogon || e.Reason == SessionSwitchReason.SessionUnlock || e.Reason == SessionSwitchReason.ConsoleConnect)
             {
                 Logger.WriteLine("Session:" + e.Reason.ToString());
                 ScreenControl.AutoScreen();
