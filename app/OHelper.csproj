@@ -16,7 +16,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <AssemblyVersion>0.262.5</AssemblyVersion>
+    <AssemblyVersion>0.262.6</AssemblyVersion>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 

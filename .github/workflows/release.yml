@@ -55,11 +55,11 @@ jobs:
         dotnet-version: '10.0.301'
 
     - name: Restore locked dependencies
-      run: dotnet restore app/OHelper.sln --locked-mode --runtime win-x64
+      run: dotnet restore app/OHelper.sln --locked-mode --runtime win-x64 -p:Platform=x64
 
     - name: Publish
       run: |
-        dotnet publish app/OHelper.sln --configuration Release --runtime win-x64 --no-restore -p:PublishSingleFile=true --no-self-contained -p:AssemblyVersion=$env:RELEASE_VERSION -p:FileVersion=$env:RELEASE_VERSION -p:Version=$env:RELEASE_VERSION
+        dotnet publish app/OHelper.sln --configuration Release --runtime win-x64 --no-restore -p:Platform=x64 -p:PublishSingleFile=true --no-self-contained -p:AssemblyVersion=$env:RELEASE_VERSION -p:FileVersion=$env:RELEASE_VERSION -p:Version=$env:RELEASE_VERSION
 
     - name: Upload unsigned EXE
       id: upload-unsigned
