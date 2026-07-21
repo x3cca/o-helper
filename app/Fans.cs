@@ -1438,7 +1438,7 @@ namespace OHelper
             byte old = 0;
             for (int i = 0; i < 8; i++)
             {
-                if (curve[i] == old) curve[i]++; // preventing 2 points in same spot from default asus profiles
+                if (curve[i] == old) curve[i]++; // Prevent two inherited default points from overlapping.
                 series.Points.AddXY(curve[i], curve[i + 8]);
                 old = curve[i];
             }

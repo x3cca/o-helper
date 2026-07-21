@@ -452,7 +452,8 @@ namespace OHelper.Input
                     string miniledName = ScreenControl.ToogleMiniled();
                     Program.toast.RunToast(miniledName, miniledName == Properties.Strings.OneZone ? ToastIcon.BrightnessDown : ToastIcon.BrightnessUp);
                     break;
-                case "aura":
+                case "keyboard":
+                case "aura": // Legacy action name retained for existing configurations.
                     Program.settingsForm.BeginInvoke(Program.settingsForm.CycleKeyboardEffect, Control.ModifierKeys == Keys.Shift ? -1 : 1);
                     break;
                 case "visual":
@@ -506,8 +507,7 @@ namespace OHelper.Input
 
         static void MuteLED()
         {
-            // SoundMuteLed is an ASUS HID-driven device; on HP Omen there is no
-            // confirmed WMI commandType for it, so skip the call entirely.
+            // HP Omen has no confirmed speaker-mute LED command, so skip the call.
             if (AppConfig.IsOmen()) return;
             Thread.Sleep(500);
             Program.acpi.DeviceSet(HpACPI.SoundMuteLed, Audio.IsMuted() ? 1 : 0, "SoundLed");
@@ -642,7 +642,7 @@ namespace OHelper.Input
         static int GetTentState()
         {
             var tentState = Program.acpi.DeviceGet(HpACPI.TentState);
-            // TentState is sticky on some convertibles (e.g. ProArt PX13); cross-check TabletState.
+            // TentState can be sticky on convertibles; cross-check TabletState.
             if (tentState > 0 && Program.acpi.DeviceGet(HpACPI.TabletState) == HpACPI.Tablet_Notebook) tentState = 0;
             Logger.WriteLine($"Tent: {tentState}");
             return tentState;
@@ -661,20 +661,20 @@ namespace OHelper.Input
         {
             switch (EventID)
             {
-                    case 95:     // Z13 Side button
+                    case 95:     // Configurable auxiliary button
                         KeyProcess("m4");
                         return;
                     case 134:     // FN + F12 ON OLD DEVICES
-                    case 139:     // ProArt F12
+                    case 139:
                         KeyProcess("m4");
                         return;
                     case 124:    // M3
                         KeyProcess("m3");
                         return;
-                    case 56:    // M4 / Rog button
+                    case 56:    // Configurable auxiliary button
                         KeyProcess("m4");
                         return;
-                    case 55:    // Arconym
+                    case 55:    // Legacy auxiliary-button event
                         KeyProcess("m6");
                         return;
                     case 181:    // FN + Numpad Enter
@@ -706,16 +706,16 @@ namespace OHelper.Input
                     case 196: // FN+F3
                         SetBacklight(1);
                         return;
-                    case 199: // ON Z13 - FN+F11 - cycles backlight
+                    case 199: // Legacy backlight-cycle event
                         SetBacklight(4);
                         return;
-                    case 46: // Fn + F4 Vivobook Brightness down
+                    case 46: // Legacy brightness-down event
                         if (Control.ModifierKeys == Keys.Control && AppConfig.IsOLED())
                         {
                             SetBrightnessDimming(-10);
                         }
                         break;
-                    case 47: // Fn + F5 Vivobook Brightness up
+                    case 47: // Legacy brightness-up event
                         if (Control.ModifierKeys == Keys.Control && AppConfig.IsOLED())
                         {
                             SetBrightnessDimming(10);
@@ -762,8 +762,8 @@ namespace OHelper.Input
                     if (!AppConfig.IsHardwareHotkeys()) SleepEvent();
                     else lastSleep = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                     break;
-                case 51:    // Fn+F6 on old TUFs
-                case 53:    // Fn+F6 on GA-502DU model
+                case 51:    // Legacy display-off event
+                case 53:
                     NativeMethods.TurnOffScreen();
                     return;
                 case 126:    // Fn+F8 emojis popup
@@ -782,7 +782,7 @@ namespace OHelper.Input
                     // Sound Mute Event
                     MuteLED();
                     return;
-                case 157:   // Zenbook DUO FN+F
+                case 157:   // Legacy performance-mode event
                     modeControl.CyclePerformanceMode(Control.ModifierKeys == Keys.Shift);
                     return;
                 case 250:

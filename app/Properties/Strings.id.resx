@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>Akselerasi</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>Tidak dapat terhubung ke ASUS ACPI. tanpanya aplikasi tidak dapat berfungsi. Cobalah untuk menginstal Asus System Control Interface</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>Muat ulang perangkat anda untuk menerapkan perubahan</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>Mulai ulang sekarang?</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Ally Controller</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>Arah Animasi</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>Kecepatan Animasi</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>Anime Matrix</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>Aplikasi sudah berjalan</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>Memory Assigned to GPU</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>Status Baterai</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>Bernapas</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>Searah Jarum Jam</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>Siklus Warna</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>Komet</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>Berlawanan Jarum Jam</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>Cepat</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>Mode Pencahayaan</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>Pelangi</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>Acak</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>Reaksi</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>Pelan</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>Statis</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>Berkedip</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>Semua</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>Dok</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>Logo</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>Roda Gulir</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>Cahaya Bawah</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>Terapkan Secara Otomatis</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>Boot</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>Suara Boot</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>Kecerahan</value>
@@ -503,9 +431,6 @@ Apakah Anda masih ingin melanjutkan?</value>
   <data name="Keyboard" xml:space="preserve">
     <value>Keyboard</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Suara Keystone</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>Hentikan semua aplikasi yang menggunakan GPU saat beralih ke mode Eco</value>
   </data>
@@ -545,33 +470,6 @@ Apakah Anda masih ingin melanjutkan?</value>
   <data name="LTDeadzones" xml:space="preserve">
     <value>Left Trigger Deadzones</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>Visualisasi Audio</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>Binary Banner</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>Terang</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>Jam</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>Redup</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>Logo Rog</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>Sedang</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>Mati</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>Gambar</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>Maks refresh rate untuk mengurangi latensi</value>
   </data>
@@ -607,12 +505,6 @@ Apakah Anda masih ingin melanjutkan?</value>
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>Performa</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>Sinkronkan dengan mouse</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>Sinkronkan dengan laptop</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>Multi Zone</value>
@@ -727,12 +619,6 @@ Apakah Anda masih ingin melanjutkan?</value>
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>Scaling Quality</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>Kurangi Kecerahan Screenpad</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>Tingkatkan Kecerahan Screenpad</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Matikan</value>

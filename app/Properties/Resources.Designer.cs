@@ -63,16 +63,6 @@ namespace OHelper.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ally {
-            get {
-                object obj = ResourceManager.GetObject("ally", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap backlight {
             get {
                 object obj = ResourceManager.GetObject("backlight", resourceCulture);
@@ -536,16 +526,6 @@ namespace OHelper.Properties {
         internal static System.Drawing.Bitmap icons8_log_32 {
             get {
                 object obj = ResourceManager.GetObject("icons8-log-32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap icons8_matrix_32 {
-            get {
-                object obj = ResourceManager.GetObject("icons8-matrix-32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

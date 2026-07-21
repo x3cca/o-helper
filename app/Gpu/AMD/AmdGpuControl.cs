@@ -235,7 +235,7 @@ public class AmdGpuControl : IGpuControl
         return _legacy = data;
     }
 
-    // Used by ROG Ally (iGPU-only) for auto-TDP logic - queries the integrated GPU adapter
+    // Queries the integrated GPU adapter for APU power telemetry.
     public int GetiGpuPower()
     {
         if (_adlContextHandle == nint.Zero || _iGPU == null) return 0;

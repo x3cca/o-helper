@@ -215,7 +215,7 @@ namespace OHelper
             buttonMiniled.MouseLeave += ButtonScreen_MouseLeave;
 
             buttonUpdates.Click += ButtonUpdates_Click;
-            // ASUS models keep the driver/BIOS update form; O-Helper models use this as a static releases link.
+            // O-Helper uses this button as a static link to the release page.
 
             if (batteryLimitBackend != BatteryChargeLimitBackendKind.None)
             {
@@ -1196,14 +1196,15 @@ namespace OHelper
 
             try
             {
-                colorDlg.CustomColors = (AppConfig.GetString("aura_color_custom", "") ?? "")
+                colorDlg.CustomColors = (AppConfig.GetString("keyboard_color_custom",
+                    AppConfig.GetString("aura_color_custom", "")) ?? "")
                     .Split('-').Select(int.Parse).ToArray();
             }
             catch { }
 
             if (colorDlg.ShowDialog() == DialogResult.OK)
             {
-                AppConfig.Set("aura_color_custom", string.Join("-", colorDlg.CustomColors));
+                AppConfig.Set("keyboard_color_custom", string.Join("-", colorDlg.CustomColors));
                 AppConfig.Set($"omen_kb_zone_{_omenKbZone}", colorDlg.Color.ToArgb());
                 _omenZoneColors[_omenKbZone] = colorDlg.Color;
 

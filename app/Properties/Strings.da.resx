@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>Acceleration</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>Kan ikke oprette forbindelse til ASUS ACPI. Applikationen kan ikke fungere uden. Prøv at installere Asus System Control Interface</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>Genstart din enhed for at anvende ændringerne</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>Genstart nu?</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Ally Controller</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>Animationsretning</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>Animationshastighed</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>Anime Matrix</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>App'en kører allerede</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>Hukommelse tildelt til GPU</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>Batteritilstand</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>Vejrtrækning</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>Med uret</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>Farvecyklus</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>Komet</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>Mod uret</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>Hurtig</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>Lystilstand</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>Regnbue</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>Tilfældig</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>Reager</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>Langsom</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>Statisk</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>Strobelys</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>Alle</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>Dock</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>Logo</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>Scroll-hjul</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>Underglød</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>Anvend automatisk</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>Boot</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>Opstarts-lyd</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>Lysstyrke</value>
@@ -503,9 +431,6 @@ Vil du stadig fortsætte?</value>
   <data name="Keyboard" xml:space="preserve">
     <value>Tastatur</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Keystone-lyd</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>Stop alle apps der bruger GPU når du skifter til Øko</value>
   </data>
@@ -545,33 +470,6 @@ Vil du stadig fortsætte?</value>
   <data name="LTDeadzones" xml:space="preserve">
     <value>Venstre udløser dødzoner</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>Lydvisualisering</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>Binær banner</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>Kraftigt</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>Ur</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>Dæmpet</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>ROG logo</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>Middel</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>Slukket</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>Billede</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>Maks. opdateringshastighed for lavere latenstid</value>
   </data>
@@ -607,12 +505,6 @@ Vil du stadig fortsætte?</value>
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>Ydelse</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>Synkroniser med mus</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>Synkroniser med laptop</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>Multizone</value>
@@ -727,12 +619,6 @@ Vil du stadig fortsætte?</value>
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>Skaleringskvalitet</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>Screenpad lysstyrke ned</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>Skærmtastatur lysstyrke op</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Luk ned</value>

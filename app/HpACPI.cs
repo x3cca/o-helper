@@ -97,43 +97,24 @@ public class HpACPI
     public const uint UniversalControl = 0x00100021;
 
     public const int Airplane = 0x88;
-    public const int KB_Light_Up = 0xc4;
-    public const int KB_Light_Down = 0xc5;
     public const int Brightness_Down = 0x10;
     public const int Brightness_Up = 0x20;
     public const int KB_Sleep = 0x6c;
 
-    public const int KB_TouchpadToggle = 0x6b;
-    public const int KB_MuteToggle = 0x7c;
-    public const int KB_FNlockToggle = 0x4e;
-
-    public const int KB_DUO_PgUpDn = 0x4B;
-    public const int KB_DUO_SecondDisplay = 0x6A;
-
-    public const int Touchpad_Toggle = 0x6B;
-
     public const int ChargerMode = 0x0012006C;
 
-    public const int ChargerUSB = 2;
     public const int ChargerBarrel = 1;
 
     public const uint CPU_Fan = 0x00110013;
     public const uint GPU_Fan = 0x00110014;
     public const uint Mid_Fan = 0x00110031;
 
-    public const uint BatteryDischarge = 0x0012005A;
-
     public const uint StatusMode = 0x00090031;
-    public const uint PowerSavingMode = 0x00090032;
 
     public const uint PerformanceMode = 0x00120075;
 
-    public const uint GPUEcoROG = 0x00090020;
-    public const uint GPUEcoVivo = 0x00090120;
-
-
-    public const uint GPUMuxROG = 0x00090016;
-    public const uint GPUMuxVivo = 0x00090026;
+    public const uint GPUEco = 0x00090020;
+    public const uint GPUMux = 0x00090016;
 
     public const uint BatteryLimit = 0x00120057;
 
@@ -144,11 +125,6 @@ public class HpACPI
     public const uint ScreenHDRControl = 0x00050071;
 
     public const uint ScreenOptimalBrightness = 0x0005002A;
-    public const uint ScreenInit = 0x00050011;
-
-    public const uint DevsCPUFan = 0x00110022;
-    public const uint DevsGPUFan = 0x00110023;
-
     public const uint DevsCPUFanCurve = 0x00110024;
     public const uint DevsGPUFanCurve = 0x00110025;
     public const uint DevsMidFanCurve = 0x00110032;
@@ -158,8 +134,6 @@ public class HpACPI
     public const int Temp_GPU = 0x00120097;
 
     public const int PPT_APUA0 = 0x001200A0;
-    public const int PPT_EDCA1 = 0x001200A1;
-    public const int PPT_TDCA2 = 0x001200A2;
     public const int PPT_APUA3 = 0x001200A3;
 
     public const int PPT_CPUB0 = 0x001200B0;
@@ -169,13 +143,8 @@ public class HpACPI
     public const int PPT_APUC1 = 0x001200C1;
     public const int PPT_GPUC2 = 0x001200C2;
 
-    public const uint CORES_CPU = 0x001200D2;
-    public const uint CORES_MAX = 0x001200D3;
-
     public const uint GPU_BASE = 0x00120099;
     public const uint GPU_POWER = 0x00120098;
-
-    public const int APU_MEM = 0x000600C1;
 
     public const int MicMuteLed = 0x00040017;
     public const int SoundMuteLed = 0x0004001C;
@@ -185,20 +154,12 @@ public class HpACPI
     public const int TentState = 0x00060062;
     public const int FnLock = 0x00100023;
 
-    public const int ScreenPadToggle = 0x00050031;
-    public const int ScreenPadBrightness = 0x00050032;
-
     public const int CameraShutter = 0x00060078;
     public const int CameraLed = 0x00060079;
     public const int StatusLed = 0x000600C2;
 
-    public const int BootSound = 0x00130022;
 
     public const int Tablet_Notebook = 0;
-    public const int Tablet_Tablet = 1;
-    public const int Tablet_Tent = 2;
-    public const int Tablet_Rotated = 3;
-
     public const int PerformanceBalanced = 0;
     public const int PerformanceTurbo = 1;
     public const int PerformanceSilent = 2;
@@ -233,13 +194,7 @@ public class HpACPI
     public const int PCoreMin = 4;
     public const int ECoreMin = 0;
 
-    public const int PCoreMax = 16;
-    public const int ECoreMax = 16;
-
     private readonly Dictionary<uint, bool> _supportCache = new();
-
-    public const uint GPUEco = GPUEcoROG;
-    public const uint GPUMux = GPUMuxROG;
 
     public bool SupportsGpuModeSwitching()
     {
@@ -678,8 +633,7 @@ public class HpACPI
         if (DeviceID == ScreenOverdrive)
             return SetOverdrive(Status != 0);
 
-        if (DeviceID == GPUEco || DeviceID == GPUEcoROG || DeviceID == GPUEcoVivo
-            || DeviceID == GPUMux || DeviceID == GPUMuxROG || DeviceID == GPUMuxVivo)
+        if (DeviceID == GPUEco || DeviceID == GPUMux)
             return SetGpuModeValue(Status);
 
         if (DeviceID == StatusMode)
@@ -703,11 +657,7 @@ public class HpACPI
         if (DeviceID == GPU_POWER || DeviceID == GPU_BASE)
             return SetGpuPowerLimit(DeviceID, Status);
 
-        if (DeviceID == BootSound)
-            return UnsupportedDeviceSet(DeviceID, logName);
-
-        if (DeviceID == CameraShutter || DeviceID == StatusLed
-            || DeviceID == ScreenPadToggle || DeviceID == ScreenPadBrightness || DeviceID == ScreenInit)
+        if (DeviceID == CameraShutter || DeviceID == StatusLed)
             return UnsupportedDeviceSet(DeviceID, logName);
 
         if (DeviceID == FnLock || DeviceID == SlateMode || DeviceID == TabletState || DeviceID == TentState)
@@ -762,8 +712,7 @@ public class HpACPI
         if (DeviceID == ScreenOverdrive)
             return GetOverdrive() ? 1 : 0;
 
-        if (DeviceID == GPUEco || DeviceID == GPUEcoROG || DeviceID == GPUEcoVivo
-            || DeviceID == GPUMux || DeviceID == GPUMuxROG || DeviceID == GPUMuxVivo)
+        if (DeviceID == GPUEco || DeviceID == GPUMux)
             return GetGpuMode();
 
         if (DeviceID == Temp_CPU)
@@ -788,9 +737,6 @@ public class HpACPI
             return -1;
 
         if (DeviceID == ScreenFHD || DeviceID == ScreenHDRControl || DeviceID == ScreenOptimalBrightness)
-            return -1;
-
-        if (DeviceID == BootSound)
             return -1;
 
         if (DeviceID == FnLock)
@@ -1678,8 +1624,7 @@ public class HpACPI
             return result.Success && result.ReturnCode == 0;
         }
 
-        if (deviceId == GPUEco || deviceId == GPUEcoROG || deviceId == GPUEcoVivo
-            || deviceId == GPUMux || deviceId == GPUMuxROG || deviceId == GPUMuxVivo)
+        if (deviceId == GPUEco || deviceId == GPUMux)
         {
             var result = ExecuteBiosCommand(
                 (uint)HpBiosCommand.Legacy,

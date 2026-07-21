@@ -20,6 +20,7 @@ jobs:
     runs-on: windows-2022
     steps:
     - name: Resolve release version
+      id: release-version
       shell: pwsh
       env:
         RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
@@ -30,12 +31,21 @@ jobs:
         }
 
         $version = $tag.TrimStart('v')
+        "release_tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Append
         "RELEASE_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+    - name: Verify exact release tag
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
+        RELEASE_TAG: ${{ steps.release-version.outputs.release_tag }}
+      run: |
+        gh api "repos/$env:GITHUB_REPOSITORY/git/ref/tags/$env:RELEASE_TAG" --silent
+
     - uses: actions/checkout@v4
       with:
-        ref: ${{ github.event.release.tag_name || inputs.release_tag }}
+        ref: refs/tags/${{ steps.release-version.outputs.release_tag }}
         fetch-depth: 0
 
     - name: Setup dotnet

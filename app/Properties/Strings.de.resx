@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>Beschleunigung</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>Verbindung zu ASUS ACPI fehlgeschlagen. O-Helper kann nicht ausgeführt werden. Bitte installiere ASUS System Control Interface.</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>Gerät neu starten, um Änderungen anzuwenden?</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>Jetzt neu starten?</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Ally Controller</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>Animationsrichtung</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>Animationsgeschwindigkeit</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>AniMe Matrix</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>Die Anwendung läuft bereits</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>GPU zugewiesener Speicher</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>Batteriezustand</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>Atmen</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>Im Uhrzeigersinn</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>Farbwechsel</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>Komet</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>Gegen den Uhrzeigersinn</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>Schnell</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>Beleuchtungsmodus</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>Regenbogen</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>Zufällig</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>Reagierend</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>Langsam</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>Statisch</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>Stroboskop</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>Alle</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>Dock</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>Logo</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>Scrollrad</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>Front</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>Automatisch anwenden</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>Hochfahren</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>Boot-Sound</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>Helligkeit</value>
@@ -503,9 +431,6 @@ Trotzdem fortfahren?</value>
   <data name="Keyboard" xml:space="preserve">
     <value>Tastatur</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Keystone-Sound</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>Alle Anwendungen auf der dGPU beim Wechsel in den Eco Modus beenden.</value>
   </data>
@@ -545,33 +470,6 @@ Trotzdem fortfahren?</value>
   <data name="LTDeadzones" xml:space="preserve">
     <value>Left Trigger Deadzones</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>Audio Visualisierung</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>Binäres Banner</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>Hell</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>Uhr</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>Dunkel</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>ROG Logo</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>Mittel</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>Aus</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>Bild</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>Maximale Wiederholrate für niedrigste Latenz</value>
   </data>
@@ -607,12 +505,6 @@ Trotzdem fortfahren?</value>
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>Leistung</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>Maus synchronisieren</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>Mit Laptop synchronisieren</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>Multi Zone</value>
@@ -727,12 +619,6 @@ Trotzdem fortfahren?</value>
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>Skalierungsqualität</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>Screenpad Helligkeit verringern</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>Screenpad-Helligkeit erhöhen</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Herunterfahren</value>

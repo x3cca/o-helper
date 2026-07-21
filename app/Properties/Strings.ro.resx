@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>Accelerare</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>Nu se poate conecta la ASUS ACPI. Aplicația nu poate funcționa fără aceasta. Încercați să instalați Asus System Control Interface</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>Reporniți dispozitivul pentru a aplica modificările</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>Reporniți acum?</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Ally Controller</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>Direcție animație</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>Viteza animației</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>Matricea Anime</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>Aplicația rulează deja</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>Memorie alocată GPU-ului</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>Starea bateriei</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>Respirație</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>În sensul acelor de ceas</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>Ciclu de culori</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>Cometă</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>În sens invers acelor de ceas</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>Rapid</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>Mod iluminare</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>Curcubeu</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>Aleatoriu</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>Reacție</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>Încet</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>Static</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>Stroboscop</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>Toate</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>Dock</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>Logo</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>Rotiță scroll</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>Iluminare de jos</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>Aplicare automată</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>Pornire</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>Sunet la pornire</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>Luminozitate</value>
@@ -503,9 +431,6 @@
   <data name="Keyboard" xml:space="preserve">
     <value>Tastatură</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Sunet Keystone</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>Opriți toate aplicațiile care folosesc GPU când treceți în modul Eco</value>
   </data>
@@ -545,33 +470,6 @@
   <data name="LTDeadzones" xml:space="preserve">
     <value>Left Trigger Deadzones</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>Vizualizator audio</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>Binary Banner</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>Luminos</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>Ceas</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>Dim</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>Logo-ul ROG</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>Mediu</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>Oprit</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>Imagine</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>Rata maximă de reîmprospătare pentru latență mai mică</value>
   </data>
@@ -607,12 +505,6 @@
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>Performanță</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>Sincronizare cu mouse-ul</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>Sincronizează cu laptopul</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>Multi Zone</value>
@@ -727,12 +619,6 @@
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>Scaling Quality</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>Scade luminozitate Screenpad</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>Mărește luminozitate Screenpad</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Oprire</value>

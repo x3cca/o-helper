@@ -119,7 +119,6 @@ namespace OHelper
             checkBoot.Text = Properties.Strings.Boot;
             checkShutdown.Text = Properties.Strings.Shutdown;
             checkBattery.Text = checkBatteryLogo.Text = checkBatteryBar.Text = checkBatteryLid.Text = Properties.Strings.Battery;
-            checkBootSound.Text = Properties.Strings.BootSound;
             checkStatusLed.Text = Properties.Strings.LEDStatusIndicators;
 
             labelSpeed.Text = Properties.Strings.AnimationSpeed;
@@ -257,8 +256,6 @@ namespace OHelper
             sliderBrightness.AccessibleName = Properties.Strings.LaptopBacklight + ": " + sliderBrightness.Value;
             sliderBrightness.ValueChanged += SliderBrightness_ValueChanged;
 
-            panelXGM.Visible = false;
-
             numericBacklightTime.Value = AppConfig.Get("keyboard_timeout", 60);
             numericBacklightPluggedTime.Value = AppConfig.Get("keyboard_ac_timeout", 0);
 
@@ -267,13 +264,6 @@ namespace OHelper
 
             checkGpuApps.Checked = AppConfig.Is("kill_gpu_apps");
             checkGpuApps.CheckedChanged += CheckGpuApps_CheckedChanged;
-
-            int bootSound = Program.acpi.DeviceGet(HpACPI.BootSound);
-            checkBootSound.Visible = bootSound >= 0;
-            if (bootSound < 0 || bootSound > UInt16.MaxValue) bootSound = AppConfig.Get("boot_sound", 0);
-
-            checkBootSound.Checked = (bootSound == 1);
-            checkBootSound.CheckedChanged += CheckBootSound_CheckedChanged;
 
             var statusLed = Program.acpi.DeviceGet(HpACPI.StatusLed);
             checkStatusLed.Visible = statusLed >= 0;
@@ -429,13 +419,6 @@ namespace OHelper
                 Process.Start("shutdown", "/r /t 1");
             }
 
-        }
-
-        private void CheckBootSound_CheckedChanged(object? sender, EventArgs e)
-        {
-            int bootSound = checkBootSound.Checked ? 1 : 0;
-            Program.acpi.DeviceSet(HpACPI.BootSound, bootSound, "BootSound");
-            AppConfig.Set("boot_sound", bootSound);
         }
 
         private void InitHibernate()

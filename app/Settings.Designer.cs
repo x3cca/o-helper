@@ -30,18 +30,6 @@ namespace OHelper
         /// </summary>
         private void InitializeComponent()
         {
-            panelMatrix = new Panel();
-            panelMatrixAuto = new Panel();
-            checkMatrixLid = new CheckBox();
-            checkMatrix = new CheckBox();
-            tableLayoutMatrix = new TableLayoutPanel();
-            comboMatrix = new RComboBox();
-            comboMatrixRunning = new RComboBox();
-            comboInterval = new RComboBox();
-            buttonMatrix = new RButton();
-            panelMatrixTitle = new Panel();
-            pictureMatrix = new PictureBox();
-            labelMatrix = new Label();
             panelBattery = new Panel();
             buttonBatteryFull = new RButton();
             sliderBattery = new Slider();
@@ -118,19 +106,6 @@ namespace OHelper
             labelRearLight = new Label();
             panelStartup = new Panel();
             labelCharge = new Label();
-            panelPeripherals = new Panel();
-            tableLayoutPeripherals = new TableLayoutPanel();
-            buttonPeripheral3 = new RButton();
-            buttonPeripheral2 = new RButton();
-            buttonPeripheral1 = new RButton();
-            panelAlly = new Panel();
-            tableLayoutAlly = new TableLayoutPanel();
-            buttonController = new RButton();
-            buttonBacklight = new RButton();
-            buttonControllerMode = new RButton();
-            panelAllyTitle = new Panel();
-            pictureAlly = new PictureBox();
-            labelAlly = new Label();
             panelGamma = new Panel();
             labelVisual = new Label();
             tableVisual = new TableLayoutPanel();
@@ -148,11 +123,6 @@ namespace OHelper
             buttonAmdOled = new RButton();
             labelVersion = new Label();
             buttonHDRControl = new RButton();
-            panelMatrix.SuspendLayout();
-            panelMatrixAuto.SuspendLayout();
-            tableLayoutMatrix.SuspendLayout();
-            panelMatrixTitle.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureMatrix).BeginInit();
             panelBattery.SuspendLayout();
             panelBatteryTitle.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBattery).BeginInit();
@@ -185,196 +155,12 @@ namespace OHelper
             panelRearLightTitle.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureRearLight).BeginInit();
             panelStartup.SuspendLayout();
-            panelPeripherals.SuspendLayout();
-            tableLayoutPeripherals.SuspendLayout();
-            panelAlly.SuspendLayout();
-            tableLayoutAlly.SuspendLayout();
-            panelAllyTitle.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureAlly).BeginInit();
             panelGamma.SuspendLayout();
             tableVisual.SuspendLayout();
             panelGammaTitle.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureGamma).BeginInit();
             panelVersion.SuspendLayout();
             SuspendLayout();
-            // 
-            // panelMatrix
-            // 
-            panelMatrix.AccessibleRole = AccessibleRole.Grouping;
-            panelMatrix.AutoSize = true;
-            panelMatrix.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panelMatrix.Controls.Add(panelMatrixAuto);
-            panelMatrix.Controls.Add(tableLayoutMatrix);
-            panelMatrix.Controls.Add(panelMatrixTitle);
-            panelMatrix.Dock = DockStyle.Top;
-            panelMatrix.Location = new Point(11, 1071);
-            panelMatrix.Margin = new Padding(0);
-            panelMatrix.Name = "panelMatrix";
-            panelMatrix.Padding = new Padding(20, 20, 20, 11);
-            panelMatrix.Size = new Size(827, 183);
-            panelMatrix.TabIndex = 4;
-            panelMatrix.TabStop = true;
-            // 
-            // panelMatrixAuto
-            // 
-            panelMatrixAuto.Controls.Add(checkMatrixLid);
-            panelMatrixAuto.Controls.Add(checkMatrix);
-            panelMatrixAuto.Dock = DockStyle.Top;
-            panelMatrixAuto.Location = new Point(20, 132);
-            panelMatrixAuto.Margin = new Padding(4);
-            panelMatrixAuto.Name = "panelMatrixAuto";
-            panelMatrixAuto.Padding = new Padding(10, 10, 0, 0);
-            panelMatrixAuto.Size = new Size(787, 42);
-            panelMatrixAuto.TabIndex = 47;
-            // 
-            // checkMatrixLid
-            // 
-            checkMatrixLid.AutoSize = true;
-            checkMatrixLid.Dock = DockStyle.Left;
-            checkMatrixLid.ForeColor = SystemColors.GrayText;
-            checkMatrixLid.Location = new Point(260, 0);
-            checkMatrixLid.Margin = new Padding(8, 4, 8, 4);
-            checkMatrixLid.Name = "checkMatrixLid";
-            checkMatrixLid.Size = new Size(253, 40);
-            checkMatrixLid.TabIndex = 46;
-            checkMatrixLid.Text = "Disable on lid close";
-            checkMatrixLid.UseVisualStyleBackColor = true;
-            checkMatrixLid.Visible = true;
-            // 
-            // checkMatrix
-            // 
-            checkMatrix.AutoSize = true;
-            checkMatrix.Dock = DockStyle.Left;
-            checkMatrix.ForeColor = SystemColors.GrayText;
-            checkMatrix.Location = new Point(8, 0);
-            checkMatrix.Margin = new Padding(8, 4, 8, 4);
-            checkMatrix.Name = "checkMatrix";
-            checkMatrix.Padding = new Padding(0, 0, 4, 0);
-            checkMatrix.Size = new Size(252, 40);
-            checkMatrix.TabIndex = 19;
-            checkMatrix.Text = Properties.Strings.TurnOffOnBattery;
-            checkMatrix.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutMatrix
-            // 
-            tableLayoutMatrix.AutoSize = true;
-            tableLayoutMatrix.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tableLayoutMatrix.ColumnCount = 3;
-            tableLayoutMatrix.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutMatrix.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutMatrix.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutMatrix.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutMatrix.Controls.Add(comboMatrix, 0, 0);
-            tableLayoutMatrix.Controls.Add(comboMatrixRunning, 1, 0);
-            tableLayoutMatrix.Controls.Add(comboInterval, 2, 0);
-            tableLayoutMatrix.Controls.Add(buttonMatrix, 2, 0);
-            tableLayoutMatrix.Dock = DockStyle.Top;
-            tableLayoutMatrix.Location = new Point(20, 60);
-            tableLayoutMatrix.Margin = new Padding(8, 4, 8, 4);
-            tableLayoutMatrix.Name = "tableLayoutMatrix";
-            tableLayoutMatrix.Padding = new Padding(3, 0, 3, 0);
-            tableLayoutMatrix.RowCount = 1;
-            tableLayoutMatrix.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutMatrix.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutMatrix.Size = new Size(787, 72);
-            tableLayoutMatrix.TabIndex = 43;
-            // 
-            // comboMatrix
-            // 
-            comboMatrix.BorderColor = RForm.borderMain;
-            comboMatrix.ButtonColor = RForm.buttonMain;
-            comboMatrix.Dock = DockStyle.Top;
-            comboMatrix.Font = new Font("Segoe UI", 9F);
-            comboMatrix.FormattingEnabled = true;
-            comboMatrix.Items.AddRange(new object[] { Properties.Strings.MatrixOff, Properties.Strings.MatrixDim, Properties.Strings.MatrixMedium, Properties.Strings.MatrixBright });
-            comboMatrix.Location = new Point(10, 8);
-            comboMatrix.Margin = new Padding(7, 8, 7, 4);
-            comboMatrix.Name = "comboMatrix";
-            comboMatrix.Size = new Size(246, 40);
-            comboMatrix.TabIndex = 16;
-            // 
-            // comboMatrixRunning
-            // 
-            comboMatrixRunning.BorderColor = RForm.borderMain;
-            comboMatrixRunning.ButtonColor = RForm.buttonMain;
-            comboMatrixRunning.Dock = DockStyle.Top;
-            comboMatrixRunning.Font = new Font("Segoe UI", 9F);
-            comboMatrixRunning.FormattingEnabled = true;
-            comboMatrixRunning.Items.AddRange(new object[] { Properties.Strings.MatrixBanner, Properties.Strings.MatrixLogo, Properties.Strings.MatrixPicture, Properties.Strings.MatrixClock, Properties.Strings.MatrixAudio });
-            comboMatrixRunning.Location = new Point(270, 8);
-            comboMatrixRunning.Margin = new Padding(7, 8, 7, 4);
-            comboMatrixRunning.Name = "comboMatrixRunning";
-            comboMatrixRunning.Size = new Size(246, 40);
-            comboMatrixRunning.TabIndex = 17;
-            // 
-            // comboInterval
-            // 
-            comboInterval.BorderColor = RForm.borderMain;
-            comboInterval.ButtonColor = RForm.buttonMain;
-            comboInterval.Dock = DockStyle.Top;
-            comboInterval.Font = new Font("Segoe UI", 9F);
-            comboInterval.FormattingEnabled = true;
-            comboInterval.Location = new Point(10, 60);
-            comboInterval.Margin = new Padding(7, 8, 7, 4);
-            comboInterval.Name = "comboInterval";
-            comboInterval.Size = new Size(246, 40);
-            comboInterval.TabIndex = 19;
-            comboInterval.Visible = false;
-            // 
-            // buttonMatrix
-            // 
-            buttonMatrix.Activated = false;
-            buttonMatrix.AutoSize = true;
-            buttonMatrix.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            buttonMatrix.BackColor = RForm.buttonSecond;
-            buttonMatrix.BorderColor = Color.Transparent;
-            buttonMatrix.BorderRadius = 2;
-            buttonMatrix.Dock = DockStyle.Top;
-            buttonMatrix.FlatAppearance.BorderSize = 0;
-            buttonMatrix.FlatStyle = FlatStyle.Flat;
-            buttonMatrix.Location = new Point(527, 4);
-            buttonMatrix.Margin = new Padding(4);
-            buttonMatrix.MaximumSize = new Size(0, 48);
-            buttonMatrix.MinimumSize = new Size(0, 44);
-            buttonMatrix.Name = "buttonMatrix";
-            buttonMatrix.Secondary = true;
-            buttonMatrix.Size = new Size(253, 44);
-            buttonMatrix.TabIndex = 18;
-            buttonMatrix.Text = Properties.Strings.PictureGif;
-            buttonMatrix.UseVisualStyleBackColor = false;
-            // 
-            // panelMatrixTitle
-            // 
-            panelMatrixTitle.Controls.Add(pictureMatrix);
-            panelMatrixTitle.Controls.Add(labelMatrix);
-            panelMatrixTitle.Dock = DockStyle.Top;
-            panelMatrixTitle.Location = new Point(20, 20);
-            panelMatrixTitle.Margin = new Padding(4);
-            panelMatrixTitle.Name = "panelMatrixTitle";
-            panelMatrixTitle.Size = new Size(787, 40);
-            panelMatrixTitle.TabIndex = 45;
-            // 
-            // pictureMatrix
-            // 
-            pictureMatrix.BackgroundImage = Properties.Resources.icons8_matrix_32;
-            pictureMatrix.BackgroundImageLayout = ImageLayout.Zoom;
-            pictureMatrix.Location = new Point(8, 3);
-            pictureMatrix.Margin = new Padding(4);
-            pictureMatrix.Name = "pictureMatrix";
-            pictureMatrix.Size = new Size(32, 32);
-            pictureMatrix.TabIndex = 41;
-            pictureMatrix.TabStop = false;
-            // 
-            // labelMatrix
-            // 
-            labelMatrix.AutoSize = true;
-            labelMatrix.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            labelMatrix.Location = new Point(44, 0);
-            labelMatrix.Margin = new Padding(4, 0, 4, 0);
-            labelMatrix.Name = "labelMatrix";
-            labelMatrix.Size = new Size(170, 32);
-            labelMatrix.TabIndex = 40;
-            labelMatrix.Text = "Anime Matrix";
             // 
             // panelBattery
             // 
@@ -1635,249 +1421,6 @@ namespace OHelper
             labelCharge.TabIndex = 40;
             labelCharge.TextAlign = ContentAlignment.MiddleRight;
             // 
-            // panelPeripherals
-            // 
-            panelPeripherals.AutoSize = true;
-            panelPeripherals.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panelPeripherals.Controls.Add(tableLayoutPeripherals);
-            panelPeripherals.Dock = DockStyle.Top;
-            panelPeripherals.Location = new Point(11, 1540);
-            panelPeripherals.Margin = new Padding(0);
-            panelPeripherals.Name = "panelPeripherals";
-            panelPeripherals.Padding = new Padding(20, 5, 20, 10);
-            panelPeripherals.Size = new Size(827, 143);
-            panelPeripherals.TabIndex = 7;
-            panelPeripherals.Visible = false;
-            // 
-            // tableLayoutPeripherals
-            // 
-            tableLayoutPeripherals.AutoSize = false;
-            tableLayoutPeripherals.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tableLayoutPeripherals.ColumnCount = 3;
-            tableLayoutPeripherals.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPeripherals.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPeripherals.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPeripherals.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-            tableLayoutPeripherals.Controls.Add(buttonPeripheral3, 0, 0);
-            tableLayoutPeripherals.Controls.Add(buttonPeripheral2, 0, 0);
-            tableLayoutPeripherals.Controls.Add(buttonPeripheral1, 0, 0);
-            tableLayoutPeripherals.Dock = DockStyle.Top;
-            tableLayoutPeripherals.Location = new Point(20, 5);
-            tableLayoutPeripherals.Margin = new Padding(8, 4, 8, 4);
-            tableLayoutPeripherals.Name = "tableLayoutPeripherals";
-            tableLayoutPeripherals.RowCount = 1;
-            tableLayoutPeripherals.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPeripherals.Size = new Size(787, 128);
-            tableLayoutPeripherals.TabIndex = 43;
-            // 
-            // buttonPeripheral3
-            // 
-            buttonPeripheral3.Activated = false;
-            buttonPeripheral3.BackColor = RForm.buttonMain;
-            buttonPeripheral3.BorderColor = Color.Transparent;
-            buttonPeripheral3.BorderRadius = 5;
-            buttonPeripheral3.CausesValidation = false;
-            buttonPeripheral3.Dock = DockStyle.Top;
-            buttonPeripheral3.FlatAppearance.BorderSize = 0;
-            buttonPeripheral3.FlatStyle = FlatStyle.Flat;
-            buttonPeripheral3.Font = new Font("Segoe UI", 8F);
-            buttonPeripheral3.ForeColor = SystemColors.ControlText;
-            buttonPeripheral3.Image = Properties.Resources.icons8_maus_48;
-            buttonPeripheral3.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonPeripheral3.Location = new Point(528, 4);
-            buttonPeripheral3.Margin = new Padding(4);
-            buttonPeripheral3.Name = "buttonPeripheral3";
-            buttonPeripheral3.Secondary = true;
-            buttonPeripheral3.Size = new Size(255, 120);
-            buttonPeripheral3.TabIndex = 2;
-            buttonPeripheral3.Text = "Mouse 3";
-            buttonPeripheral3.TextImageRelation = TextImageRelation.ImageBeforeText;
-            buttonPeripheral3.UseVisualStyleBackColor = false;
-            // 
-            // buttonPeripheral2
-            // 
-            buttonPeripheral2.Activated = false;
-            buttonPeripheral2.BackColor = RForm.buttonMain;
-            buttonPeripheral2.BorderColor = Color.Transparent;
-            buttonPeripheral2.BorderRadius = 5;
-            buttonPeripheral2.CausesValidation = false;
-            buttonPeripheral2.Dock = DockStyle.Top;
-            buttonPeripheral2.FlatAppearance.BorderSize = 0;
-            buttonPeripheral2.FlatStyle = FlatStyle.Flat;
-            buttonPeripheral2.Font = new Font("Segoe UI", 8F);
-            buttonPeripheral2.ForeColor = SystemColors.ControlText;
-            buttonPeripheral2.Image = Properties.Resources.icons8_maus_48;
-            buttonPeripheral2.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonPeripheral2.Location = new Point(266, 4);
-            buttonPeripheral2.Margin = new Padding(4);
-            buttonPeripheral2.Name = "buttonPeripheral2";
-            buttonPeripheral2.Secondary = true;
-            buttonPeripheral2.Size = new Size(254, 120);
-            buttonPeripheral2.TabIndex = 1;
-            buttonPeripheral2.Text = "Mouse 2";
-            buttonPeripheral2.TextImageRelation = TextImageRelation.ImageBeforeText;
-            buttonPeripheral2.UseVisualStyleBackColor = false;
-            // 
-            // buttonPeripheral1
-            // 
-            buttonPeripheral1.Activated = false;
-            buttonPeripheral1.BackColor = RForm.buttonMain;
-            buttonPeripheral1.BorderColor = Color.Transparent;
-            buttonPeripheral1.BorderRadius = 5;
-            buttonPeripheral1.CausesValidation = false;
-            buttonPeripheral1.Dock = DockStyle.Top;
-            buttonPeripheral1.FlatAppearance.BorderSize = 0;
-            buttonPeripheral1.FlatStyle = FlatStyle.Flat;
-            buttonPeripheral1.Font = new Font("Segoe UI", 8F);
-            buttonPeripheral1.ForeColor = SystemColors.ControlText;
-            buttonPeripheral1.Image = Properties.Resources.icons8_maus_48;
-            buttonPeripheral1.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonPeripheral1.Location = new Point(4, 4);
-            buttonPeripheral1.Margin = new Padding(4);
-            buttonPeripheral1.Name = "buttonPeripheral1";
-            buttonPeripheral1.Secondary = true;
-            buttonPeripheral1.Size = new Size(254, 120);
-            buttonPeripheral1.TabIndex = 0;
-            buttonPeripheral1.Text = "Mouse 1";
-            buttonPeripheral1.TextImageRelation = TextImageRelation.ImageBeforeText;
-            buttonPeripheral1.UseVisualStyleBackColor = false;
-            // 
-            // panelAlly
-            // 
-            panelAlly.AccessibleRole = AccessibleRole.Grouping;
-            panelAlly.AutoSize = true;
-            panelAlly.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panelAlly.Controls.Add(tableLayoutAlly);
-            panelAlly.Controls.Add(panelAllyTitle);
-            panelAlly.Dock = DockStyle.Top;
-            panelAlly.Location = new Point(11, 1254);
-            panelAlly.Margin = new Padding(0);
-            panelAlly.Name = "panelAlly";
-            panelAlly.Padding = new Padding(20, 20, 20, 0);
-            panelAlly.Size = new Size(827, 140);
-            panelAlly.TabIndex = 5;
-            panelAlly.TabStop = true;
-            panelAlly.Visible = false;
-            // 
-            // tableLayoutAlly
-            // 
-            tableLayoutAlly.AutoSize = true;
-            tableLayoutAlly.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tableLayoutAlly.ColumnCount = 3;
-            tableLayoutAlly.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33F));
-            tableLayoutAlly.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33F));
-            tableLayoutAlly.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33F));
-            tableLayoutAlly.Controls.Add(buttonController, 0, 0);
-            tableLayoutAlly.Controls.Add(buttonBacklight, 0, 0);
-            tableLayoutAlly.Controls.Add(buttonControllerMode, 0, 0);
-            tableLayoutAlly.Dock = DockStyle.Top;
-            tableLayoutAlly.Location = new Point(20, 60);
-            tableLayoutAlly.Margin = new Padding(8, 4, 8, 4);
-            tableLayoutAlly.Name = "tableLayoutAlly";
-            tableLayoutAlly.RowCount = 1;
-            tableLayoutAlly.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
-            tableLayoutAlly.Size = new Size(787, 80);
-            tableLayoutAlly.TabIndex = 23;
-            // 
-            // buttonController
-            // 
-            buttonController.Activated = false;
-            buttonController.BackColor = RForm.buttonSecond;
-            buttonController.BorderColor = Color.Transparent;
-            buttonController.BorderRadius = 5;
-            buttonController.Dock = DockStyle.Fill;
-            buttonController.FlatAppearance.BorderSize = 0;
-            buttonController.FlatStyle = FlatStyle.Flat;
-            buttonController.ForeColor = SystemColors.ControlText;
-            buttonController.Image = Properties.Resources.icons8_controls_32;
-            buttonController.ImageAlign = ContentAlignment.MiddleRight;
-            buttonController.Location = new Point(528, 4);
-            buttonController.Margin = new Padding(4);
-            buttonController.Name = "buttonController";
-            buttonController.Secondary = true;
-            buttonController.Size = new Size(255, 72);
-            buttonController.TabIndex = 11;
-            buttonController.Text = "Controller";
-            buttonController.TextImageRelation = TextImageRelation.ImageBeforeText;
-            buttonController.UseVisualStyleBackColor = false;
-            // 
-            // buttonBacklight
-            // 
-            buttonBacklight.Activated = false;
-            buttonBacklight.BackColor = RForm.buttonMain;
-            buttonBacklight.BorderColor = Color.Transparent;
-            buttonBacklight.BorderRadius = 5;
-            buttonBacklight.Dock = DockStyle.Fill;
-            buttonBacklight.FlatAppearance.BorderSize = 0;
-            buttonBacklight.FlatStyle = FlatStyle.Flat;
-            buttonBacklight.ForeColor = SystemColors.ControlText;
-            buttonBacklight.Image = Properties.Resources.backlight;
-            buttonBacklight.ImageAlign = ContentAlignment.MiddleRight;
-            buttonBacklight.Location = new Point(266, 4);
-            buttonBacklight.Margin = new Padding(4);
-            buttonBacklight.Name = "buttonBacklight";
-            buttonBacklight.Secondary = false;
-            buttonBacklight.Size = new Size(254, 72);
-            buttonBacklight.TabIndex = 10;
-            buttonBacklight.Text = "100%";
-            buttonBacklight.TextImageRelation = TextImageRelation.ImageBeforeText;
-            buttonBacklight.UseVisualStyleBackColor = false;
-            // 
-            // buttonControllerMode
-            // 
-            buttonControllerMode.Activated = false;
-            buttonControllerMode.BackColor = RForm.buttonMain;
-            buttonControllerMode.BorderColor = Color.Transparent;
-            buttonControllerMode.BorderRadius = 5;
-            buttonControllerMode.Dock = DockStyle.Fill;
-            buttonControllerMode.FlatAppearance.BorderSize = 0;
-            buttonControllerMode.FlatStyle = FlatStyle.Flat;
-            buttonControllerMode.ForeColor = SystemColors.ControlText;
-            buttonControllerMode.Image = Properties.Resources.icons8_game_controller_48;
-            buttonControllerMode.ImageAlign = ContentAlignment.MiddleRight;
-            buttonControllerMode.Location = new Point(4, 4);
-            buttonControllerMode.Margin = new Padding(4);
-            buttonControllerMode.Name = "buttonControllerMode";
-            buttonControllerMode.Secondary = false;
-            buttonControllerMode.Size = new Size(254, 72);
-            buttonControllerMode.TabIndex = 9;
-            buttonControllerMode.Text = Properties.Strings.AutoMode;
-            buttonControllerMode.TextImageRelation = TextImageRelation.ImageBeforeText;
-            buttonControllerMode.UseVisualStyleBackColor = false;
-            // 
-            // panelAllyTitle
-            // 
-            panelAllyTitle.Controls.Add(pictureAlly);
-            panelAllyTitle.Controls.Add(labelAlly);
-            panelAllyTitle.Dock = DockStyle.Top;
-            panelAllyTitle.Location = new Point(20, 20);
-            panelAllyTitle.Margin = new Padding(4);
-            panelAllyTitle.Name = "panelAllyTitle";
-            panelAllyTitle.Size = new Size(787, 40);
-            panelAllyTitle.TabIndex = 25;
-            // 
-            // pictureAlly
-            // 
-            pictureAlly.BackgroundImage = Properties.Resources.icons8_controller_32;
-            pictureAlly.BackgroundImageLayout = ImageLayout.Zoom;
-            pictureAlly.Location = new Point(8, 0);
-            pictureAlly.Margin = new Padding(4);
-            pictureAlly.Name = "pictureAlly";
-            pictureAlly.Size = new Size(32, 32);
-            pictureAlly.TabIndex = 27;
-            pictureAlly.TabStop = false;
-            // 
-            // labelAlly
-            // 
-            labelAlly.AutoSize = true;
-            labelAlly.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            labelAlly.Location = new Point(43, 0);
-            labelAlly.Margin = new Padding(4, 0, 4, 0);
-            labelAlly.Name = "labelAlly";
-            labelAlly.Size = new Size(181, 32);
-            labelAlly.TabIndex = 26;
-            labelAlly.Text = "Ally Controller";
-            // 
             // panelGamma
             // 
             panelGamma.AutoSize = true;
@@ -2179,15 +1722,6 @@ namespace OHelper
             ShowIcon = false;
             StartPosition = FormStartPosition.CenterScreen;
             Text = "O-Helper";
-            panelMatrix.ResumeLayout(false);
-            panelMatrix.PerformLayout();
-            panelMatrixAuto.ResumeLayout(false);
-            panelMatrixAuto.PerformLayout();
-            tableLayoutMatrix.ResumeLayout(false);
-            tableLayoutMatrix.PerformLayout();
-            panelMatrixTitle.ResumeLayout(false);
-            panelMatrixTitle.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureMatrix).EndInit();
             panelBattery.ResumeLayout(false);
             panelBatteryTitle.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBattery).EndInit();
@@ -2236,15 +1770,6 @@ namespace OHelper
             ((System.ComponentModel.ISupportInitialize)pictureRearLight).EndInit();
             panelStartup.ResumeLayout(false);
             panelStartup.PerformLayout();
-            panelPeripherals.ResumeLayout(false);
-            panelPeripherals.PerformLayout();
-            tableLayoutPeripherals.ResumeLayout(false);
-            panelAlly.ResumeLayout(false);
-            panelAlly.PerformLayout();
-            tableLayoutAlly.ResumeLayout(false);
-            panelAllyTitle.ResumeLayout(false);
-            panelAllyTitle.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureAlly).EndInit();
             panelGamma.ResumeLayout(false);
             panelGamma.PerformLayout();
             tableVisual.ResumeLayout(false);
@@ -2256,7 +1781,6 @@ namespace OHelper
         }
 
         #endregion
-        private Panel panelMatrix;
         private Panel panelBattery;
         private Panel panelFooter;
         private RButton buttonQuit;
@@ -2276,21 +1800,16 @@ namespace OHelper
         private RButton buttonScreenAuto;
         private RButton button60Hz;
         private Panel panelKeyboard;
-        private TableLayoutPanel tableLayoutMatrix;
-        private RComboBox comboMatrixRunning;
-        private RComboBox comboMatrix;
         private TableLayoutPanel tableLayoutKeyboard;
         private RComboBox comboKeyboard;
         private Panel panelColor;
         private PictureBox pictureColor2;
         private PictureBox pictureColor;
-        private CheckBox checkMatrix;
         private RButton button120Hz;
         private RButton buttonOptimized;
         private Label labelTipGPU;
         private Label labelTipScreen;
         private RButton buttonMiniled;
-        private RButton buttonMatrix;
         private RButton buttonKeyboardColor;
         private RButton buttonUnleashed;
         private RButton buttonFans;
@@ -2310,9 +1829,6 @@ namespace OHelper
         private Panel panelKeyboardTitle;
         private PictureBox pictureKeyboard;
         private Label labelKeyboard;
-        private Panel panelMatrixTitle;
-        private PictureBox pictureMatrix;
-        private Label labelMatrix;
         private Panel panelBatteryTitle;
         private Label labelBattery;
         private PictureBox pictureBattery;
@@ -2320,36 +1836,20 @@ namespace OHelper
         private Panel panelStartup;
         private RButton buttonStopGPU;
         private TableLayoutPanel tableButtons;
-        private Panel panelPeripherals;
-        private TableLayoutPanel tableLayoutPeripherals;
-        private RButton buttonPeripheral2;
-        private RButton buttonPeripheral3;
-        private RButton buttonPeripheral1;
         private RButton buttonKeyboard;
         private RButton buttonUpdates;
         private Label labelCharge;
         private RButton buttonFnLock;
         private RButton buttonBatteryFull;
-        private Panel panelAlly;
-        private TableLayoutPanel tableLayoutAlly;
-        private RButton buttonControllerMode;
-        private Panel panelAllyTitle;
-        private Label labelAlly;
-        private PictureBox pictureAlly;
-        private RButton buttonBacklight;
         private TableLayoutPanel tableAMD;
         private RButton buttonFPS;
-        private RButton buttonController;
         private RButton buttonOverlay;
-        private RComboBox comboInterval;
         private Panel panelGamma;
         private Slider sliderGamma;
         private Panel panelGammaTitle;
         private Label labelGamma;
         private PictureBox pictureGamma;
         private Label labelGammaTitle;
-        private CheckBox checkMatrixLid;
-        private Panel panelMatrixAuto;
         private TableLayoutPanel tableVisual;
         private RComboBox comboVisual;
         private RComboBox comboGamut;

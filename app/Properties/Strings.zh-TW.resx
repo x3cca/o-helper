@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>滑鼠加速</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>無法連結到華碩 ACPI，應用程式無法執行。 請嘗試安裝 Asus System Control Interface</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>重新啟動裝置以套用變更</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>立即重新啟動?</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Ally控制器</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>動畫方向</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>動畫速度</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>AniMeMatrix™</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>程式正在執行</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>分配給 GPU 的記憶體</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>電池狀態</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>呼吸</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>順時針</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>色彩循環</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>彗星</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>逆時針</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>快速</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>燈效模式</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>正常</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>彩虹</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>隨機</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>觸發</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>慢</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>靜態恆亮</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>閃爍</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>全部</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>底座</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>Logo</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>滾輪</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>底光</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>自動套用</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>開機時</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>開機音效</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>亮度</value>
@@ -503,9 +431,6 @@
   <data name="Keyboard" xml:space="preserve">
     <value>鍵盤</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Keystone 音效</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>切換至節能模式時，關閉所有正在使用獨顯的程式</value>
   </data>
@@ -545,33 +470,6 @@
   <data name="LTDeadzones" xml:space="preserve">
     <value>左扳機(LT)死區</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>音效視覺化</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>横幅</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>明亮</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>時鐘</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>黯淡</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>ROG logo</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>中</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>關閉</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>圖片</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>更高的更新率和更低延遲</value>
   </data>
@@ -607,12 +505,6 @@
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>性能設定</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>與滑鼠同步</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>與筆電同步</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>多區</value>
@@ -727,12 +619,6 @@
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>縮放品質</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>第二觸控螢幕亮度降低</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>第二觸控螢幕亮度提高</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>關機時</value>

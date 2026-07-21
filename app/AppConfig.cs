@@ -1,6 +1,5 @@
 using OHelper.Helpers;
 using OHelper.Mode;
-using Microsoft.Win32;
 using System.Management;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -538,112 +537,9 @@ public static class AppConfig
         Set(name + "_" + Modes.GetCurrent(), value);
     }
 
-    public static bool IsAlly()
-    {
-        return false;
-    }
-
-    public static bool IsAuraSync()
-    {
-        return Is("mouse_aura_sync");
-    }
-
-    public static bool NoMKeys()
-    {
-        return (ContainsModel("Z13") && !IsARCNM()) ||
-        ContainsModel("FX706") ||
-        ContainsModel("FA706") ||
-        ContainsModel("FA506") ||
-        ContainsModel("FX506") ||
-        ContainsModel("Duo") ||
-        ContainsModel("FX505");
-    }
-
-    public static bool IsARCNM()
-    {
-        return ContainsModel("GZ301VIC");
-    }
-
-    public static bool IsTUF()
-    {
-        return ContainsModel("TUF") || ContainsModel("TX Gaming") || ContainsModel("TX Air");
-    }
-
-    public static bool IsProArt()
-    {
-        return ContainsModel("ProArt");
-    }
-
-    public static bool IsVivoZenbook()
-    {
-        return ContainsModel("Vivobook") || ContainsModel("Zenbook") || ContainsModel("EXPERTBOOK") || ContainsModel(" V16") || ContainsModel("ASUSLaptop");
-    }
-
-    public static bool IsVivoZenPro()
-    {
-        return ContainsModel("Vivobook") || ContainsModel("Zenbook") || ContainsModel("ProArt") || ContainsModel("EXPERTBOOK") || ContainsModel(" V16") || ContainsModel("ASUSLaptop");
-    }
-
     public static bool IsHardwareFnLock()
     {
         return Is("force_fn_lock");
-    }
-
-    // Devices with bugged bios command to change brightness
-    public static bool SwappedBrightness()
-    {
-        return ContainsModel("FA506IEB") || ContainsModel("FA506IH") || ContainsModel("FA506IC") || ContainsModel("FA506II") || ContainsModel("FX506LU") || ContainsModel("FX506IC") || ContainsModel("FX506LH") || ContainsModel("FA506IV") || ContainsModel("FA706IC") || ContainsModel("FA706IH");
-    }
-
-    public static bool IsDUO()
-    {
-        return ContainsModel("Duo") || ContainsModel("GX550") || ContainsModel("GX551") || ContainsModel("GX650") || ContainsModel("UX840") || ContainsModel("UX482");
-    }
-
-    public static bool IsM4Button()
-    {
-        return IsDUO() || ContainsModel("GZ302EA");
-    }
-
-    // G14 2020 has no aura, but media keys instead
-    public static bool NoAura()
-    {
-        return (ContainsModel("GA401I") && !ContainsModel("GA401IHR")) || ContainsModel("GA502IU") || ContainsModel("HN7306") || ContainsModel("M6500X");
-    }
-
-    public static bool MediaKeys()
-    {
-        return (ContainsModel("GA401I") && !ContainsModel("GA401IHR")) || ContainsModel("G712L") || ContainsModel("GX502L");
-    }
-
-    public static bool IsWhite()
-    {
-        return ContainsModel("GA401") || ContainsModel("FX517Z") || ContainsModel("FX516P") || ContainsModel("X13") || IsARCNM() || ContainsModel("FA617N") || ContainsModel("FA617X") || NoAura() || Is("no_rgb");
-    }
-
-    public static bool IsSleepBacklight()
-    {
-        return ContainsModel("FA617") || ContainsModel("FX507") || ContainsModel("FA507");
-    }
-
-    public static bool IsAnimeMatrix()
-    {
-        return ContainsModel("GA401") || ContainsModel("GA402") || ContainsModel("GU604V") || ContainsModel("GU604V") || ContainsModel("G835") || ContainsModel("G815") || ContainsModel("G635") || ContainsModel("G615");
-    }
-
-    public static bool IsSlash()
-    {
-        return ContainsModel("GA403") || ContainsModel("GU605") || ContainsModel("GA605") || IsSlashLong();
-    }
-
-    public static bool IsSlashLong()
-    {
-        return ContainsModel("GA405") || ContainsModel("GU405") || ContainsModel("GU606") || ContainsModel("GX651");
-    }
-
-    public static bool IsInvertedFNLock()
-    {
-        return ContainsModel("M140") || ContainsModel("S550") || ContainsModel("K650") || ContainsModel("P540") || IsTUF();
     }
 
     public static bool IsOLED()
@@ -656,105 +552,14 @@ public static class AppConfig
         return Is("no_overdrive");
     }
 
-    public static bool IsStrix()
-    {
-        return ContainsModel("Strix") || ContainsModel("Scar") || ContainsModel("G703G");
-    }
-
-    public static bool IsEcoBootFix()
-    {
-        return ContainsModel("G635L") || ContainsModel("G615L") || ContainsModel("G835L") || ContainsModel("G815L") || ContainsModel("FA506");
-    }
-
-    public static bool IsBacklightZones()
-    {
-        return IsStrix() || IsZ13();
-    }
-
     public static bool IsHardwareHotkeys()
     {
         return Is("hardware_hotkeys");
     }
 
-    public static bool NoWMI()
-    {
-        return ContainsModel("GL704G") || ContainsModel("GM501G") || ContainsModel("GX501G");
-    }
-
-    public static bool IsNoDirectRGB()
-    {
-        return ContainsModel("GA503") || ContainsModel("G533Q") || ContainsModel("GU502") || IsSlash();
-    }
-
-    public static bool IsStrixNumpad()
-    {
-        return ContainsModel("G713R");
-    }
-
-    public static bool IsStrix4ZoneFlipped()
-    {
-        return ContainsModel("G513");
-    }
-
-    public static bool IsZ1325()
-    {
-        return ContainsModel("GZ302E");
-    }
-
-    public static bool IsZ13()
-    {
-        return ContainsModel("Z13");
-    }
-
-    public static bool HasRearLight()
-    {
-        return IsZ13();
-    }
-
-    public static bool IsPZ13()
-    {
-        return ContainsModel("PZ13");
-    }
-
-    public static bool IsS17()
-    {
-        return ContainsModel("S17");
-    }
-
     public static bool HasTabletMode()
     {
         return Is("tablet_mode");
-    }
-
-    public static bool IsX13()
-    {
-        return ContainsModel("X13");
-    }
-
-    public static bool IsG14AMD()
-    {
-        return ContainsModel("GA402R");
-    }
-
-    public static bool DynamicBoost5()
-    {
-        return ContainsModel("GZ301ZE");
-    }
-
-    public static bool DynamicBoost15()
-    {
-        return ContainsModel("FX507ZC4") || ContainsModel("GA403UM") || ContainsModel("GU605CP") || ContainsModel("FX608J") || ContainsModel("FX608L") || ContainsModel("FA608U") || ContainsModel("FA608P") ||
-        ContainsModel("FA401K") || ContainsModel("FA401UM") || ContainsModel("FA401UH");
-    }
-
-    public static bool DynamicBoost20()
-    {
-        return ContainsModel("GU605") || ContainsModel("GA605");
-    }
-
-    public static bool IsAdvantageEdition()
-    {
-        return ContainsModel("13QY");
     }
 
     public static bool IsAlwaysUltimate()
@@ -780,11 +585,6 @@ public static class AppConfig
     public static bool IsFanRequired()
     {
         return Is("fan_required");
-    }
-
-    public static bool IsCPULight()
-    {
-        return ContainsModel("GA402X") || ContainsModel("GA605") || ContainsModel("GA403") || ContainsModel("FA507N") || ContainsModel("FA507X") || ContainsModel("FA707N") || ContainsModel("FA707X") || ContainsModel("GZ302") || ContainsModel("GU405") || ContainsModel("GX651");
     }
 
     public static bool IsPowerRequired()
@@ -817,48 +617,14 @@ public static class AppConfig
         return Is("gpu_mode_force_set");
     }
 
-    public static bool IsAMDiGPU()
-    {
-        return ContainsModel("GV301RA") || ContainsModel("GV302XA") || ContainsModel("GZ302") || IsOnlyAIMAX() || IsAlly();
-    }
-
     public static bool NoGpu()
     {
         return Is("no_gpu");
     }
 
-    public static bool IsOnlyAIMAX()
-    {
-        return ContainsModel("FA401EA") || ContainsModel("HN7306EA");
-    }
-
     public static bool IsHardwareTouchpadToggle()
     {
         return Is("hardware_touchpad_toggle");
-    }
-
-    public static bool IsIntelHX()
-    {
-        return ContainsModel("G814") || ContainsModel("G614") || ContainsModel("G834") || ContainsModel("G634") || ContainsModel("G835") || ContainsModel("G635") || ContainsModel("G815") || ContainsModel("G615");
-    }
-
-    public static bool Is8Ecores()
-    {
-        return ContainsModel("FX507Z") || ContainsModel("GU603ZV");
-    }
-
-    public static bool IsNoFNV()
-    {
-        return ContainsModel("FX507") || ContainsModel("FX707");
-    }
-
-    public static bool IsROG()
-    {
-        return false;
-    }
-    public static bool IsASUS()
-    {
-        return false;
     }
 
     // HP OMEN MODEL DETECTION
@@ -890,23 +656,9 @@ public static class AppConfig
             || Is("force_dynamic_refresh");
     }
 
-    // OMEN 4-zone RGB keyboards
-    public static bool IsOmen4ZoneRGB()
-    {
-        // Trust the per-model capability database first
-        var caps = GetModelCapabilities();
-        if (caps.HasFourZoneRgb || caps.HasPerKeyRgb)
-            return true;
-
-        // Fallback: Transcend 14 string match (covers models not yet in the DB)
-        return IsOmenTranscend14();
-    }
-
     // Any HP Omen keyboard that uses the WMI 0x20009 BIOS interface.
-    // Used to decide whether to show the Omen keyboard lighting panel
-    // instead of the ASUS Aura HID path. The runtime WMI probe in
-    // HpACPI.GetKeyboardType() / HasBacklight() confirms the keyboard
-    // is actually present and reachable.
+    // The runtime WMI probe in HpACPI.GetKeyboardType() / HasBacklight()
+    // confirms the keyboard is actually present and reachable.
     public static bool IsOmenKeyboardSupported()
     {
         if (!IsKeyboardLightingControlEnabled()) return false;
@@ -917,8 +669,7 @@ public static class AppConfig
         if (!caps.HasKeyboardBacklight) return false;
         if (!caps.HasFourZoneRgb && !caps.HasPerKeyRgb) return false;
 
-        // Respect the existing config escape hatch used to hide the
-        // ASUS Aura panel; reuse it for the Omen panel as well.
+        // Respect the existing config escape hatch used to hide RGB controls.
         if (Is("no_rgb")) return false;
 
         return true;
@@ -927,11 +678,6 @@ public static class AppConfig
     public static bool IsKeyboardLightingControlEnabled()
     {
         return Is("enable_keyboard_lighting_control");
-    }
-
-    public static bool IsOmenKeyboardRgb()
-    {
-        return IsOmenKeyboardSupported() && IsOmen4ZoneRGB();
     }
 
     // OMEN Slim series (slim chassis, different fan curves)
@@ -950,25 +696,6 @@ public static class AppConfig
     public static bool IsOmen16()
     {
         return (IsOmen() && ContainsModel("16-")) && !IsOmenMax() && !IsOmenSlim();
-    }
-
-    // Check if this is an HP system (for feature gating)
-    public static bool IsHP()
-    {
-        return IsOmen() || ContainsModel("HP");
-    }
-
-    // Workaround gates for HP models
-    public static bool HasOmenLightBoost()
-    {
-        return IsOmen() && !Is("no_overdrive");
-    }
-
-    public static bool IsOmenFanControllable()
-    {
-        if (!IsOmen()) return false;
-        var caps = GetModelCapabilities();
-        return caps.SupportsFanControlWmi || caps.SupportsFanControlEc;
     }
 
     public static bool IsOmenAlwaysUltimate()
@@ -1001,11 +728,6 @@ public static class AppConfig
         return Is("overlay_game_only");
     }
 
-    public static bool IsStopAC()
-    {
-        return Is("stop_ac");
-    }
-
     public static bool IsChargeLimit6080()
     {
         return Is("charge_limit_6080") || IsOmenChargeLimit6080();
@@ -1015,11 +737,6 @@ public static class AppConfig
     public static bool IsDynamicLighting()
     {
         return Is("dynamic_lighting");
-    }
-
-    public static bool IsDynamicLightingOnly()
-    {
-        return ContainsModel("S560") || ContainsModel("M540") || ContainsModel("UX760");
     }
 
     public static bool IsDynamicLightingInit()
@@ -1032,21 +749,9 @@ public static class AppConfig
         return Is("force_miniled");
     }
 
-    public static bool IsKeystone()
-    {
-        return ContainsModel("G531") || ContainsModel("G731") ||
-               ContainsModel("G532") || ContainsModel("G732") ||
-               ContainsModel("G533") || ContainsModel("G733");
-    }
-
     public static bool IsSleepReset()
     {
         return Is("sleep_reset") || IsOmenSleepReset();
-    }
-
-    public static bool SaveDimming()
-    {
-        return Is("save_dimming");
     }
 
     public static bool IsAutoStatusLed()
