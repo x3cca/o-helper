@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>Acceleration</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>Can't connect to the ACPI/WMI interface. Application can't function without it. Try installing or reinstalling the HP system firmware driver</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>Restart your device to apply changes</value>
   </data>
@@ -147,17 +144,11 @@
   <data name="AlertGpuModeReboot" xml:space="preserve">
     <value>Switching to {0} requires a system restart</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Ally Controller</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>Animation Direction</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>Animation Speed</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>Anime Matrix</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>App already running</value>
@@ -179,66 +170,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>Memory Assigned to GPU</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>Battery State</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>Breathe</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>Clockwise</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>Color Cycle</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>Comet</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>Counterclockwise</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>Fast</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>Lighting Mode</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>Rainbow</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>Random</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>React</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>Slow</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>Static</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>Strobe</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>All</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>Dock</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>Logo</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>Scrollwheel</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>Underglow</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>Auto Apply</value>
@@ -311,9 +242,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>Boot</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>Boot Sound</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>Brightness</value>
@@ -515,9 +443,6 @@ Do you still want to continue?</value>
   <data name="Keyboard" xml:space="preserve">
     <value>Keyboard</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Keystone Sound</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>Stop all apps using GPU when switching to Eco</value>
   </data>
@@ -557,33 +482,6 @@ Do you still want to continue?</value>
   <data name="LTDeadzones" xml:space="preserve">
     <value>Left Trigger Deadzones</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>Audio Visualizer</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>Binary Banner</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>Bright</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>Clock</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>Dim</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>Rog Logo</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>Medium</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>Off</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>Picture</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>Max refresh rate for lower latency</value>
   </data>
@@ -619,12 +517,6 @@ Do you still want to continue?</value>
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>Performance</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>Synchronize with mouse</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>Sync with laptop</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>Multi Zone</value>
@@ -739,12 +631,6 @@ Do you still want to continue?</value>
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>Scaling Quality</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>Screenpad Brightness Down</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>Screenpad Brightness Up</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Shutdown</value>
@@ -1045,7 +931,13 @@ Recommended if you experience random hangs or unresponsive hardware.</value>
   <data name="DynamicRefreshUnsupported" xml:space="preserve">
     <value>Dynamic refresh is not supported by this panel or driver</value>
   </data>
-  <data name="XGMobileStandardModeOnly" xml:space="preserve">
-    <value>XG Mobile toggle works only in Standard mode</value>
+  <data name="DisplayModeRestart" xml:space="preserve">
+    <value>Changing display mode requires a system restart.</value>
+  </data>
+  <data name="StartupTaskCreateError" xml:space="preserve">
+    <value>Can't create the startup task. Open Task Scheduler, remove any existing OHelper task, and try again.</value>
+  </data>
+  <data name="StartupTaskRemoveError" xml:space="preserve">
+    <value>Can't remove the startup task. Open Task Scheduler and remove the OHelper task manually.</value>
   </data>
 </root>

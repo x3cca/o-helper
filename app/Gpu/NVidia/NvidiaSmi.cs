@@ -13,12 +13,7 @@ public static class NvidiaSmi
         if (AppConfig.IsOmenSlim()) return 100;     // Slim chassis
         if (AppConfig.IsOmen16()) return 115;       // Standard OMEN 16
 
-        // ASUS models
-        if (AppConfig.ContainsModel("GU605") || AppConfig.ContainsModel("GA605")) return 125;
-        if (AppConfig.ContainsModel("GA403")) return 90;
-        if (AppConfig.ContainsModel("FA607")) return 140;
-
-        return 175;
+        return 115;
     }
 
     public static int GetMaxGPUPower()

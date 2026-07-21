@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>Acceleration</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>ASUS ACPIに接続できません。 Asus System Control Interfaceをインストールしてください</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>変更を適用するにはデバイスを再起動してください</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>今すぐ再起動？</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Allyコントローラ</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>アニメーション方向</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>アニメーション速度</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>AniMe Matrix</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>アプリは既に実行中です</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>GPUに割り当てられたメモリ</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>バッテリーの状態</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>呼吸</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>時計回り</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>カラーサイクル</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>コメット</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>反時計回り</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>高速</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>照明モード</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>普通</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>虹</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>ランダム</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>リアクト</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>低速</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>固定</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>ストロボ</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>全て</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>ドック</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>ロゴ</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>Scrollwheel</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>アンダーグロー</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>自動的に適用</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>ブート</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>起動音</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>明るさ</value>
@@ -503,9 +431,6 @@
   <data name="Keyboard" xml:space="preserve">
     <value>キーボード</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Keystoneサウンド</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>エコに切り替えるときにGPUを使用しているすべてのアプリを停止します</value>
   </data>
@@ -545,33 +470,6 @@
   <data name="LTDeadzones" xml:space="preserve">
     <value>左トリガーデッドゾーン</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>オーディオビジュアライザー</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>Binary Banner</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>明度調整</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>時計</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>Dim</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>Rog ロゴ</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>Medium</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>オフ</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>画像</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>最大リフレッシュレートで低遅延を実現</value>
   </data>
@@ -607,12 +505,6 @@
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>パフォーマンス</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>マウスと同期</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>ノートPCと同期</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>Multi Zone</value>
@@ -727,12 +619,6 @@
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>スケーリング品質</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>画面の明るさダウン</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>画面の明るさを上げる</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>シャットダウン</value>

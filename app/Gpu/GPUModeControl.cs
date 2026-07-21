@@ -1,7 +1,6 @@
 using OHelper.Display;
 using OHelper.Gpu.NVidia;
 using OHelper.Helpers;
-using OHelper.USB;
 using System.Diagnostics;
 
 namespace OHelper.Gpu
@@ -67,8 +66,6 @@ namespace OHelper.Gpu
             AppConfig.Set("gpu_mode", gpuMode);
             settings.VisualiseGPUMode(gpuMode);
             RefreshFansGpuTab();
-
-            Aura.CustomRGB.ApplyGPUColor(gpuMode);
 
         }
 
@@ -136,20 +133,18 @@ namespace OHelper.Gpu
 
             Task.Run(async () =>
             {
-
-                int targetMode = eco == 1 ? HpACPI.GPUModeEco : HpACPI.GPUModeStandard;
-
-                if (eco == 1)
-                {
-                    HardwareControl.KillGPUApps();
-                    HardwareControl.DisposeGpuControl();
-                    if (AppConfig.IsNVPlatform()) NvidiaGpuControl.StopNVService();
-                }
-
-                Logger.WriteLine($"Running eco command {eco} (mode {targetMode})");
-
                 try
                 {
+                    int targetMode = eco == 1 ? HpACPI.GPUModeEco : HpACPI.GPUModeStandard;
+
+                    if (eco == 1)
+                    {
+                        HardwareControl.KillGPUApps();
+                        HardwareControl.DisposeGpuControl();
+                        if (AppConfig.IsNVPlatform()) NvidiaGpuControl.StopNVService();
+                    }
+
+                    Logger.WriteLine($"Running eco command {eco} (mode {targetMode})");
 
                     int status = Program.acpi.DeviceSet(HpACPI.GPUEco, targetMode, "GPUEco");
                     await Task.Delay(TimeSpan.FromMilliseconds(AppConfig.Get("refresh_delay", 500)));
@@ -238,9 +233,6 @@ namespace OHelper.Gpu
                     if ((GpuAuto && !IsPlugged()) || (ForceGPU && GpuMode == HpACPI.GPUModeEco))
                     {
 
-#pragma warning disable CS0618 // IsXGConnected is ASUS-only
-                        if (Program.acpi.IsXGConnected()) return false;
-#pragma warning restore CS0618
                         if (HardwareControl.IsUsedGPU())
                         {
                             DialogResult dialogResult = MessageBox.Show(Properties.Strings.AlertDGPU, Properties.Strings.AlertDGPUTitle, MessageBoxButtons.YesNo);
@@ -258,17 +250,9 @@ namespace OHelper.Gpu
         }
 
 
-        public void ToggleXGM(bool silent = false)
-        {
-            Logger.WriteLine("XG Mobile toggle is disabled in O-Helper; HP OMEN has no XG Mobile equivalent");
-        }
-
         public void KillGPUApps()
         {
-            if (HardwareControl.GpuControl is not null)
-            {
-                HardwareControl.GpuControl.KillGPUApps();
-            }
+            HardwareControl.KillGPUApps();
         }
 
         public void CaptureNvBootState()

@@ -6,15 +6,15 @@ public class NumericUpDownWithUnit : RNumericUpDown
 {
     #region| Fields |
 
-    private string unit = null;
+    private string? unit;
     private bool unitFirst = false;
-    private string offText = null;
+    private string? offText;
 
     #endregion
 
     #region| Properties |
 
-    public string Unit
+    public string? Unit
     {
         get => unit;
         set
@@ -36,7 +36,7 @@ public class NumericUpDownWithUnit : RNumericUpDown
         }
     }
 
-    public string OffText
+    public string? OffText
     {
         get => offText;
         set

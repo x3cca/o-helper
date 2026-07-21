@@ -1,7 +1,7 @@
 using OHelper.Helpers;
 using System.Diagnostics;
 using System.IO.Compression;
-using System.Net;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -23,6 +23,7 @@ namespace OHelper.AutoUpdate
         const uint WtdChoiceFile = 1;
         const uint WtdStateActionIgnore = 0;
         static readonly Guid WintrustActionGenericVerifyV2 = new("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
+        static readonly HttpClient HttpClient = CreateHttpClient();
 
         readonly SettingsForm settings;
 
@@ -75,19 +76,29 @@ namespace OHelper.AutoUpdate
             if (Math.Abs(DateTimeOffset.Now.ToUnixTimeSeconds() - lastUpdate) < 43200) return;
             lastUpdate = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-            Task.Run(async () =>
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-                CheckForUpdatesAsync();
-            });
+            _ = CheckForUpdatesAfterDelayAsync();
         }
 
         public void Update()
         {
             if (update)
-                Task.Run(() => CheckForUpdatesAsync(true));
+                _ = CheckForUpdatesAsync(true);
             else
                 LoadReleases();
+        }
+
+        static HttpClient CreateHttpClient()
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("O-Helper", "1.0"));
+            client.Timeout = TimeSpan.FromMinutes(10);
+            return client;
+        }
+
+        async Task CheckForUpdatesAfterDelayAsync()
+        {
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            await CheckForUpdatesAsync();
         }
 
         public void LoadReleases()
@@ -102,15 +113,13 @@ namespace OHelper.AutoUpdate
             }
         }
 
-        async void CheckForUpdatesAsync(bool force = false)
+        async Task CheckForUpdatesAsync(bool force = false)
         {
             if (AppConfig.Is("skip_updates")) return;
 
             try
             {
-                using var httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "O-Helper App");
-                var json = await httpClient.GetStringAsync(LatestReleaseApiUrl);
+                var json = await HttpClient.GetStringAsync(LatestReleaseApiUrl);
                 var config = JsonSerializer.Deserialize<JsonElement>(json);
                 if (!IsExpectedRelease(config))
                 {
@@ -145,7 +154,7 @@ namespace OHelper.AutoUpdate
 
                 if (force || Environment.GetCommandLineArgs() is [_, "autoupdate", ..])
                 {
-                    AutoUpdate(asset.Value, gitVersion);
+                    await AutoUpdateAsync(asset.Value, gitVersion);
                     return;
                 }
 
@@ -154,11 +163,11 @@ namespace OHelper.AutoUpdate
                     DialogResult dialogResult = DialogResult.No;
                     settings.Invoke((System.Windows.Forms.MethodInvoker)delegate
                     {
-                        dialogResult = MessageBox.Show(settings, Properties.Strings.DownloadUpdate + ": O-Helper " + tag + "?", "Update", MessageBoxButtons.YesNo);
+                        dialogResult = MessageBox.Show(settings, Properties.Strings.DownloadUpdate + ": O-Helper " + tag + "?", Properties.Strings.Updates, MessageBoxButtons.YesNo);
                     });
 
                     if (dialogResult == DialogResult.Yes)
-                        AutoUpdate(asset.Value, gitVersion);
+                        await AutoUpdateAsync(asset.Value, gitVersion);
                     else
                         AppConfig.Set("skip_version", tag);
                 }
@@ -295,7 +304,7 @@ namespace OHelper.AutoUpdate
             }
         }
 
-        void AutoUpdate(ReleaseAsset asset, Version version)
+        async Task AutoUpdateAsync(ReleaseAsset asset, Version version)
         {
             string? installDirectory = Path.GetDirectoryName(Application.ExecutablePath);
             if (string.IsNullOrEmpty(installDirectory))
@@ -311,9 +320,14 @@ namespace OHelper.AutoUpdate
             try
             {
                 Directory.CreateDirectory(stagingDirectory);
-                using var client = new WebClient();
-                client.Headers.Add("User-Agent", "O-Helper App");
-                client.DownloadFile(asset.Url, downloadPath);
+                using var response = await HttpClient.GetAsync(asset.Url, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+                if (response.Content.Headers.ContentLength is long contentLength && contentLength > MaximumUpdateSize)
+                    throw new InvalidDataException("Downloaded update exceeds the maximum allowed size.");
+
+                await using (Stream source = await response.Content.ReadAsStreamAsync())
+                await using (FileStream destination = File.Create(downloadPath))
+                    await source.CopyToAsync(destination);
 
                 if (new FileInfo(downloadPath).Length != asset.Size || !FileHashMatches(downloadPath, asset.Sha256))
                     throw new InvalidDataException("Downloaded update does not match the release SHA-256 digest.");

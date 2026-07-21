@@ -18,11 +18,17 @@ jobs:
     runs-on: windows-2022
     steps:
     - uses: actions/checkout@v4
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.301'
+    - name: Restore locked dependencies
+      run: dotnet restore app/OHelper.sln --locked-mode
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
         languages: c#
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+    - name: Build
+      run: dotnet build app/OHelper.sln --no-restore
     - name: Analyze
       uses: github/codeql-action/analyze@v3

@@ -115,7 +115,7 @@ namespace OHelper.UI
             Rectangle rectSurface = ClientRectangle;
 
             using (GraphicsPath pathSurface = GetFigurePath(rectSurface, radius + border))
-            using (Pen penSurface = new Pen(Parent.BackColor, border))
+            using (Pen penSurface = new Pen(Parent?.BackColor ?? BackColor, border))
             {
                 pevent.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 Region = new Region(pathSurface);
@@ -165,9 +165,7 @@ namespace OHelper.UI
                     rect.Y += Image.Height;
                     rect.Height -= Image.Height;
                 }
-                using (var brush = new SolidBrush(Parent.BackColor))
-                    pevent.Graphics.FillRectangle(brush, rect);
-                using (var brush = new SolidBrush(BackColor))
+                using (var brush = new SolidBrush(Parent?.BackColor ?? BackColor))
                     pevent.Graphics.FillRectangle(brush, rect);
                 TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak;
                 TextRenderer.DrawText(pevent.Graphics, Text, Font, rect, Color.FromArgb(150, ForeColor), flags);

@@ -24,7 +24,7 @@ namespace OHelper.Display
                 return false;
             }
 
-            string internalName = AppConfig.GetString("internal_display");
+            string? internalName = AppConfig.GetString("internal_display");
 
             foreach (var path in paths)
             {

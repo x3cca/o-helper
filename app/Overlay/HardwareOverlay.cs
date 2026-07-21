@@ -391,7 +391,7 @@ namespace OHelper.Overlay
         private static string FormatFan(int? fan)
         {
             if (fan is null || fan < 0) return "";
-            return fan.ToString();
+            return fan.Value.ToString();
         }
 
         private void Tick()
@@ -787,7 +787,7 @@ namespace OHelper.Overlay
 
         private static Screen TargetScreen()
         {
-            string name = AppConfig.GetString("overlay_screen");
+            string? name = AppConfig.GetString("overlay_screen");
             if (!string.IsNullOrEmpty(name))
                 foreach (Screen s in Screen.AllScreens)
                     if (s.DeviceName == name) return s;
@@ -847,7 +847,7 @@ namespace OHelper.Overlay
 
         private static Color ParseColor(string key, Color fallback)
         {
-            string hex = AppConfig.GetString(key);
+            string? hex = AppConfig.GetString(key);
             if (string.IsNullOrEmpty(hex)) return fallback;
             try { return ColorTranslator.FromHtml(hex.StartsWith("#") ? hex : "#" + hex); }
             catch { return fallback; }

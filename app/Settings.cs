@@ -1,5 +1,3 @@
-using OHelper.Ally;
-using OHelper.AnimeMatrix;
 using OHelper.AutoUpdate;
 using OHelper.Battery;
 using OHelper.Display;
@@ -8,11 +6,8 @@ using OHelper.Gpu;
 using OHelper.Helpers;
 using OHelper.Input;
 using OHelper.Mode;
-using OHelper.Peripherals;
-using OHelper.Peripherals.Mouse;
 using OHelper.Properties;
 using OHelper.UI;
-using OHelper.USB;
 using System.Diagnostics;
 using System.Timers;
 
@@ -21,25 +16,16 @@ namespace OHelper
     public partial class SettingsForm : RForm
     {
         ContextMenuStrip contextMenuStrip = new CustomContextMenu();
-        ToolStripMenuItem menuEco, menuStandard, menuUltimate, menuOptimized;
+        ToolStripMenuItem menuEco = default!, menuStandard = default!, menuUltimate = default!, menuOptimized = default!;
         DonateControl donateControl;
 
-        public GPUModeControl gpuControl;
-        public AllyControl allyControl;
         AutoUpdateControl updateControl;
-
-        AsusMouseSettings? mouseSettings;
-
-        public AniMatrixControl matrixControl;
 
         public static System.Timers.Timer sensorTimer = default!;
         private static readonly bool sensorsAlways = AppConfig.Is("sensors_always");
 
-        public Matrix? matrixForm;
         public Fans? fansForm;
         public Extra? extraForm;
-        public Updates? updatesForm;
-        public Handheld? handheldForm;
 
         static long lastRefresh;
         static long lastBatteryRefresh;
@@ -63,13 +49,11 @@ namespace OHelper
             batteryLimitBackend = AppConfig.GetBatteryChargeLimitBackend();
             panelBattery.Visible = batteryLimitBackend != BatteryChargeLimitBackendKind.None;
             sliderBattery.Visible = batteryLimitBackend != BatteryChargeLimitBackendKind.None;
+            panelPerformance.Visible = AppConfig.SupportsPerformanceModes();
             InitTheme(true);
             InitDynamicRefreshButton();
 
-            gpuControl = new GPUModeControl(this);
             updateControl = new AutoUpdateControl(this);
-            matrixControl = new AniMatrixControl(this);
-            allyControl = new AllyControl(this);
 
             buttonSilent.Text = Properties.Strings.Silent;
             buttonBalanced.Text = Properties.Strings.Balanced;
@@ -94,24 +78,16 @@ namespace OHelper
             labelGPU.Text = Properties.Strings.GPUMode;
             labelSreen.Text = Properties.Strings.LaptopScreen;
             UpdateKeyboardLabel();
-            labelMatrix.Text = Properties.Strings.AnimeMatrix;
             labelBatteryTitle.Text = Properties.Strings.BatteryChargeLimit;
 
-            checkMatrix.Text = Properties.Strings.TurnOffOnBattery;
-            checkMatrixLid.Text = Properties.Strings.DisableOnLidClose;
             checkStartup.Text = Properties.Strings.RunOnStartup;
 
-            buttonMatrix.Text = Properties.Strings.PictureGif;
             buttonQuit.Text = Properties.Strings.Quit;
             buttonUpdates.Text = Properties.Strings.Updates;
             buttonDonate.Text = Properties.Strings.Donate;
 
-            buttonController.Text = Properties.Strings.Controller;
-            labelAlly.Text = Properties.Strings.AllyController;
-
             // Accessible Labels
 
-            panelMatrix.AccessibleName = Properties.Strings.AnimeMatrix;
             sliderBattery.AccessibleName = Properties.Strings.BatteryChargeLimit;
             buttonQuit.AccessibleName = Properties.Strings.Quit;
             buttonUpdates.AccessibleName = Properties.Strings.BiosAndDriverUpdates;
@@ -153,7 +129,6 @@ namespace OHelper
             buttonStandard.BorderColor = colorStandard;
             buttonUltimate.BorderColor = colorTurbo;
             buttonOptimized.BorderColor = colorEco;
-            buttonXGM.BorderColor = colorTurbo;
 
             button60Hz.BorderColor = colorGray;
             button120Hz.BorderColor = colorGray;
@@ -196,23 +171,12 @@ namespace OHelper
             buttonFans.Click += ButtonFans_Click;
             buttonMaxFans.Click += ButtonMaxFans_Click;
             buttonKeyboard.Click += ButtonKeyboard_Click;
-            buttonController.Click += ButtonHandheld_Click;
 
             pictureColor.Click += PictureColor_Click;
             pictureColor2.Click += PictureColor2_Click;
 
             labelCPUFan.Click += LabelCPUFan_Click;
             labelGPUFan.Click += LabelCPUFan_Click;
-
-            comboMatrix.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboMatrixRunning.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboInterval.DropDownStyle = ComboBoxStyle.DropDownList;
-
-            comboMatrix.DropDownClosed += ComboMatrix_SelectedValueChanged;
-            comboMatrixRunning.DropDownClosed += ComboMatrixRunning_SelectedValueChanged;
-            comboInterval.DropDownClosed += ComboInterval_DropDownClosed;
-
-            buttonMatrix.Click += ButtonMatrix_Click;
 
             checkStartup.Checked = Startup.IsScheduled();
             checkStartup.CheckedChanged += CheckStartup_CheckedChanged;
@@ -231,11 +195,6 @@ namespace OHelper
 
             buttonUltimate.MouseMove += ButtonUltimate_MouseHover;
             buttonUltimate.MouseLeave += ButtonGPU_MouseLeave;
-
-            tableGPU.MouseMove += ButtonXGM_MouseMove;
-            tableGPU.MouseLeave += ButtonGPU_MouseLeave;
-
-            buttonXGM.Click += ButtonXGM_Click;
 
             buttonScreenAuto.MouseMove += ButtonScreenAuto_MouseHover;
             buttonScreenAuto.MouseLeave += ButtonScreen_MouseLeave;
@@ -256,7 +215,7 @@ namespace OHelper
             buttonMiniled.MouseLeave += ButtonScreen_MouseLeave;
 
             buttonUpdates.Click += ButtonUpdates_Click;
-            // ASUS models keep the driver/BIOS update form; O-Helper models use this as a static releases link.
+            // O-Helper uses this button as a static link to the release page.
 
             if (batteryLimitBackend != BatteryChargeLimitBackendKind.None)
             {
@@ -282,25 +241,12 @@ namespace OHelper
             labelCharge.MouseLeave += PanelBattery_MouseLeave;
             labelBattery.Click += LabelBattery_Click;
 
-            buttonPeripheral1.Click += ButtonPeripheral_Click;
-            buttonPeripheral2.Click += ButtonPeripheral_Click;
-            buttonPeripheral3.Click += ButtonPeripheral_Click;
-
-            buttonPeripheral1.MouseEnter += ButtonPeripheral_MouseEnter;
-            buttonPeripheral2.MouseEnter += ButtonPeripheral_MouseEnter;
-            buttonPeripheral3.MouseEnter += ButtonPeripheral_MouseEnter;
 
             buttonBatteryFull.MouseEnter += ButtonBatteryFull_MouseEnter;
             buttonBatteryFull.MouseLeave += ButtonBatteryFull_MouseLeave;
             buttonBatteryFull.Click += ButtonBatteryFull_Click;
 
-            buttonControllerMode.Click += ButtonControllerMode_Click;
-            buttonBacklight.Click += ButtonBacklight_Click;
-
-            buttonFPS.Click += ButtonFPS_Click;
             buttonOverlay.Click += ButtonOverlay_Click;
-
-            buttonAutoTDP.Click += ButtonAutoTDP_Click;
             buttonAutoTDP.BorderColor = colorTurbo;
 
             Text = "O-Helper " + (ProcessHelper.IsUserAdministrator() ? "*" : "-") + " " + AppConfig.GetModelShort();
@@ -321,7 +267,6 @@ namespace OHelper
             labelBacklight.ForeColor = colorStandard;
             labelBacklight.Click += LabelBacklight_Click;
 
-            InitMaxFans();
             panelPerformance.Focus();
             InitVisual();
         }
@@ -368,7 +313,7 @@ namespace OHelper
         private void LabelBattery_Click(object? sender, EventArgs e)
         {
             HardwareControl.chargeWatt = !HardwareControl.chargeWatt;
-            RefreshSensors(true);
+            _ = RefreshSensors(true);
         }
 
         private void ButtonEnergySaver_Click(object? sender, EventArgs e)
@@ -405,11 +350,6 @@ namespace OHelper
         private void SliderBattery_MouseUp(object? sender, MouseEventArgs e)
         {
             BatteryControl.SetBatteryChargeLimit(sliderBattery.Value);
-        }
-
-        private void ButtonAutoTDP_Click(object? sender, EventArgs e)
-        {
-            allyControl.ToggleAutoTDP();
         }
 
         private void LabelCharge_Click(object? sender, EventArgs e)
@@ -458,30 +398,8 @@ namespace OHelper
             }
 
             var gamuts = VisualControl.GetGamutModes();
-
-            // Color profiles exist
-            if (gamuts.Count > 0)
-            {
-                tableVisual.ColumnCount = 3;
-                buttonInstallColor.Visible = false;
-            }
-            else
-            {
-                // If it's possible to retrieve color profiles
-                if (ColorProfileHelper.ProfileExists())
-                {
-                    tableVisual.ColumnCount = 2;
-
-                    buttonInstallColor.Text = Properties.Strings.DownloadColorProfiles;
-                    buttonInstallColor.Visible = true;
-                    buttonInstallColor.Click += ButtonInstallColorProfile_Click;
-
-                    panelGamma.Visible = true;
-                    tableVisual.Visible = true;
-                }
-
-                return;
-            }
+            tableVisual.ColumnCount = 3;
+            buttonInstallColor.Visible = false;
 
             panelGamma.Visible = true;
             tableVisual.Visible = true;
@@ -543,23 +461,18 @@ namespace OHelper
                     comboVisual.SelectedIndex = comboVisual.Items.Count - 1;
             }
 
-            Program.toast.RunToast(comboVisual.GetItemText(comboVisual.SelectedItem), ToastIcon.BrightnessUp);
-        }
-
-        private async void ButtonInstallColorProfile_Click(object? sender, EventArgs e)
-        {
-            await ColorProfileHelper.InstallProfile();
-            InitVisual();
+            Program.toast.RunToast(comboVisual.GetItemText(comboVisual.SelectedItem) ?? string.Empty, ToastIcon.BrightnessUp);
         }
 
         private void ComboGamut_SelectedValueChanged(object? sender, EventArgs e)
         {
-            VisualControl.SetGamut((int)comboGamut.SelectedValue);
+            if (comboGamut.SelectedValue is int gamut) VisualControl.SetGamut(gamut);
         }
 
         private void ComboVisual_SelectedValueChanged(object? sender, EventArgs e)
         {
-            VisualControl.SetVisual((SplendidCommand)comboVisual.SelectedValue, (int)comboColorTemp.SelectedValue);
+            if (comboVisual.SelectedValue is SplendidCommand visual && comboColorTemp.SelectedValue is int temperature)
+                VisualControl.SetVisual(visual, temperature);
             VisualiseDisabled();
         }
 
@@ -606,86 +519,6 @@ namespace OHelper
             KeyboardHook.KeyKeyKeyPress(Keys.LControlKey, Keys.LShiftKey, Keys.O);
         }
 
-        private void ButtonHandheld_Click(object? sender, EventArgs e)
-        {
-            if (handheldForm == null || handheldForm.Text == "")
-            {
-                handheldForm = new Handheld();
-                AddOwnedForm(handheldForm);
-            }
-
-            if (handheldForm.Visible)
-            {
-                handheldForm.Close();
-            }
-            else
-            {
-                //handheldForm.FormPosition();
-                handheldForm.Show();
-            }
-        }
-
-        private void ButtonFPS_Click(object? sender, EventArgs e)
-        {
-            allyControl.ToggleFPSLimit();
-        }
-
-        private void ButtonBacklight_Click(object? sender, EventArgs e)
-        {
-            allyControl.ToggleBacklight();
-        }
-
-        private void ButtonControllerMode_Click(object? sender, EventArgs e)
-        {
-            allyControl.ToggleMode();
-        }
-
-        public void VisualiseAlly(bool visible = false)
-        {
-            if (!visible) return;
-
-            panelAlly.Visible = true;
-            panelKeyboardTitle.Visible = false;
-            panelKeyboard.Padding = new Padding(panelKeyboard.Padding.Left, 0, panelKeyboard.Padding.Right, panelKeyboard.Padding.Bottom);
-
-            tableAMD.Visible = true;
-        }
-
-        public void VisualiseController(ControllerMode mode)
-        {
-            switch (mode)
-            {
-                case ControllerMode.Gamepad:
-                    buttonControllerMode.Text = "Gamepad";
-                    break;
-                case ControllerMode.Mouse:
-                    buttonControllerMode.Text = "Mouse";
-                    break;
-                case ControllerMode.Skip:
-                    buttonControllerMode.Text = "Skip";
-                    break;
-                default:
-                    buttonControllerMode.Text = "Auto";
-                    break;
-            }
-        }
-
-        public void VisualiseBacklight(int backlight)
-        {
-            buttonBacklight.Text = Math.Round((double)backlight * 33.33).ToString() + "%";
-        }
-
-        public void VisualiseFPSLimit(int limit)
-        {
-            buttonFPS.Text = "FPS Limit " + ((limit > 0 && limit <= 120) ? limit : "OFF");
-        }
-
-        public void VisualiseAutoTDP(bool status)
-        {
-            Logger.WriteLine($"Auto TDP: {status}");
-            buttonAutoTDP.Activated = status;
-        }
-
         private void SettingsForm_Focused(object? sender, EventArgs e)
         {
             if (activateCheck)
@@ -708,7 +541,7 @@ namespace OHelper
         private void ButtonBatteryFull_MouseLeave(object? sender, EventArgs e)
         {
             batteryFullMouseOver = false;
-            RefreshSensors(true);
+            _ = RefreshSensors(true);
         }
 
         private void ButtonBatteryFull_MouseEnter(object? sender, EventArgs e)
@@ -738,7 +571,7 @@ namespace OHelper
         private void PanelBattery_MouseLeave(object? sender, EventArgs e)
         {
             batteryMouseOver = false;
-            RefreshSensors(true);
+            _ = RefreshSensors(true);
         }
 
         private void ShowBatteryWear()
@@ -761,57 +594,18 @@ namespace OHelper
             sensorTimer.Enabled = this.Visible || sensorsAlways;
             if (this.Visible)
             {
-                Task.Run((Action)RefreshPeripheralsBattery);
                 updateControl.CheckForUpdates();
                 BeginInvoke(new Action(() =>
                 {
                     ScreenControl.InitScreen();
-                    VisualizeXGM();
                     buttonEnergySaver.Visible = PowerNative.GetBatterySaverStatus();
                 }));
             }
         }
 
-        private void RefreshPeripheralsBattery()
-        {
-            PeripheralsProvider.RefreshBatteryForAllDevices(true);
-        }
-
         private void ButtonUpdates_Click(object? sender, EventArgs e)
         {
-            if (!AppConfig.IsASUS())
-            {
-                try
-                {
-                    Process.Start(new ProcessStartInfo("https://github.com/CoolDotty/o-helper/releases") { UseShellExecute = true });
-                }
-                catch (Exception ex)
-                {
-                    Logger.WriteLine("Failed to open releases page:" + ex.Message);
-                }
-                return;
-            }
-
-            if (updatesForm == null || updatesForm.Text == "")
-            {
-                updatesForm = new Updates();
-                AddOwnedForm(updatesForm);
-            }
-
-            if (updatesForm.Visible)
-            {
-                updatesForm.Close();
-            }
-            else
-            {
-                updatesForm.Show();
-            }
-        }
-
-        public void VisualiseMatrixPicture(string image)
-        {
-            if (matrixForm == null || matrixForm.Text == "") return;
-            matrixForm.VisualiseMatrix(image);
+            updateControl.LoadReleases();
         }
 
         protected override void WndProc(ref Message m)
@@ -833,48 +627,44 @@ namespace OHelper
 
             if (m.Msg == NativeMethods.WM_POWERBROADCAST && m.WParam == (IntPtr)NativeMethods.PBT_POWERSETTINGCHANGE)
             {
-                var settings = (NativeMethods.POWERBROADCAST_SETTING)m.GetLParam(typeof(NativeMethods.POWERBROADCAST_SETTING));
-                if (settings.PowerSetting == NativeMethods.PowerSettingGuid.LIDSWITCH_STATE_CHANGE)
+                if (m.GetLParam(typeof(NativeMethods.POWERBROADCAST_SETTING)) is NativeMethods.POWERBROADCAST_SETTING settings)
                 {
-                    switch (settings.Data)
+                    if (settings.PowerSetting == NativeMethods.PowerSettingGuid.LIDSWITCH_STATE_CHANGE)
                     {
-                        case 0:
-                            Logger.WriteLine("Lid Closed");
-                            BatteryControl.AutoBattery();
-                            InputDispatcher.lidClose = AniMatrixControl.lidClose = true;
-                            Aura.ApplyBrightness(0, "Lid");
-                            matrixControl.SetLidMode();
-                            break;
-                        case 1:
-                            Logger.WriteLine("Lid Open");
-                            InputDispatcher.InitFNLock();
-                            InputDispatcher.lidClose = AniMatrixControl.lidClose = false;
-                            Aura.ApplyBrightness(InputDispatcher.GetBacklight(), "Lid");
-                            matrixControl.SetLidMode();
-                            break;
+                        switch (settings.Data)
+                        {
+                            case 0:
+                                Logger.WriteLine("Lid Closed");
+                                BatteryControl.AutoBattery();
+                                InputDispatcher.lidClose = true;
+                                break;
+                            case 1:
+                                Logger.WriteLine("Lid Open");
+                                InputDispatcher.InitFNLock();
+                                InputDispatcher.lidClose = false;
+                                break;
+                        }
                     }
-
-                }
-                else
-                {
-                    switch (settings.Data)
+                    else
                     {
-                        case 0:
-                            Logger.WriteLine("Monitor Power Off");
-                            Aura.SleepBrightness();
-                            Program.hardwareOverlay?.SuspendForDisplayOff();
-                            break;
-                        case 1:
-                            Logger.WriteLine("Monitor Power On");
-                            BatteryControl.AutoBattery();
-                            Program.hardwareOverlay?.ResumeForDisplayOn();
-                            break;
-                        case 2:
-                            Logger.WriteLine("Monitor Dimmed");
-                            break;
+                        switch (settings.Data)
+                        {
+                            case 0:
+                                Logger.WriteLine("Monitor Power Off");
+                                Program.hardwareOverlay?.SuspendForDisplayOff();
+                                break;
+                            case 1:
+                                Logger.WriteLine("Monitor Power On");
+                                BatteryControl.AutoBattery();
+                                Program.hardwareOverlay?.ResumeForDisplayOn();
+                                break;
+                            case 2:
+                                Logger.WriteLine("Monitor Dimmed");
+                                break;
+                        }
                     }
+                    m.Result = (IntPtr)1;
                 }
-                m.Result = (IntPtr)1;
             }
 
             if (m.Msg == Program.WM_TASKBARCREATED)
@@ -1024,13 +814,6 @@ namespace OHelper
             donateControl?.ApplyTheme();
         }
 
-        private void ButtonXGM_Click(object? sender, EventArgs e)
-        {
-            if (!AppConfig.IsASUS()) return;
-            gpuControl.ToggleXGM();
-        }
-
-
         public void SetVersionLabel(string label, bool update = false)
         {
             if (InvokeRequired)
@@ -1055,7 +838,7 @@ namespace OHelper
 
         private static void OnTimedEvent(Object? source, ElapsedEventArgs? e)
         {
-            Program.settingsForm.RefreshSensors();
+            _ = Program.settingsForm.RefreshSensors();
         }
 
         private void ButtonFHD_MouseHover(object? sender, EventArgs e)
@@ -1118,19 +901,6 @@ namespace OHelper
             labelTipGPU.Text = "";
         }
 
-        private void ButtonXGM_MouseMove(object? sender, MouseEventArgs e)
-        {
-            if (sender is null) return;
-            TableLayoutPanel table = (TableLayoutPanel)sender;
-
-            if (!buttonXGM.Visible) return;
-
-            labelTipGPU.Text = buttonXGM.Bounds.Contains(table.PointToClient(Cursor.Position)) ?
-                Properties.Strings.XGMobileStandardModeOnly : "";
-
-        }
-
-
         private void ButtonScreenAuto_Click(object? sender, EventArgs e)
         {
             if (AppConfig.HasDisplayModes())
@@ -1154,73 +924,10 @@ namespace OHelper
                 Startup.UnSchedule();
         }
 
-        private void CheckMatrix_CheckedChanged(object? sender, EventArgs e)
-        {
-            AppConfig.Set("matrix_auto", checkMatrix.Checked ? 1 : 0);
-            matrixControl.SetBatteryAuto();
-        }
-
-        private void CheckMatrixLid_CheckedChanged(object? sender, EventArgs e)
-        {
-            AppConfig.Set("matrix_lid", checkMatrixLid.Checked ? 1 : 0);
-            matrixControl.SetLidMode(true);
-        }
-
-
-        private void ButtonMatrix_Click(object? sender, EventArgs e)
-        {
-
-            if (matrixForm == null || matrixForm.Text == "")
-            {
-                matrixForm = new Matrix();
-                AddOwnedForm(matrixForm);
-            }
-
-            if (matrixForm.Visible)
-            {
-                matrixForm.Close();
-            }
-            else
-            {
-                matrixForm.FormPosition();
-                matrixForm.Show();
-            }
-
-        }
-
-        public void VisualiseMatrixRunning(int mode)
-        {
-            Invoke(delegate
-            {
-                comboMatrixRunning.SelectedIndex = mode;
-                if (comboMatrix.SelectedIndex == 0) comboMatrix.SelectedIndex = 3;
-            });
-        }
-
-        private void ComboInterval_DropDownClosed(object? sender, EventArgs e)
-        {
-            AppConfig.Set("matrix_interval", comboInterval.SelectedIndex);
-            matrixControl.SetDevice();
-        }
-
-        private void ComboMatrixRunning_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            AppConfig.Set("matrix_running", comboMatrixRunning.SelectedIndex);
-            matrixControl.SetDevice();
-        }
-
-
-        private void ComboMatrix_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            AppConfig.Set("matrix_brightness", comboMatrix.SelectedIndex);
-            matrixControl.SetDevice();
-        }
-
-
         private void LabelCPUFan_Click(object? sender, EventArgs e)
         {
             FanSensorControl.fanRpm = !FanSensorControl.fanRpm;
-            RefreshSensors(true);
+            _ = RefreshSensors(true);
         }
 
         private void PictureColor2_Click(object? sender, EventArgs e)
@@ -1230,7 +937,6 @@ namespace OHelper
                 OmenCycleZone();
                 return;
             }
-            SetColorPicker("aura_color2", pictureColor2);
         }
 
         private void PictureColor_Click(object? sender, EventArgs e)
@@ -1300,21 +1006,19 @@ namespace OHelper
         }
 
         private bool _maxFansActive = false;
-        private bool _maxFansReady = false;
 
-        private void InitMaxFans()
+        internal void InitMaxFans()
         {
             var current = Program.acpi?.GetFanMax();
             if (current.HasValue)
             {
                 _maxFansActive = current.Value;
-                _maxFansReady = true;
             }
             else
             {
                 _maxFansActive = false;
-                _maxFansReady = false;
             }
+            Program.modeControl.SetFanMaxActive(_maxFansActive);
             UpdateMaxFansVisual();
         }
 
@@ -1334,12 +1038,20 @@ namespace OHelper
             }
 
             bool enable = !_maxFansActive;
+            if (enable)
+            {
+                // Pause and drain temperature-driven fan updates before issuing the
+                // max-fan command so a falling-temperature tick cannot undo it.
+                Program.modeControl.SetFanMaxActive(true);
+            }
+
             int result = Program.acpi.SetFanMax(enable);
 
             if (result == 1)
             {
                 _maxFansActive = enable;
-                Program.modeControl.SetFanMaxActive(enable);
+                if (!enable)
+                    Program.modeControl.SetFanMaxActive(false);
                 UpdateMaxFansVisual();
                 Program.toast?.RunToast(
                     Properties.Strings.MaxFans + " " + (enable ? Properties.Strings.On : Properties.Strings.Off),
@@ -1356,19 +1068,13 @@ namespace OHelper
             }
             else
             {
+                if (enable)
+                {
+                    Program.modeControl.SetFanMaxActive(false);
+                    Program.modeControl.AutoFans(true);
+                }
                 Logger.WriteLine($"ButtonMaxFans: SetFanMax({enable}) failed");
             }
-        }
-
-        private void SetColorPicker(string colorField = "aura_color", PictureBox? preview = null)
-        {
-            RColorPicker colorDlg = new RColorPicker((preview ?? pictureColor).BackColor);
-            colorDlg.ColorChanged += c =>
-            {
-                AppConfig.Set(colorField, c.ToArgb());
-                SetAura();
-            };
-            colorDlg.ShowDialog(this);
         }
 
         private void ButtonKeyboardColor_Click(object? sender, EventArgs e)
@@ -1376,98 +1082,24 @@ namespace OHelper
             if (AppConfig.IsOmenKeyboardSupported())
             {
                 OmenPickZoneColor();
-                return;
             }
-            SetColorPicker("aura_color");
         }
 
-        private void ButtonRearColor_Click(object? sender, EventArgs e)
+        public void InitKeyboardLighting()
         {
-            SetColorPicker("rear_color", pictureRearColor);
-        }
-
-        private void PictureRearColor_Click(object? sender, EventArgs e)
-        {
-            SetColorPicker("rear_color", pictureRearColor);
-        }
-
-        private void ComboRearLight_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            AppConfig.Set("rear_mode", (int)comboRearLight.SelectedValue);
-            SetAura();
-        }
-
-        public void InitRearLight()
-        {
-            if (!AppConfig.HasRearLight())
-                return;
-
-            Aura.RearMode = (AuraMode)AppConfig.Get("rear_mode");
-            Aura.SetRearColor(AppConfig.Get("rear_color"));
-
-            comboRearLight.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboRearLight.DataSource = new BindingSource(Aura.GetRearModes(), null);
-            comboRearLight.DisplayMember = "Value";
-            comboRearLight.ValueMember = "Key";
-            comboRearLight.SelectedValue = Aura.RearMode;
-            comboRearLight.SelectedValueChanged += ComboRearLight_SelectedValueChanged;
-
-            buttonRearColor.Click += ButtonRearColor_Click;
-            pictureRearColor.Click += PictureRearColor_Click;
-
-            pictureRearColor.BackColor = Aura.RearColor;
-            panelRearLight.Visible = true;
-        }
-
-        public void InitAura()
-        {
-            if (!AppConfig.IsKeyboardLightingControlEnabled())
+            if (!AppConfig.IsKeyboardLightingControlEnabled() || !AppConfig.IsOmenKeyboardSupported())
             {
                 panelKeyboard.Visible = false;
-                Logger.WriteLine("Keyboard lighting control disabled");
+                Logger.WriteLine("OMEN keyboard lighting control unavailable");
                 return;
             }
 
-            if (AppConfig.IsOmenKeyboardSupported())
-            {
-                InitOmenKeyboard();
-                return;
-            }
-
-            comboKeyboard.DropDownStyle = ComboBoxStyle.DropDownList;
-            if (!Aura.IsBacklightDetected && !AppConfig.Is("skip_aura"))
-                Aura.Init();
-
-            Aura.Mode = (AuraMode)AppConfig.Get("aura_mode");
-            Aura.Speed = (AuraSpeed)AppConfig.Get("aura_speed");
-            Aura.SetColor(AppConfig.Get("aura_color"));
-            Aura.SetColor2(AppConfig.Get("aura_color2"));
-
-            comboKeyboard.DataSource = new BindingSource(Aura.GetModes(), null);
-            comboKeyboard.DisplayMember = "Value";
-            comboKeyboard.ValueMember = "Key";
-            comboKeyboard.SelectedValue = Aura.Mode;
-            comboKeyboard.SelectedValueChanged += ComboKeyboard_SelectedValueChanged;
-
-
-            if (Aura.isWhite)
-            {
-                panelColor.Visible = false;
-            }
-
-            if (AppConfig.NoAura())
-            {
-                comboKeyboard.Visible = false;
-            }
-
-            VisualiseAura();
-
-            InitRearLight();
+            InitOmenKeyboard();
         }
 
         // ---- Omen WMI keyboard path ----
         // The Omen keyboard uses the WMI BiosCmd.Keyboard (0x20009) interface via
-        // HpACPI, not the ASUS Aura HID path. We reuse the existing keyboard panel
+        // HpACPI. We reuse the existing keyboard panel
         // controls (comboKeyboard, buttonKeyboardColor, pictureColor, pictureColor2)
         // but drive them with Omen semantics:
         //   * comboKeyboard  -> effect list (Static/Breathing/ColorCycle/Wave)
@@ -1502,7 +1134,7 @@ namespace OHelper
                 return;
             }
 
-            // Hide the ASUS "Extra" button - Omen uses the keyboard panel directly.
+            // Omen uses the keyboard panel directly.
             buttonKeyboard.Visible = false;
 
             // Effect list keyed by integer (0=Static,1=Breathing,2=ColorCycle,3=Wave)
@@ -1513,7 +1145,6 @@ namespace OHelper
             comboKeyboard.Items.Add(Properties.Strings.OmenEffectColorCycle);
             comboKeyboard.Items.Add(Properties.Strings.OmenEffectWave);
             comboKeyboard.SelectedIndex = Math.Max(0, Math.Min(3, AppConfig.Get("omen_kb_effect", 0)));
-            comboKeyboard.SelectedIndexChanged -= ComboKeyboard_SelectedValueChanged;
             comboKeyboard.SelectedIndexChanged += ComboKeyboard_OmenEffectChanged;
 
             // Color picker buttons: clicking the color swatch cycles to the next zone
@@ -1558,14 +1189,15 @@ namespace OHelper
 
             try
             {
-                colorDlg.CustomColors = AppConfig.GetString("aura_color_custom", "")
+                colorDlg.CustomColors = (AppConfig.GetString("keyboard_color_custom",
+                    AppConfig.GetString("aura_color_custom", "")) ?? "")
                     .Split('-').Select(int.Parse).ToArray();
             }
             catch { }
 
             if (colorDlg.ShowDialog() == DialogResult.OK)
             {
-                AppConfig.Set("aura_color_custom", string.Join("-", colorDlg.CustomColors));
+                AppConfig.Set("keyboard_color_custom", string.Join("-", colorDlg.CustomColors));
                 AppConfig.Set($"omen_kb_zone_{_omenKbZone}", colorDlg.Color.ToArgb());
                 _omenZoneColors[_omenKbZone] = colorDlg.Color;
 
@@ -1658,98 +1290,7 @@ namespace OHelper
             }
         }
 
-        public void SetAura()
-        {
-            Task.Run(() =>
-            {
-                Aura.ApplyAura();
-                VisualiseAura();
-            });
-        }
-
-        private void _VisualiseAura()
-        {
-            pictureColor.BackColor = Aura.Color1;
-            pictureColor2.BackColor = Aura.Color2;
-            pictureColor2.Visible = Aura.HasSecondColor();
-
-            if (panelRearLight.Visible) pictureRearColor.BackColor = Aura.RearColor;
-
-            bool dynamic = AppConfig.IsDynamicLighting() && DynamicLightingHelper.IsEnabled() && !AppConfig.IsDynamicLightingOnly();
-
-            if (dynamic)
-            {
-                labelBacklight.Cursor = Cursors.Hand;
-                labelBacklight.Text = Strings.DisableDynamicLighting;
-            } else if (Aura.Mode == AuraMode.AMBIENT)
-            {
-                labelBacklight.Cursor = Cursors.Default;
-                labelBacklight.Text = Strings.AmbientModeResources;
-            } else
-            {
-                labelBacklight.Cursor = Cursors.Default;
-                labelBacklight.Text = "";
-            }
-        }
-
-        public void VisualiseAura()
-        {
-            if (InvokeRequired)
-                Invoke(_VisualiseAura);
-            else
-                _VisualiseAura();
-        }
-
-        public void InitMatrix()
-        {
-
-            if (!matrixControl.IsValid)
-            {
-                panelMatrix.Visible = false;
-                return;
-            }
-
-            if (matrixControl.IsSlash)
-            {
-                labelMatrix.Text = "Slash Lighting";
-                comboMatrixRunning.Items.Clear();
-
-                foreach (var item in SlashDevice.Modes)
-                {
-                    comboMatrixRunning.Items.Add(item.Value);
-                }
-
-                comboInterval.Visible = true;
-                comboInterval.Items.Add(Properties.Strings.IntervalOff);
-                for (int i = 1; i <= 5; i++) comboInterval.Items.Add(string.Format(Properties.Strings.IntervalSeconds, i));
-
-                buttonMatrix.Visible = false;
-            }
-
-            comboMatrix.SelectedIndex = Math.Max(0, Math.Min(AppConfig.Get("matrix_brightness", 0), comboMatrix.Items.Count - 1));
-            comboMatrixRunning.SelectedIndex = Math.Min(AppConfig.Get("matrix_running", 0), comboMatrixRunning.Items.Count - 1);
-            comboInterval.SelectedIndex = Math.Min(AppConfig.Get("matrix_interval", 0), comboInterval.Items.Count - 1);
-
-            checkMatrix.Checked = AppConfig.Is("matrix_auto");
-            checkMatrix.CheckedChanged += CheckMatrix_CheckedChanged;
-
-            checkMatrixLid.Checked = AppConfig.Is("matrix_lid");
-            checkMatrixLid.CheckedChanged += CheckMatrixLid_CheckedChanged;
-
-
-        }
-
-
-        public void CycleMatrix(int delta)
-        {
-            comboMatrix.SelectedIndex = Math.Min(Math.Max(0, comboMatrix.SelectedIndex + delta), comboMatrix.Items.Count - 1);
-            AppConfig.Set("matrix_brightness", comboMatrix.SelectedIndex);
-            matrixControl.SetDevice();
-            Program.toast.RunToast(comboMatrix.GetItemText(comboMatrix.SelectedItem), delta > 0 ? ToastIcon.BacklightUp : ToastIcon.BacklightDown);
-        }
-
-
-        public void CycleAuraMode(int delta)
+        public void CycleKeyboardEffect(int delta)
         {
             if (!AppConfig.IsKeyboardLightingControlEnabled()) return;
 
@@ -1768,15 +1309,8 @@ namespace OHelper
                     comboKeyboard.SelectedIndex = comboKeyboard.Items.Count - 1;
             }
 
-            Program.toast.RunToast(comboKeyboard.GetItemText(comboKeyboard.SelectedItem), ToastIcon.BacklightUp);
+            Program.toast.RunToast(comboKeyboard.GetItemText(comboKeyboard.SelectedItem) ?? string.Empty, ToastIcon.BacklightUp);
         }
-
-        private void ComboKeyboard_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            AppConfig.Set("aura_mode", (int)comboKeyboard.SelectedValue);
-            SetAura();
-        }
-
 
         private void Button120Hz_Click(object? sender, EventArgs e)
         {
@@ -2011,7 +1545,6 @@ namespace OHelper
 
         private void ButtonQuit_Click(object? sender, EventArgs e)
         {
-            matrixControl.Dispose();
             Close();
             Program.trayIcon.Visible = false;
             Application.Exit();
@@ -2025,10 +1558,6 @@ namespace OHelper
             this.Hide();
             if (fansForm != null && fansForm.Text != "") fansForm.Close();
             if (extraForm != null && extraForm.Text != "") extraForm.Close();
-            if (updatesForm != null && updatesForm.Text != "") updatesForm.Close();
-            if (matrixForm != null && matrixForm.Text != "") matrixForm.Close();
-            if (handheldForm != null && handheldForm.Text != "") handheldForm.Close();
-            if (mouseSettings != null && mouseSettings.Text != "") mouseSettings.Close();
             MemoryHelper.TrimAfter();
         }
 
@@ -2050,9 +1579,6 @@ namespace OHelper
         {
             return (fansForm != null && fansForm.ContainsFocus) ||
                    (extraForm != null && extraForm.ContainsFocus) ||
-                   (updatesForm != null && updatesForm.ContainsFocus) ||
-                   (matrixForm != null && matrixForm.ContainsFocus) ||
-                   (handheldForm != null && handheldForm.ContainsFocus) ||
                    this.ContainsFocus ||
                    (lostFocusCheck && Math.Abs(DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastLostFocus) < 300);
         }
@@ -2068,17 +1594,17 @@ namespace OHelper
 
         private void ButtonUltimate_Click(object? sender, EventArgs e)
         {
-            gpuControl.SetGPUMode(HpACPI.GPUModeUltimate);
+            Program.gpuControl.SetGPUMode(HpACPI.GPUModeUltimate);
         }
 
         private void ButtonStandard_Click(object? sender, EventArgs e)
         {
-            gpuControl.SetGPUMode(HpACPI.GPUModeStandard);
+            Program.gpuControl.SetGPUMode(HpACPI.GPUModeStandard);
         }
 
         private void ButtonEco_Click(object? sender, EventArgs e)
         {
-            gpuControl.SetGPUMode(HpACPI.GPUModeEco);
+            Program.gpuControl.SetGPUMode(HpACPI.GPUModeEco);
         }
 
 
@@ -2086,15 +1612,15 @@ namespace OHelper
         {
             AppConfig.Set("gpu_auto", (AppConfig.Get("gpu_auto") == 1) ? 0 : 1);
             VisualiseGPUMode();
-            gpuControl.AutoGPUMode(true);
+            Program.gpuControl.AutoGPUMode(true);
         }
 
         private void ButtonStopGPU_Click(object? sender, EventArgs e)
         {
-            gpuControl.KillGPUApps();
+            Program.gpuControl.KillGPUApps();
         }
 
-        public async void RefreshSensors(bool force = false)
+        public async Task RefreshSensors(bool force = false)
         {
             int throttle = (!Visible && sensorsAlways) ? 6000 : 2000;
             if (!force && Math.Abs(DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastRefresh) < throttle) return;
@@ -2109,9 +1635,15 @@ namespace OHelper
             string battery = "";
             string charge = "";
 
-            await Task.Run(() => HardwareControl.ReadSensors());
-            if (Visible) Task.Run((Action)PeripheralsProvider.RefreshBatteryForAllDevices);
-
+            try
+            {
+                await Task.Run(() => HardwareControl.ReadSensors());
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLine("Sensor refresh failed: " + ex.Message);
+                return;
+            }
             if (HardwareControl.cpuTemp > 0)
                 cpuTemp = ": " + TempHelper.FormatTemp((double)HardwareControl.cpuTemp);
 
@@ -2150,6 +1682,14 @@ namespace OHelper
                 });
 
             if (Program.trayIcon is not null) Program.trayIcon.Text = trayTip;
+        }
+
+        public void Shutdown()
+        {
+            sensorTimer?.Stop();
+            sensorTimer?.Dispose();
+            fansForm?.Close();
+            extraForm?.Close();
         }
 
         public void LabelFansResult(string text)
@@ -2260,47 +1800,6 @@ namespace OHelper
 
 
 
-        public void VisualizeXGM(int GPUMode = -1)
-        {
-            if (!AppConfig.IsASUS())
-            {
-                buttonXGM.Enabled = buttonXGM.Visible = false;
-                return;
-            }
-
-#pragma warning disable CS0618 // IsXGConnected is ASUS-only
-            bool connected = Program.acpi.IsXGConnected();
-#pragma warning restore CS0618
-            buttonXGM.Enabled = buttonXGM.Visible = connected;
-
-            if (!connected) return;
-
-            if (GPUMode != -1)
-                ButtonEnabled(buttonXGM, AppConfig.IsAMDiGPU() || GPUMode != HpACPI.GPUModeEco);
-
-
-            int activated = Program.acpi.DeviceGet(HpACPI.GPUXG);
-            Logger.WriteLine("XGM Activated flag: " + activated);
-
-            buttonXGM.Activated = activated == 1;
-
-            if (activated == 1)
-            {
-                ButtonEnabled(buttonOptimized, false);
-                ButtonEnabled(buttonEco, false);
-                ButtonEnabled(buttonStandard, false);
-                ButtonEnabled(buttonUltimate, false);
-            }
-            else
-            {
-                ButtonEnabled(buttonOptimized, true);
-                ButtonEnabled(buttonEco, true);
-                ButtonEnabled(buttonStandard, true);
-                ButtonEnabled(buttonUltimate, true);
-            }
-
-        }
-
         public void VisualiseGPUButtons(bool eco = true, bool standard = true, bool ultimate = true, bool optimized = true)
         {
             isMuxGpu = ultimate;
@@ -2345,7 +1844,7 @@ namespace OHelper
         }
 
 
-        public void LockGPUModes(string text = null)
+        public void LockGPUModes(string? text = null)
         {
             Invoke(delegate
             {
@@ -2355,7 +1854,6 @@ namespace OHelper
                 ButtonEnabled(buttonEco, false);
                 ButtonEnabled(buttonStandard, false);
                 ButtonEnabled(buttonUltimate, false);
-                ButtonEnabled(buttonXGM, false);
 
                 labelGPU.Text = text;
             });
@@ -2363,27 +1861,6 @@ namespace OHelper
 
         public void VisualiseGPUMode(int GPUMode = -1)
         {
-            if (AppConfig.IsAlly())
-            {
-                tableGPU.Visible = false;
-                labelGPU.Text = "GPU";
-                if (!AppConfig.IsASUS())
-                {
-                    VisualiseIcon();
-                    return;
-                }
-
-#pragma warning disable CS0618 // IsXGConnected is ASUS-only
-                if (Program.acpi.IsXGConnected())
-#pragma warning restore CS0618
-                {
-                    tableAMD.Controls.Add(buttonXGM, 1, 0);
-                    VisualizeXGM();
-                }
-                VisualiseIcon();
-                return;
-            }
-
             ButtonEnabled(buttonOptimized, true);
             ButtonEnabled(buttonEco, true);
             ButtonEnabled(buttonStandard, true);
@@ -2426,8 +1903,6 @@ namespace OHelper
             }
 
             VisualiseIcon();
-            VisualizeXGM(GPUMode);
-
             if (isGpuSection)
             {
                 menuEco.Checked = buttonEco.Activated;
@@ -2554,176 +2029,7 @@ namespace OHelper
                         type = "4-Zone RGB";
                 }
             }
-            else if (Aura.BacklightType != AuraBacklightType.Unknown)
-            {
-                type = Aura.BacklightType switch
-                {
-                    AuraBacklightType.PerKey => "Per-Key RGB",
-                    AuraBacklightType.MultiZone => "4-Zone RGB",
-                    AuraBacklightType.SingleZone => "Single Zone",
-                    _ => ""
-                };
-            }
-
-            labelKeyboard.Text = Properties.Strings.LaptopKeyboard + (type.Length > 0 ? ": " + type : "") + (PeripheralsProvider.IsAuraSync ? " +" : "");
-        }
-
-        public void VisualizePeripherals()
-        {
-            if (!PeripheralsProvider.IsAnyPeripheralConnect())
-            {
-                panelPeripherals.Visible = false;
-                return;
-            }
-
-            Button[] buttons = new Button[] { buttonPeripheral1, buttonPeripheral2, buttonPeripheral3 };
-
-            //we only support 4 devces for now. Who has more than 4 mice connected to the same PC anyways....
-            List<IPeripheral> lp = PeripheralsProvider.AllPeripherals();
-
-            for (int i = 0; i < lp.Count && i < buttons.Length; ++i)
-            {
-                IPeripheral m = lp.ElementAt(i);
-                Button b = buttons[i];
-
-                string id = m.GetDisplayName();
-                bool ready = m.IsDeviceReady;
-                bool hasBat = m.HasBattery();
-                bool charging = ready && hasBat && m.Charging;
-                int level = (ready && hasBat) ? Math.Min(5, (m.Battery + 10) / 20) : -1;
-                bool showPercent = AppConfig.Is("mouse_battery") && ready && hasBat;
-                int cacheBattery = showPercent ? m.Battery : -1;
-                var state = (id, ready, charging, level, cacheBattery, b.ForeColor.ToArgb());
-
-                if (b.Tag is ValueTuple<string, bool, bool, int, int, int> prev && prev.Equals(state) && b.Visible)
-                    continue;
-
-                b.Text = showPercent ? id + "\n" + m.Battery + "%" : id;
-
-                Image? baseIcon = m.DeviceType() switch
-                {
-                    PeripheralType.Mouse => Properties.Resources.icons8_maus_48,
-                    PeripheralType.Keyboard => Properties.Resources.icons8_keyboard_32,
-                    _ => null,
-                };
-
-                if (baseIcon is not null)
-                {
-                    int iw = baseIcon.Width;
-                    int ih = baseIcon.Height;
-                    Image composed = ControlHelper.TintImage(baseIcon, b.ForeColor);
-                    if (!ready)
-                    {
-                        composed = ControlHelper.OverlayBadge(composed, Properties.Resources.icons8_cancel_48, RForm.colorTurbo, iconWidth: iw, iconHeight: ih);
-                    }
-                    else if (hasBat)
-                    {
-                        if (charging)
-                            composed = ControlHelper.OverlayBadge(composed, Properties.Resources.icons8_flash_48, RForm.colorEco, iconWidth: iw, iconHeight: ih);
-
-                        Color barColor = level <= 1 ? colorTurbo
-                                       : level <= 3 ? colorStandard
-                                       : colorEco;
-                        composed = ControlHelper.OverlayChargeBars(composed, level, 5, barColor, iconWidth: iw, iconHeight: ih);
-                    }
-
-                    b.Image = ControlHelper.ResizeImage(composed, ControlHelper.Scale);
-                }
-
-                b.Tag = state;
-                b.Visible = true;
-            }
-
-            for (int i = lp.Count; i < buttons.Length; ++i)
-            {
-                buttons[i].Visible = false;
-            }
-
-            panelPeripherals.Visible = true;
-        }
-
-        private void ButtonPeripheral_MouseEnter(object? sender, EventArgs e)
-        {
-            int index = 0;
-            if (sender == buttonPeripheral2) index = 1;
-            if (sender == buttonPeripheral3) index = 2;
-            IPeripheral iph = PeripheralsProvider.AllPeripherals().ElementAt(index);
-
-
-            if (iph is null)
-            {
-                return;
-            }
-
-            if (!iph.IsDeviceReady)
-            {
-                //Refresh battery on hover if the device is marked as "Not Ready"
-                iph.ReadBattery();
-            }
-        }
-
-        private void ButtonPeripheral_Click(object? sender, EventArgs e)
-        {
-            if (mouseSettings is not null)
-            {
-                mouseSettings.Close();
-                return;
-            }
-
-            int index = 0;
-            if (sender == buttonPeripheral2) index = 1;
-            if (sender == buttonPeripheral3) index = 2;
-
-            IPeripheral iph = PeripheralsProvider.AllPeripherals().ElementAt(index);
-
-            if (iph is null)
-            {
-                //Can only happen when the user hits the button in the exact moment a device is disconnected.
-                return;
-            }
-
-            if (iph.DeviceType() == PeripheralType.Mouse)
-            {
-                AsusMouse? am = iph as AsusMouse;
-                if (am is null || !am.IsDeviceReady)
-                {
-                    //Should not happen if all device classes are implemented correctly. But better safe than sorry.
-                    return;
-                }
-                mouseSettings = new AsusMouseSettings(am);
-                mouseSettings.TopMost = AppConfig.Is("topmost");
-                mouseSettings.FormClosed += MouseSettings_FormClosed;
-                mouseSettings.Disposed += MouseSettings_Disposed;
-                if (!mouseSettings.IsDisposed)
-                {
-                    mouseSettings.Show();
-                }
-                else
-                {
-                    mouseSettings = null;
-                }
-
-            }
-        }
-
-        private void MouseSettings_Disposed(object? sender, EventArgs e)
-        {
-            mouseSettings = null;
-        }
-
-        private void MouseSettings_FormClosed(object? sender, FormClosedEventArgs e)
-        {
-            mouseSettings = null;
-        }
-
-        public void VisualiseAudio(double level)
-        {
-            int filledSquares = (int)Math.Round(level/2);
-            string squares = new string('|', filledSquares);
-            Invoke(delegate
-            {
-                labelMatrix.Text = $"Slash Lighting: {squares}";
-            });
+            labelKeyboard.Text = Properties.Strings.LaptopKeyboard + (type.Length > 0 ? ": " + type : "");
         }
 
         public void VisualiseFnLock()

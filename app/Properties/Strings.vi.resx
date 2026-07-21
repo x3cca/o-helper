@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>Gia tốc</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>Không thể kết nối đến ASUS ACPI. Chương trình cần nó để có thể hoạt động. Hãy thử cài lại Asus System Control Interface</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>Khởi động lại thiết bị của bạn để áp dụng thay đổi</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>Khởi động lại ngay?</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Bộ điều khiển Ally</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>Hướng hoạt ảnh</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>Tốc độ</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>AniMe Matrix</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>Chương trình đã chạy</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>Bộ nhớ chuyển cho GPU</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>Trạng thái pin</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>Hơi thở</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>Chiều kim đồng hồ</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>Chuyển màu</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>Sao chổi</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>Ngược chiều kim đồng hồ</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>Nhanh</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>Chế độ sáng</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>Bình thường</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>Cầu vồng</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>Ngẫu nhiên</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>Phản ứng</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>Chậm</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>Tĩnh</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>Nhấp nháy</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>Tất cả</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>Dock kết nối</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>Biểu tượng</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>Con lăn chuột</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>Underglow</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>Áp dụng tự động</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>Khởi động</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>Tiếng ROG khi bật máy</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>Độ sáng</value>
@@ -503,9 +431,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="Keyboard" xml:space="preserve">
     <value>Bàn phím</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Âm thanh Keystone</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>Ngưng tất cả app dùng GPU khi đổi sang chế độ Eco</value>
   </data>
@@ -545,33 +470,6 @@ Bạn có muốn tiếp tục không?</value>
   <data name="LTDeadzones" xml:space="preserve">
     <value>Deadzone trigger trái</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>Sóng nhạc</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>Nhị phân</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>Sáng</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>Đồng hồ</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>Sáng mờ</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>Logo ROG</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>Vừa phải</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>Tắt</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>Hình ảnh</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>Tần số quét tối đa để có độ trễ thấp</value>
   </data>
@@ -607,12 +505,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>Performance</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>Synchronize with mouse</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>Đồng bộ với laptop</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>Multi Zone</value>
@@ -727,12 +619,6 @@ Bạn có muốn tiếp tục không?</value>
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>Scaling Quality</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>Screenpad Brightness Down</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>Screenpad Brightness Up</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Tắt nguồn</value>

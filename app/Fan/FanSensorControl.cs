@@ -7,7 +7,6 @@ namespace OHelper.Fan
         public const int DEFAULT_FAN_MIN = 18;
         public const int DEFAULT_FAN_MAX = 58;
 
-        public const int XGM_FAN_MAX = 72;
 
         public const int INADEQUATE_MAX = 104;
 
@@ -16,7 +15,7 @@ namespace OHelper.Fan
         Fans fansForm;
         ModeControl modeControl = Program.modeControl;
 
-        static int[] measuredMax;
+        static int[] measuredMax = Array.Empty<int>();
         static int sameCount = 0;
 
         static System.Timers.Timer timer = default!;
@@ -49,33 +48,6 @@ namespace OHelper.Fan
 
         static int[] GetDefaultMax()
         {
-            if (AppConfig.ContainsModel("GA401I")) return new int[3] { 78, 76, DEFAULT_FAN_MAX };
-            if (AppConfig.ContainsModel("GA401")) return new int[3] { 71, 73, DEFAULT_FAN_MAX };
-            if (AppConfig.ContainsModel("GA402")) return new int[3] { 55, 56, DEFAULT_FAN_MAX };
-
-            if (AppConfig.ContainsModel("G513R")) return new int[3] { 58, 60, DEFAULT_FAN_MAX };
-            if (AppConfig.ContainsModel("G513Q")) return new int[3] { 69, 69, DEFAULT_FAN_MAX };
-            if (AppConfig.ContainsModel("GA503")) return new int[3] { 64, 64, DEFAULT_FAN_MAX };
-
-            if (AppConfig.ContainsModel("GU603")) return new int[3] { 62, 64, DEFAULT_FAN_MAX };
-
-            if (AppConfig.ContainsModel("FA507R")) return new int[3] { 63, 57, DEFAULT_FAN_MAX };
-            if (AppConfig.ContainsModel("FA507X")) return new int[3] { 63, 68, DEFAULT_FAN_MAX };
-
-            if (AppConfig.ContainsModel("FX607J")) return new int[3] { 74, 72, DEFAULT_FAN_MAX };
-
-            if (AppConfig.ContainsModel("GX650")) return new int[3] { 62, 62, DEFAULT_FAN_MAX };
-
-            if (AppConfig.ContainsModel("G732")) return new int[3] { 61, 60, DEFAULT_FAN_MAX };
-            if (AppConfig.ContainsModel("G713")) return new int[3] { 56, 60, DEFAULT_FAN_MAX };
-
-            if (AppConfig.ContainsModel("Z301")) return new int[3] { 72, 64, DEFAULT_FAN_MAX };
-
-            if (AppConfig.ContainsModel("GV601")) return new int[3] { 78, 59, 85 };
-
-            if (AppConfig.ContainsModel("GA403")) return new int[3] { 68, 68, 80 };
-            if (AppConfig.ContainsModel("GU605")) return new int[3] { 62, 62, 92 };
-
             // HP OMEN models - fan curve defaults
             if (AppConfig.IsOmenTranscend()) return new int[3] { 65, 65, DEFAULT_FAN_MAX };  // Thin-and-light: conservative fan limits (updated to 6500 RPM max)
             if (AppConfig.IsOmenSlim()) return new int[3] { 52, 52, DEFAULT_FAN_MAX };       // Slim chassis
@@ -87,15 +59,11 @@ namespace OHelper.Fan
 
         static int[] GetDefaultMin()
         {
-            if (AppConfig.ContainsModel("GA403")) return new int[3] { 22, 22, 22 };
-            if (AppConfig.ContainsModel("GU605")) return new int[3] { 22, 22, 22 };
-            if (AppConfig.ContainsModel("HN7306")) return new int[3] { 22, 22, 22 };
             return new int[3] { DEFAULT_FAN_MIN, DEFAULT_FAN_MIN, DEFAULT_FAN_MIN };
         }
 
         public static int GetFanMax(HpFan device)
         {
-            if (device == HpFan.XGM) return XGM_FAN_MAX;
 
             if (_fanMax[(int)device] < 0 || _fanMax[(int)device] > INADEQUATE_MAX)
                 SetFanMax(device, DEFAULT_FAN_MAX);
@@ -105,7 +73,6 @@ namespace OHelper.Fan
 
         public static int GetFanMin(HpFan device)
         {
-            if (device == HpFan.XGM) return DEFAULT_FAN_MIN;
             return _fanMin[(int)device];
         }
 
@@ -128,7 +95,7 @@ namespace OHelper.Fan
             }
         }
 
-        public static string FormatFan(HpFan device, int value)
+        public static string? FormatFan(HpFan device, int value)
         {
             if (value < 0) return null;
 

@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>Hızlandırma</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>ASUS ACPI bağlanılamıyor. Uygulama onsuz çalışamaz. Asus Sistem Kontrol Arayüzünü kurmayı deneyin</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>Değişiklikleri uygulamak için cihazınızı yeniden başlatın</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>Şimdi yeniden başlatılsın mı?</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Ally Kontrolcüsü</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>Animasyon yönü</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>Animasyon Hızı</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>Anime Matrix</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>Uygulama zaten çalışıyor</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>GPU için Atanan Bellek</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>Pil Durumu</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>Nefes</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>Saat Yönünde</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>Renk Döngüsü</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>Kuyruklu Yıldız</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>Saat Yönünün Tersine</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>Hızlı</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>Işıklandırma Modu</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>Gökkuşağı</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>Rastgele</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>Reaksiyon</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>Yavaş</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>Sabit</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>Flaş</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>Tümü</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>Yuva</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>Logo</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>Kaydırma Tekerleği</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>Alttan Aydınlatma</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>Otomatik Uygula</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>Açılış</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>Açılış sesi</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>Parlaklık</value>
@@ -503,9 +431,6 @@ Yine de devam etmek istiyor musunuz?</value>
   <data name="Keyboard" xml:space="preserve">
     <value>Klavye</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Keystone Sesi</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>Eco moda geçerken GPU kullanan tüm uygulamaları durdur</value>
   </data>
@@ -545,33 +470,6 @@ Yine de devam etmek istiyor musunuz?</value>
   <data name="LTDeadzones" xml:space="preserve">
     <value>Sol Tetik Ölü Bölgeleri</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>Ses Görselleştirici</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>İkili Afiş</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>Parlak</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>Saat</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>Mat</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>Rog Logosu</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>Orta</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>Kapalı</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>Resim</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>En düşük gecikme için en yüksek yenileme hızı</value>
   </data>
@@ -607,12 +505,6 @@ Yine de devam etmek istiyor musunuz?</value>
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>Performans</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>Fare ile eşitle</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>Dizüstüyle senkronize et</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>Çoklu Bölge</value>
@@ -727,12 +619,6 @@ Yine de devam etmek istiyor musunuz?</value>
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>Ölçeklendirme Kalitesi</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>Screenpad Parlaklığını Azalt</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>Screenpad Parlaklığını Artır</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Kapanış</value>

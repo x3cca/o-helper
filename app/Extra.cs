@@ -4,7 +4,6 @@ using OHelper.Helpers;
 using OHelper.Input;
 using OHelper.Mode;
 using OHelper.UI;
-using OHelper.USB;
 using System.Diagnostics;
 
 namespace OHelper
@@ -41,17 +40,6 @@ namespace OHelper
               {"overlay", Properties.Strings.Overlay},
               {"custom", Properties.Strings.Custom}
             };
-
-            if (AppConfig.IsDUO())
-            {
-                customActions.Add("screenpad_down", Properties.Strings.ScreenPadDown);
-                customActions.Add("screenpad_up", Properties.Strings.ScreenPadUp);
-            }
-
-            if (AppConfig.IsAlly())
-            {
-                customActions.Add("controller", "Controller Mode");
-            }
 
             switch (name)
             {
@@ -96,7 +84,7 @@ namespace OHelper
             combo.DisplayMember = "Value";
             combo.ValueMember = "Key";
 
-            string action = AppConfig.GetString(name);
+            string? action = AppConfig.GetString(name);
 
             combo.SelectedValue = (action is not null) ? action : "";
             if (combo.SelectedValue is null) combo.SelectedValue = "";
@@ -104,7 +92,7 @@ namespace OHelper
             combo.SelectedValueChanged += delegate
             {
                 if (combo.SelectedValue is not null)
-                    AppConfig.Set(name, combo.SelectedValue.ToString());
+                    AppConfig.Set(name, combo.SelectedValue.ToString()!);
 
                 if (name == "m1" || name == "m2")
                     Program.inputDispatcher.RegisterKeys();
@@ -131,8 +119,6 @@ namespace OHelper
             checkBoot.Text = Properties.Strings.Boot;
             checkShutdown.Text = Properties.Strings.Shutdown;
             checkBattery.Text = checkBatteryLogo.Text = checkBatteryBar.Text = checkBatteryLid.Text = Properties.Strings.Battery;
-            checkBootSound.Text = Properties.Strings.BootSound;
-            checkKeystoneSound.Text = Properties.Strings.KeystoneSound;
             checkStatusLed.Text = Properties.Strings.LEDStatusIndicators;
 
             labelSpeed.Text = Properties.Strings.AnimationSpeed;
@@ -198,47 +184,10 @@ namespace OHelper
             panelSettings.AccessibleName = Properties.Strings.ExtraSettings;
             numericHibernateAfter.AccessibleName = Properties.Strings.HibernateAfter;
 
-            if (AppConfig.IsARCNM())
-            {
-                labelM3.Text = "FN+F6";
-                labelM1.Visible = comboM1.Visible = textM1.Visible = false;
-                labelM2.Visible = comboM2.Visible = textM2.Visible = false;
-                labelM4.Visible = comboM4.Visible = textM4.Visible = false;
-                labelFNF4.Visible = comboFNF4.Visible = textFNF4.Visible = false;
-            }
-
-            if (AppConfig.NoMKeys())
-            {
-                labelM1.Text = "FN+F2";
-                labelM2.Text = "FN+F3";
-                labelM3.Text = "FN+F4";
-                labelM4.Visible = comboM4.Visible = textM4.Visible = AppConfig.IsM4Button();
-                labelFNF4.Visible = comboFNF4.Visible = textFNF4.Visible = false;
-            }
-
-            if (AppConfig.IsVivoZenPro())
-            {
-                labelM1.Visible = comboM1.Visible = textM1.Visible = false;
-                labelM2.Visible = comboM2.Visible = textM2.Visible = false;
-                labelM3.Visible = comboM3.Visible = textM3.Visible = false;
-                labelFNF4.Visible = comboFNF4.Visible = textFNF4.Visible = false;
-                labelM4.Text = "FN+F12";
-            }
-
-            if (AppConfig.MediaKeys())
-            {
-                labelFNF4.Visible = comboFNF4.Visible = textFNF4.Visible = false;
-            }
-
-            if (!AppConfig.IsTUF())
-            {
-                labelFNE.Visible = comboFNE.Visible = textFNE.Visible = false;
-            }
-
-            if (AppConfig.IsNoFNV())
-            {
-                labelFNV.Visible = comboFNV.Visible = textFNV.Visible = false;
-            }
+            labelFNF4.Visible = comboFNF4.Visible = textFNF4.Visible = false;
+            labelFNC.Visible = comboFNC.Visible = textFNC.Visible = false;
+            labelFNV.Visible = comboFNV.Visible = textFNV.Visible = false;
+            labelFNE.Visible = comboFNE.Visible = textFNE.Visible = false;
 
             if (!Program.acpi.IsSupported(HpACPI.GPUEco))
             {
@@ -248,75 +197,17 @@ namespace OHelper
 
             checkNoOverdrive.Visible = Program.acpi.IsOverdriveSupported();
 
-            // Change text and hide irrelevant options on the ROG Ally,
-            // which is a bit of a special case piece of hardware.
-            if (AppConfig.IsAlly())
-            {
-                labelM1.Visible = comboM1.Visible = textM1.Visible = false;
-                labelM2.Visible = comboM2.Visible = textM2.Visible = false;
-
-                // Re-label M3 and M4 and FNF4 to match the front labels.
-                labelM3.Text = "Cmd Center";
-                labelM4.Text = "ROG";
-                labelFNF4.Text = "Back Paddles";
-
-                // Hide all of the FN options, as the Ally has no special keyboard FN key.
-                labelFNC.Visible = false;
-                comboFNC.Visible = false;
-                textFNC.Visible = false;
-
-                labelFNV.Visible = false;
-                comboFNV.Visible = false;
-                textFNV.Visible = false;
-
-                SetKeyCombo(comboM3, textM3, "cc");
-                SetKeyCombo(comboM4, textM4, "m4");
-                SetKeyCombo(comboFNF4, textFNF4, "paddle");
-
-                checkGpuApps.Visible = false;
-                checkUSBC.Visible = false;
-                checkAutoToggleClamshellMode.Visible = false;
-
-                int apuMem = Program.acpi.GetAPUMem();
-                if (apuMem >= 0)
-                {
-                    panelAPU.Visible = true;
-                    comboAPU.DropDownStyle = ComboBoxStyle.DropDownList;
-                    comboAPU.SelectedIndex = apuMem;
-                }
-
-                comboAPU.SelectedIndexChanged += ComboAPU_SelectedIndexChanged;
-
-            }
-            else
-            {
-                SetKeyCombo(comboM1, textM1, "m1");
-                SetKeyCombo(comboM2, textM2, "m2");
-
-                SetKeyCombo(comboM3, textM3, "m3");
-                SetKeyCombo(comboM4, textM4, "m4");
-                SetKeyCombo(comboFNF4, textFNF4, "fnf4");
-
-                SetKeyCombo(comboFNC, textFNC, "fnc");
-                SetKeyCombo(comboFNV, textFNV, "fnv");
-                SetKeyCombo(comboFNE, textFNE, "fne");
-            }
-
-            if (AppConfig.IsStrix())
-            {
-                labelM4.Text = "M5/ROG";
-            }
+            SetKeyCombo(comboM1, textM1, "m1");
+            SetKeyCombo(comboM2, textM2, "m2");
+            SetKeyCombo(comboM3, textM3, "m3");
+            SetKeyCombo(comboM4, textM4, "m4");
 
 
             InitTheme();
             Shown += Keyboard_Shown;
 
-            comboKeyboardSpeed.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboKeyboardSpeed.DataSource = new BindingSource(Aura.GetSpeeds(), null);
-            comboKeyboardSpeed.DisplayMember = "Value";
-            comboKeyboardSpeed.ValueMember = "Key";
-            comboKeyboardSpeed.SelectedValue = Aura.Speed;
-            comboKeyboardSpeed.SelectedValueChanged += ComboKeyboardSpeed_SelectedValueChanged;
+            comboKeyboardSpeed.Visible = false;
+            labelSpeed.Visible = false;
 
             // Keyboard
             checkAwake.Checked = AppConfig.IsNotFalse("keyboard_awake");
@@ -346,65 +237,7 @@ namespace OHelper
             checkSleepLogo.Checked = AppConfig.IsNotFalse("keyboard_sleep_logo");
             checkShutdownLogo.Checked = AppConfig.IsNotFalse("keyboard_shutdown_logo");
 
-            checkAwake.CheckedChanged += CheckPower_CheckedChanged;
-            checkBattery.CheckedChanged += CheckPower_CheckedChanged;
-            checkBoot.CheckedChanged += CheckPower_CheckedChanged;
-            checkSleep.CheckedChanged += CheckPower_CheckedChanged;
-            checkShutdown.CheckedChanged += CheckPower_CheckedChanged;
-
-            checkAwakeBar.CheckedChanged += CheckPower_CheckedChanged;
-            checkBatteryBar.CheckedChanged += CheckPower_CheckedChanged;
-            checkBootBar.CheckedChanged += CheckPower_CheckedChanged;
-            checkSleepBar.CheckedChanged += CheckPower_CheckedChanged;
-            checkShutdownBar.CheckedChanged += CheckPower_CheckedChanged;
-
-            checkAwakeLid.CheckedChanged += CheckPower_CheckedChanged;
-            checkBatteryLid.CheckedChanged += CheckPower_CheckedChanged;
-            checkBootLid.CheckedChanged += CheckPower_CheckedChanged;
-            checkSleepLid.CheckedChanged += CheckPower_CheckedChanged;
-            checkShutdownLid.CheckedChanged += CheckPower_CheckedChanged;
-
-            checkAwakeLogo.CheckedChanged += CheckPower_CheckedChanged;
-            checkBatteryLogo.CheckedChanged += CheckPower_CheckedChanged;
-            checkBootLogo.CheckedChanged += CheckPower_CheckedChanged;
-            checkSleepLogo.CheckedChanged += CheckPower_CheckedChanged;
-            checkShutdownLogo.CheckedChanged += CheckPower_CheckedChanged;
-
-            if (!AppConfig.IsBacklightZones() || AppConfig.IsARCNM())
-            {
-                labelBacklightKeyboard.Visible = false;
-                checkBattery.Visible = false;
-            }
-
-            if (!Aura.HasLightbar)
-            {
-                labelBacklightBar.Visible = false;
-                checkAwakeBar.Visible = false;
-                checkBatteryBar.Visible = false;
-                checkBootBar.Visible = false;
-                checkSleepBar.Visible = false;
-                checkShutdownBar.Visible = false;
-            }
-
-            if (!Aura.HasLogo)
-            {
-                labelBacklightLogo.Visible = false;
-                checkAwakeLogo.Visible = false;
-                checkBatteryLogo.Visible = false;
-                checkBootLogo.Visible = false;
-                checkSleepLogo.Visible = false;
-                checkShutdownLogo.Visible = false;
-            }
-
-            if (!Aura.HasRearglow)
-            {
-                labelBacklightLid.Visible = false;
-                checkAwakeLid.Visible = false;
-                checkBatteryLid.Visible = false;
-                checkBootLid.Visible = false;
-                checkSleepLid.Visible = false;
-                checkShutdownLid.Visible = false;
-            }
+            tableBacklight.Visible = false;
 
             //checkAutoToggleClamshellMode.Visible = clamshellControl.IsExternalDisplayConnected();
             checkAutoToggleClamshellMode.Checked = AppConfig.Is("toggle_clamshell_mode");
@@ -423,10 +256,6 @@ namespace OHelper
             sliderBrightness.AccessibleName = Properties.Strings.LaptopBacklight + ": " + sliderBrightness.Value;
             sliderBrightness.ValueChanged += SliderBrightness_ValueChanged;
 
-            panelXGM.Visible = XGM.IsConnected();
-            checkXGM.Checked = !(AppConfig.Get("xmg_light") == 0);
-            checkXGM.CheckedChanged += CheckXGM_CheckedChanged;
-
             numericBacklightTime.Value = AppConfig.Get("keyboard_timeout", 60);
             numericBacklightPluggedTime.Value = AppConfig.Get("keyboard_ac_timeout", 0);
 
@@ -435,13 +264,6 @@ namespace OHelper
 
             checkGpuApps.Checked = AppConfig.Is("kill_gpu_apps");
             checkGpuApps.CheckedChanged += CheckGpuApps_CheckedChanged;
-
-            int bootSound = Program.acpi.DeviceGet(HpACPI.BootSound);
-            checkBootSound.Visible = bootSound >= 0;
-            if (bootSound < 0 || bootSound > UInt16.MaxValue) bootSound = AppConfig.Get("boot_sound", 0);
-
-            checkBootSound.Checked = (bootSound == 1);
-            checkBootSound.CheckedChanged += CheckBootSound_CheckedChanged;
 
             var statusLed = Program.acpi.DeviceGet(HpACPI.StatusLed);
             checkStatusLed.Visible = statusLed >= 0;
@@ -467,9 +289,6 @@ namespace OHelper
             checkAspm.Checked = AppConfig.IsAutoASPM();
             checkAspm.CheckedChanged += CheckAspm_CheckedChanged;
 
-            checkKeystoneSound.Visible = AppConfig.IsKeystone();
-            checkKeystoneSound.Checked = Keystone.IsEnabled();
-            checkKeystoneSound.CheckedChanged += CheckKeystoneSoundCheckedChanged;
 
             toolTip.SetToolTip(checkAutoToggleClamshellMode, Properties.Strings.ClamshellModeTooltip);
             toolTip.SetToolTip(checkNVPlatform, Properties.Strings.NVPlatformTooltip);
@@ -482,11 +301,6 @@ namespace OHelper
 
             InitACPITesting();
 
-        }
-
-        private void CheckKeystoneSoundCheckedChanged(object? sender, EventArgs e)
-        {
-            Keystone.SetEnabled(checkKeystoneSound.Checked);
         }
 
         private void CheckAspm_CheckedChanged(object? sender, EventArgs e)
@@ -552,8 +366,6 @@ namespace OHelper
             if (eCoresMax == 0) eCoresMax = 8;
             if (pCoresMax == 0) pCoresMax = 6;
 
-            if (AppConfig.Is8Ecores()) eCoresMax = Math.Max(8, eCoresMax);
-
             eCoresMax = Math.Max(4, eCoresMax);
             pCoresMax = Math.Max(4, pCoresMax);
 
@@ -609,13 +421,6 @@ namespace OHelper
 
         }
 
-        private void CheckBootSound_CheckedChanged(object? sender, EventArgs e)
-        {
-            int bootSound = checkBootSound.Checked ? 1 : 0;
-            Program.acpi.DeviceSet(HpACPI.BootSound, bootSound, "BootSound");
-            AppConfig.Set("boot_sound", bootSound);
-        }
-
         private void InitHibernate()
         {
             try
@@ -659,7 +464,7 @@ namespace OHelper
             else
                 AppConfig.Set("keyboard_brightness", sliderBrightness.Value);
 
-            Aura.ApplyBrightness(sliderBrightness.Value, "Slider");
+            InputDispatcher.SetBacklightLevel(sliderBrightness.Value);
             sliderBrightness.AccessibleName = Properties.Strings.LaptopBacklight + ": " + sliderBrightness.Value;
         }
 
@@ -673,12 +478,6 @@ namespace OHelper
             AppConfig.Set("keyboard_timeout", (int)numericBacklightTime.Value);
             AppConfig.Set("keyboard_ac_timeout", (int)numericBacklightPluggedTime.Value);
             Program.inputDispatcher.InitBacklightTimer();
-        }
-
-        private void CheckXGM_CheckedChanged(object? sender, EventArgs e)
-        {
-            AppConfig.Set("xmg_light", (checkXGM.Checked ? 1 : 0));
-            XGM.Light(checkXGM.Checked);
         }
 
         private void CheckUSBC_CheckedChanged(object? sender, EventArgs e)
@@ -703,47 +502,6 @@ namespace OHelper
             AppConfig.Set("topmost", (checkTopmost.Checked ? 1 : 0));
             Program.settingsForm.TopMost = checkTopmost.Checked;
         }
-
-        private void CheckPower_CheckedChanged(object? sender, EventArgs e)
-        {
-            AppConfig.Set("keyboard_awake", (checkAwake.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_boot", (checkBoot.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_sleep", (checkSleep.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_shutdown", (checkShutdown.Checked ? 1 : 0));
-
-            AppConfig.Set("keyboard_awake_bar", (checkAwakeBar.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_boot_bar", (checkBootBar.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_sleep_bar", (checkSleepBar.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_shutdown_bar", (checkShutdownBar.Checked ? 1 : 0));
-
-            AppConfig.Set("keyboard_awake_lid", (checkAwakeLid.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_boot_lid", (checkBootLid.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_sleep_lid", (checkSleepLid.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_shutdown_lid", (checkShutdownLid.Checked ? 1 : 0));
-
-            AppConfig.Set("keyboard_awake_logo", (checkAwakeLogo.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_boot_logo", (checkBootLogo.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_sleep_logo", (checkSleepLogo.Checked ? 1 : 0));
-            AppConfig.Set("keyboard_shutdown_logo", (checkShutdownLogo.Checked ? 1 : 0));
-
-            if (AppConfig.IsBacklightZones())
-            {
-                AppConfig.Set("keyboard_awake_bat", (checkBattery.Checked ? 1 : 0));
-                AppConfig.Set("keyboard_awake_bar_bat", (checkBatteryBar.Checked ? 1 : 0));
-                AppConfig.Set("keyboard_awake_lid_bat", (checkBatteryLid.Checked ? 1 : 0));
-                AppConfig.Set("keyboard_awake_logo_bat", (checkBatteryLogo.Checked ? 1 : 0));
-            }
-
-            Aura.ApplyPower();
-
-        }
-
-        private void ComboKeyboardSpeed_SelectedValueChanged(object? sender, EventArgs e)
-        {
-            AppConfig.Set("aura_speed", (int)comboKeyboardSpeed.SelectedValue);
-            Aura.ApplyAura();
-        }
-
 
         private void Keyboard_Shown(object? sender, EventArgs e)
         {

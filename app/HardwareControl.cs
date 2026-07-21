@@ -55,8 +55,6 @@ public static class HardwareControl
 
     static long lastUpdate;
 
-    static bool isPZ13 = AppConfig.IsPZ13();
-
     static bool _chargeWatt = AppConfig.Is("charge_watt");
 
     static PerformanceCounter? _cpuTempCounter;
@@ -332,27 +330,6 @@ public static class HardwareControl
 
         try
         {
-            if (AppConfig.IsAlly())
-            {
-                decimal? discharge = Program.acpi.GetBatteryDischarge();
-                if (discharge is not null)
-                {
-                    batteryRate = discharge;
-
-                    // Capacity from cached power manager state is sufficient
-                    var batteryState = GetNativeBatteryState();
-                    if (batteryState.HasValue)
-                    {
-                        chargeCapacity = batteryState.Value.RemainingCapacity;
-
-                        if (fullCapacity is null or 0 && batteryState.Value.MaxCapacity > 0)
-                            fullCapacity = batteryState.Value.MaxCapacity;
-                    }
-                    FormatBatteryCharge();
-                    return;
-                }
-            }
-
             var statusTask = Task.Run(QueryBatteryStatus);
             var directStatus = statusTask.Wait(1000) ? statusTask.Result : null;
 
@@ -446,8 +423,6 @@ public static class HardwareControl
         if (Math.Abs(last - lastUpdate) < 2) return cpuTemp;
         lastUpdate = last;
 
-        if (isPZ13) return (float)GetCPUTempWMI();
-
         cpuTemp = HardwareMonitor.GetCpuTemperature();
 
         if (cpuTemp == null || cpuTemp < 0)
@@ -460,7 +435,7 @@ public static class HardwareControl
 
             cpuTemp = _cpuTempCounter.NextValue() - 273;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //Debug.WriteLine("Failed reading CPU temp :" + ex.Message);
         }
@@ -487,7 +462,7 @@ public static class HardwareControl
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //Logger.WriteLine("Error retrieving temperature: " + ex.Message);
         }
@@ -503,7 +478,7 @@ public static class HardwareControl
         {
             gpuTemp = GpuControl?.GetCurrentTemperature();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             gpuTemp = -1;
             //Debug.WriteLine("Failed reading GPU temp :" + ex.Message);
@@ -874,7 +849,7 @@ public static class HardwareControl
 
     public static NvidiaGpuControl? GetNvidiaGpuControl()
     {
-        if ((bool)GpuControl?.IsNvidia)
+        if (GpuControl?.IsNvidia == true)
             return (NvidiaGpuControl)GpuControl;
         else
             return null;
@@ -936,7 +911,6 @@ public static class HardwareControl
             if (_gpuControl.IsValid)
             {
                 GpuControl = _gpuControl;
-                if (GpuControl.FullName.Contains("6850M")) AppConfig.Set("xgm_special", 1);
                 Logger.WriteLine(GpuControl.FullName);
                 return;
             }
@@ -956,15 +930,15 @@ public static class HardwareControl
 
     public static void KillGPUApps()
     {
-
-        List<string> tokill = new() { "EADesktop", "epicgameslauncher", "ASUSSmartDisplayControl" };
-
-        foreach (string kill in tokill) ProcessHelper.KillByName(kill);
-
-        if (AppConfig.Is("kill_gpu_apps") && GpuControl is not null)
+        if (!AppConfig.Is("kill_gpu_apps"))
         {
-            GpuControl.KillGPUApps();
+            Logger.WriteLine("GPU application termination skipped: user opt-in is disabled");
+            return;
         }
+
+        if (GpuControl is null) return;
+        Logger.WriteLine("Stopping processes reported by the active GPU backend");
+        GpuControl.KillGPUApps();
     }
 
     public static void Dispose()

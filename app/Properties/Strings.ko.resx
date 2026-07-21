@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>가속</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>ASUS ACPI에 연결할 수 없어 응용 프로그램이 작동하지 않습니다. Asus System Control Interface를 먼저 설치하십시오.</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>변경 사항을 적용하려면 기기를 다시 시작하십시오.</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>지금 다시 시작하시겠습니까?</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Ally 컨트롤러</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>애니메이션 방향</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>애니메이션 속도</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>Anime Matrix</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>프로그램이 이미 실행중입니다.</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>GPU에 할당된 메모리</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>배터리 상태</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>숨쉬기</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>시계 방향</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>색 순환</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>혜성</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>반시계 방향</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>빠르게</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>조명 모드</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>보통</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>무지개</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>랜덤</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>반응</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>느리게</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>정적</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>섬광</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>전체</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>독</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>로고</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>스크롤 휠</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>하단 조명</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>자동 적용</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>부팅</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>부팅 사운드</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>밝기</value>
@@ -503,9 +431,6 @@
   <data name="Keyboard" xml:space="preserve">
     <value>키보드</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Keystone 사운드</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>Eco 모드로 전환 시 GPU를 사용하는 모든 앱 중지</value>
   </data>
@@ -545,33 +470,6 @@
   <data name="LTDeadzones" xml:space="preserve">
     <value>왼쪽 트리거 데드존</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>오디오 비주얼라이저</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>Binary Banner</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>밝게</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>시계</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>어둡게</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>Rog 로고</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>중간</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>끄기</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>사진</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>최대 주사율 설정</value>
   </data>
@@ -607,12 +505,6 @@
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>성능</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>마우스와 동기화</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>노트북과 동기화</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>다중 영역</value>
@@ -727,12 +619,6 @@
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>스케일링 품질</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>Screenpad 밝기 감소</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>Screenpad 밝기 증가</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>종료</value>

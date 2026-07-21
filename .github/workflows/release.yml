@@ -19,13 +19,8 @@ jobs:
   release:
     runs-on: windows-2022
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-
     - name: Resolve release version
+      id: release-version
       shell: pwsh
       env:
         RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
@@ -36,12 +31,35 @@ jobs:
         }
 
         $version = $tag.TrimStart('v')
+        "release_tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Append
         "RELEASE_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+    - name: Verify exact release tag
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
+        RELEASE_TAG: ${{ steps.release-version.outputs.release_tag }}
+      run: |
+        gh api "repos/$env:GITHUB_REPOSITORY/git/ref/tags/$env:RELEASE_TAG" --silent
+
+    - uses: actions/checkout@v4
+      with:
+        ref: refs/tags/${{ steps.release-version.outputs.release_tag }}
+        fetch-depth: 0
+        persist-credentials: false
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.301'
+
+    - name: Restore locked dependencies
+      run: dotnet restore app/OHelper.sln --locked-mode --runtime win-x64 -p:Platform=x64
+
     - name: Publish
       run: |
-        dotnet publish app/OHelper.sln --configuration Release --runtime win-x64 -p:PublishSingleFile=true --no-self-contained -p:AssemblyVersion=$env:RELEASE_VERSION -p:FileVersion=$env:RELEASE_VERSION -p:Version=$env:RELEASE_VERSION
+        dotnet publish app/OHelper.sln --configuration Release --runtime win-x64 --no-restore -p:Platform=x64 -p:PublishSingleFile=true --no-self-contained -p:AssemblyVersion=$env:RELEASE_VERSION -p:FileVersion=$env:RELEASE_VERSION -p:Version=$env:RELEASE_VERSION
 
     - name: Upload unsigned EXE
       id: upload-unsigned
@@ -63,6 +81,11 @@ jobs:
           -and -not [string]::IsNullOrWhiteSpace($env:SIGNPATH_PROJECT) `
           -and -not [string]::IsNullOrWhiteSpace($env:SIGNPATH_POLICY)
         "has_signpath=$($hasSignPath.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+    - name: Require signing configuration
+      if: ${{ steps.detect-signing.outputs.has_signpath != 'true' }}
+      shell: pwsh
+      run: throw "Release signing is not configured. Refusing to publish unsigned administrator-level binaries."
 
     - id: sign-exe
       if: ${{ steps.detect-signing.outputs.has_signpath == 'true' }}
@@ -87,21 +110,6 @@ jobs:
       run: |
         gh release upload "$env:RELEASE_TAG" ./signed/OHelper.exe ./signed/OHelper.zip --clobber
 
-    - name: Create ZIP from unsigned EXE
-      if: ${{ steps.detect-signing.outputs.has_signpath != 'true' }}
-      shell: pwsh
-      run: |
-        New-Item -ItemType Directory -Force -Path ./unsigned | Out-Null
-        Copy-Item app/bin/x64/Release/net8.0-windows/win-x64/publish/OHelper.exe ./unsigned/OHelper.exe -Force
-        Compress-Archive ./unsigned/OHelper.exe ./unsigned/OHelper.zip -Force
-
-    - name: Upload unsigned EXE and ZIP
-      if: ${{ steps.detect-signing.outputs.has_signpath != 'true' }}
-      env:
-        GH_TOKEN: ${{ github.token }}
-      run: |
-        gh release upload "$env:RELEASE_TAG" ./unsigned/OHelper.exe ./unsigned/OHelper.zip --clobber
-
     - name: Generate SLSA build provenance attestation
       if: ${{ steps.detect-signing.outputs.has_signpath == 'true' && steps.sign-exe.outcome == 'success' }}
       uses: actions/attest-build-provenance@v2
@@ -109,11 +117,3 @@ jobs:
         subject-path: |
           ./signed/OHelper.exe
           ./signed/OHelper.zip
-
-    - name: Generate unsigned build provenance attestation
-      if: ${{ steps.detect-signing.outputs.has_signpath != 'true' }}
-      uses: actions/attest-build-provenance@v2
-      with:
-        subject-path: |
-          ./unsigned/OHelper.exe
-          ./unsigned/OHelper.zip

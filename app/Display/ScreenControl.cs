@@ -1,5 +1,4 @@
 using OHelper.Helpers;
-using Microsoft.Win32;
 using System.Diagnostics;
 
 namespace OHelper.Display
@@ -117,22 +116,6 @@ namespace OHelper.Display
         public static void SetAutoRefresh(int auto)
         {
             AppConfig.Set("screen_auto", auto);
-            if (auto == 0) SetAsusRefreshFlag(0);
-        }
-
-        public static void SetAsusRefreshFlag(int value)
-        {
-            if (!ProcessHelper.IsUserAdministrator()) return;
-            const string keyPath = @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{8714A8D1-0F08-4681-9DF6-A8C4607A58B4}";
-            try
-            {
-                using var key = Registry.LocalMachine.OpenSubKey(keyPath, writable: true);
-                key.SetValue("RefreshFlag", value, RegistryValueKind.DWord);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLine($"Failed to set RefreshFlag: {ex.Message}");
-            }
         }
 
         public static void ToggleScreenRate()
@@ -237,7 +220,7 @@ namespace OHelper.Display
             int fhd = Program.acpi.DeviceGet(HpACPI.ScreenFHD);
             Logger.WriteLine($"FHD Toggle: {fhd}");
 
-            DialogResult dialogResult = MessageBox.Show("Changing display mode requires reboot", Properties.Strings.AlertUltimateTitle, MessageBoxButtons.YesNo);
+            DialogResult dialogResult = MessageBox.Show(Properties.Strings.DisplayModeRestart, Properties.Strings.AlertUltimateTitle, MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
                 Program.acpi.DeviceSet(HpACPI.ScreenFHD, (fhd == 1) ? 0 : 1, "FHD");
@@ -350,10 +333,6 @@ namespace OHelper.Display
             bool screenEnabled = (frequency >= 0);
 
             int fhd = -1;
-            if (AppConfig.IsDUO())
-            {
-                fhd = Program.acpi.DeviceGet(HpACPI.ScreenFHD);
-            }
 
             int hdrControl = Program.acpi.DeviceGet(HpACPI.ScreenHDRControl);
             if (hdrControl >= 0) Logger.WriteLine($"HDR Control Status: {hdrControl}");

@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+early_access: false
+
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  review_status: true
+  review_details: true
+  poem: false
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: true
+  path_filters:
+    - "**/*"
+    - "!**/bin/**"
+    - "!**/obj/**"
+    - "!app/Properties/*.Designer.cs"
+    - "!app/Properties/Strings.*.resx"
+  path_instructions:
+    - path: "app/**/*.cs"
+      instructions: |
+        This is a Windows-only .NET 8 WinForms tray application that controls HP OMEN hardware.
+        Prioritize correctness, cancellation and timer ownership, UI-thread marshaling, disposal,
+        capability gates, safe failure behavior, and immediate persistence where restart behavior matters.
+        Do not propose cross-platform abstractions, dependency-injection rewrites, or a new test framework.
+    - path: "app/HpACPI.cs"
+      instructions: |
+        Treat firmware writes as safety-sensitive. Verify HP WMI command and commandType mappings,
+        payload sizes, return-code handling, the minimum four-byte output buffer, transport-failure
+        accounting, capability checks, and graceful unsupported-device behavior.
+    - path: "app/AppConfig.cs"
+      instructions: |
+        Check config locking, atomic and debounced writes, AppData precedence, corrupt-file recovery,
+        mode-specific key naming, conservative unknown-model behavior, and explicit Flush calls for
+        settings that must survive an immediate restart.
+    - path: ".github/workflows/**"
+      instructions: |
+        Check exact tag and ref handling, least-privilege permissions, pinned SDKs, locked restores,
+        PowerShell correctness, artifact paths, and fail-closed signing for administrator-level binaries.
+    - path: "app/Properties/*.resx"
+      instructions: |
+        Check that user-facing strings remain localizable and that base-resource key changes are kept
+        consistent with generated accessors and satellite resource files.
+
+chat:
+  auto_reply: true

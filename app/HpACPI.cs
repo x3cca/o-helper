@@ -6,8 +6,7 @@ public enum HpFan
 {
     CPU = 0,
     GPU = 1,
-    Mid = 2,
-    XGM = 3
+    Mid = 2
 }
 
 public enum HpMode
@@ -98,45 +97,24 @@ public class HpACPI
     public const uint UniversalControl = 0x00100021;
 
     public const int Airplane = 0x88;
-    public const int KB_Light_Up = 0xc4;
-    public const int KB_Light_Down = 0xc5;
     public const int Brightness_Down = 0x10;
     public const int Brightness_Up = 0x20;
     public const int KB_Sleep = 0x6c;
 
-    public const int KB_TouchpadToggle = 0x6b;
-    public const int KB_MuteToggle = 0x7c;
-    public const int KB_FNlockToggle = 0x4e;
-
-    public const int KB_DUO_PgUpDn = 0x4B;
-    public const int KB_DUO_SecondDisplay = 0x6A;
-
-    public const int Touchpad_Toggle = 0x6B;
-
     public const int ChargerMode = 0x0012006C;
 
-    public const int ChargerUSB = 2;
     public const int ChargerBarrel = 1;
 
     public const uint CPU_Fan = 0x00110013;
     public const uint GPU_Fan = 0x00110014;
     public const uint Mid_Fan = 0x00110031;
 
-    public const uint BatteryDischarge = 0x0012005A;
-
     public const uint StatusMode = 0x00090031;
-    public const uint PowerSavingMode = 0x00090032;
 
     public const uint PerformanceMode = 0x00120075;
 
-    public const uint GPUEcoROG = 0x00090020;
-    public const uint GPUEcoVivo = 0x00090120;
-
-    public const uint GPUXGConnected = 0x00090018;
-    public const uint GPUXG = 0x00090019;
-
-    public const uint GPUMuxROG = 0x00090016;
-    public const uint GPUMuxVivo = 0x00090026;
+    public const uint GPUEco = 0x00090020;
+    public const uint GPUMux = 0x00090016;
 
     public const uint BatteryLimit = 0x00120057;
 
@@ -147,11 +125,6 @@ public class HpACPI
     public const uint ScreenHDRControl = 0x00050071;
 
     public const uint ScreenOptimalBrightness = 0x0005002A;
-    public const uint ScreenInit = 0x00050011;
-
-    public const uint DevsCPUFan = 0x00110022;
-    public const uint DevsGPUFan = 0x00110023;
-
     public const uint DevsCPUFanCurve = 0x00110024;
     public const uint DevsGPUFanCurve = 0x00110025;
     public const uint DevsMidFanCurve = 0x00110032;
@@ -161,8 +134,6 @@ public class HpACPI
     public const int Temp_GPU = 0x00120097;
 
     public const int PPT_APUA0 = 0x001200A0;
-    public const int PPT_EDCA1 = 0x001200A1;
-    public const int PPT_TDCA2 = 0x001200A2;
     public const int PPT_APUA3 = 0x001200A3;
 
     public const int PPT_CPUB0 = 0x001200B0;
@@ -172,13 +143,8 @@ public class HpACPI
     public const int PPT_APUC1 = 0x001200C1;
     public const int PPT_GPUC2 = 0x001200C2;
 
-    public const uint CORES_CPU = 0x001200D2;
-    public const uint CORES_MAX = 0x001200D3;
-
     public const uint GPU_BASE = 0x00120099;
     public const uint GPU_POWER = 0x00120098;
-
-    public const int APU_MEM = 0x000600C1;
 
     public const int MicMuteLed = 0x00040017;
     public const int SoundMuteLed = 0x0004001C;
@@ -188,20 +154,12 @@ public class HpACPI
     public const int TentState = 0x00060062;
     public const int FnLock = 0x00100023;
 
-    public const int ScreenPadToggle = 0x00050031;
-    public const int ScreenPadBrightness = 0x00050032;
-
     public const int CameraShutter = 0x00060078;
     public const int CameraLed = 0x00060079;
     public const int StatusLed = 0x000600C2;
 
-    public const int BootSound = 0x00130022;
 
     public const int Tablet_Notebook = 0;
-    public const int Tablet_Tablet = 1;
-    public const int Tablet_Tent = 2;
-    public const int Tablet_Rotated = 3;
-
     public const int PerformanceBalanced = 0;
     public const int PerformanceTurbo = 1;
     public const int PerformanceSilent = 2;
@@ -236,13 +194,7 @@ public class HpACPI
     public const int PCoreMin = 4;
     public const int ECoreMin = 0;
 
-    public const int PCoreMax = 16;
-    public const int ECoreMax = 16;
-
     private readonly Dictionary<uint, bool> _supportCache = new();
-
-    public static uint GPUEco => AppConfig.IsVivoZenPro() ? GPUEcoVivo : GPUEcoROG;
-    public static uint GPUMux => AppConfig.IsVivoZenPro() ? GPUMuxVivo : GPUMuxROG;
 
     public bool SupportsGpuModeSwitching()
     {
@@ -288,41 +240,6 @@ public class HpACPI
         };
     }
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    private static extern IntPtr CreateFile(
-        string lpFileName,
-        uint dwDesiredAccess,
-        uint dwShareMode,
-        IntPtr lpSecurityAttributes,
-        uint dwCreationDisposition,
-        uint dwFlagsAndAttributes,
-        IntPtr hTemplateFile
-    );
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool DeviceIoControl(
-        IntPtr hDevice,
-        uint dwIoControlCode,
-        byte[] lpInBuffer,
-        uint nInBufferSize,
-        byte[] lpOutBuffer,
-        uint nOutBufferSize,
-        ref uint lpBytesReturned,
-        IntPtr lpOverlapped
-    );
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool CloseHandle(IntPtr hObject);
-
-    private const uint GENERIC_READ = 0x80000000;
-    private const uint GENERIC_WRITE = 0x40000000;
-    private const uint OPEN_EXISTING = 3;
-    private const uint FILE_ATTRIBUTE_NORMAL = 0x80;
-    private const uint FILE_SHARE_READ = 1;
-    private const uint FILE_SHARE_WRITE = 2;
-
-    private IntPtr handle;
-    private IntPtr eventHandle;
     private bool _connected = false;
 
     #region WMI BIOS Interface
@@ -333,9 +250,9 @@ public class HpACPI
     private const string WMI_INSTANCE_NAME = @"ACPI\PNP0C14\0_0";
     private static readonly byte[] WMI_SIGN = { 0x53, 0x45, 0x43, 0x55 };
 
-    private ManagementScope _wmiScope;
-    private ManagementClass _wmiDataClass;
-    private ManagementObject _wmiMethodsObject;
+    private ManagementScope? _wmiScope;
+    private ManagementClass? _wmiDataClass;
+    private ManagementObject? _wmiMethodsObject;
     private bool _wmiInitialized;
     private bool _wmiDisabled;
     private bool _useLegacyWmi;
@@ -346,7 +263,7 @@ public class HpACPI
     private DateTime _lastErrorLog = DateTime.MinValue;
     private static readonly TimeSpan ERROR_LOG_INTERVAL = TimeSpan.FromSeconds(30);
 
-    private System.Timers.Timer _heartbeatTimer;
+    private System.Timers.Timer? _heartbeatTimer;
     private const int HEARTBEAT_INTERVAL_MS = 60000;
 
     #endregion
@@ -408,7 +325,7 @@ public class HpACPI
             {
                 foreach (ManagementObject instance in instances)
                 {
-                    string instanceName = Convert.ToString(instance["InstanceName"]);
+                    string? instanceName = Convert.ToString(instance["InstanceName"]);
                     if (string.Equals(instanceName, WMI_INSTANCE_NAME, StringComparison.OrdinalIgnoreCase))
                     {
                         _wmiMethodsObject = instance;
@@ -453,7 +370,7 @@ public class HpACPI
             {
                 foreach (ManagementObject instance in instances)
                 {
-                    string instanceName = Convert.ToString(instance["InstanceName"]);
+                    string? instanceName = Convert.ToString(instance["InstanceName"]);
                     if (string.Equals(instanceName, WMI_INSTANCE_NAME, StringComparison.OrdinalIgnoreCase))
                     {
                         _wmiMethodsObject?.Dispose();
@@ -479,7 +396,7 @@ public class HpACPI
         }
     }
 
-    public WmiBiosResult ExecuteBiosCommand(uint command, int commandType, byte[] inputData, int returnDataSize)
+    public WmiBiosResult ExecuteBiosCommand(uint command, int commandType, byte[]? inputData, int returnDataSize)
     {
         TryRecoverWmiAfterCooldown();
         if (_wmiDisabled)
@@ -496,7 +413,7 @@ public class HpACPI
         {
             try
             {
-                using (ManagementObject input = _wmiDataClass.CreateInstance())
+                using (ManagementObject input = _wmiDataClass!.CreateInstance())
                 {
                     input["Sign"] = WMI_SIGN;
                     input["Command"] = (uint)command;
@@ -505,11 +422,11 @@ public class HpACPI
                     input["hpqBData"] = inputData ?? Array.Empty<byte>();
 
                     string methodName = GetWmiMethodName(returnDataSize);
-                    ManagementBaseObject inParams = _wmiMethodsObject.GetMethodParameters(methodName);
+                    ManagementBaseObject inParams = _wmiMethodsObject!.GetMethodParameters(methodName);
                     inParams["InData"] = input;
 
-                    ManagementBaseObject outParams = _wmiMethodsObject.InvokeMethod(methodName, inParams, null);
-                    ManagementBaseObject outData = outParams?["OutData"] as ManagementBaseObject;
+                    ManagementBaseObject? outParams = _wmiMethodsObject.InvokeMethod(methodName, inParams, null);
+                    ManagementBaseObject? outData = outParams?["OutData"] as ManagementBaseObject;
 
                     if (outData == null)
                     {
@@ -675,6 +592,8 @@ public class HpACPI
     {
         _heartbeatTimer?.Dispose();
         _heartbeatTimer = null;
+        _fanSettingsTimer?.Dispose();
+        _fanSettingsTimer = null;
 
         _wmiInitialized = false;
         try { _wmiMethodsObject?.Dispose(); } catch { }
@@ -714,12 +633,8 @@ public class HpACPI
         if (DeviceID == ScreenOverdrive)
             return SetOverdrive(Status != 0);
 
-        if (DeviceID == GPUEco || DeviceID == GPUEcoROG || DeviceID == GPUEcoVivo
-            || DeviceID == GPUMux || DeviceID == GPUMuxROG || DeviceID == GPUMuxVivo)
+        if (DeviceID == GPUEco || DeviceID == GPUMux)
             return SetGpuModeValue(Status);
-
-        if (DeviceID == GPUXG)
-            return SetGpuXg(Status);
 
         if (DeviceID == StatusMode)
             return 1;
@@ -742,11 +657,7 @@ public class HpACPI
         if (DeviceID == GPU_POWER || DeviceID == GPU_BASE)
             return SetGpuPowerLimit(DeviceID, Status);
 
-        if (DeviceID == BootSound)
-            return UnsupportedDeviceSet(DeviceID, logName);
-
-        if (DeviceID == CameraShutter || DeviceID == StatusLed
-            || DeviceID == ScreenPadToggle || DeviceID == ScreenPadBrightness || DeviceID == ScreenInit)
+        if (DeviceID == CameraShutter || DeviceID == StatusLed)
             return UnsupportedDeviceSet(DeviceID, logName);
 
         if (DeviceID == FnLock || DeviceID == SlateMode || DeviceID == TabletState || DeviceID == TentState)
@@ -801,14 +712,8 @@ public class HpACPI
         if (DeviceID == ScreenOverdrive)
             return GetOverdrive() ? 1 : 0;
 
-        if (DeviceID == GPUEco || DeviceID == GPUEcoROG || DeviceID == GPUEcoVivo
-            || DeviceID == GPUMux || DeviceID == GPUMuxROG || DeviceID == GPUMuxVivo)
+        if (DeviceID == GPUEco || DeviceID == GPUMux)
             return GetGpuMode();
-
-        if (DeviceID == GPUXG)
-#pragma warning disable CS0618
-            return IsXGConnected() ? 1 : 0;
-#pragma warning restore CS0618
 
         if (DeviceID == Temp_CPU)
             return GetCpuTemp();
@@ -832,9 +737,6 @@ public class HpACPI
             return -1;
 
         if (DeviceID == ScreenFHD || DeviceID == ScreenHDRControl || DeviceID == ScreenOptimalBrightness)
-            return -1;
-
-        if (DeviceID == BootSound)
             return -1;
 
         if (DeviceID == FnLock)
@@ -864,6 +766,12 @@ public class HpACPI
 
     private int SetPerformanceMode(int modeValue)
     {
+        if (!AppConfig.SupportsPerformanceModes())
+        {
+            Logger.WriteLine("HpACPI SetPerformanceMode skipped: model capability is not confirmed");
+            return 0;
+        }
+
         byte modeByte;
         switch (modeValue)
         {
@@ -1118,12 +1026,6 @@ public class HpACPI
         return success ? 1 : 0;
     }
 
-    private int SetGpuXg(int status)
-    {
-        Logger.WriteLine("SetGpuXg unsupported on HP Omen; XG Mobile is ASUS-only");
-        return 0;
-    }
-
     #endregion
 
     #region Fan Control
@@ -1161,7 +1063,7 @@ public class HpACPI
 
     public int GetFan(HpFan device)
     {
-        if (!IsWmiReady()) return -1;
+        if (!AppConfig.SupportsRpmReadback() || !IsWmiReady()) return -1;
 
         try
         {
@@ -1172,11 +1074,10 @@ public class HpACPI
                 new byte[4],
                 128);
 
-            if (result.Success && result.ReturnCode == 0 && result.Data.Length >= 4)
+            int fanIndex = device switch { HpFan.GPU => 1, HpFan.Mid => 2, _ => 0 };
+            int offset = fanIndex * 2;
+            if (result.Success && result.ReturnCode == 0 && result.Data.Length >= offset + 2)
             {
-                int fanIndex = device switch { HpFan.GPU => 1, HpFan.Mid => 2, _ => 0 };
-                int offset = fanIndex * 2;
-                
                 // Handle endianness detection - try little-endian first, then big-endian
                 int rpm = result.Data[offset] | (result.Data[offset + 1] << 8);
                 
@@ -1208,9 +1109,9 @@ public class HpACPI
                 new byte[4],
                 128);
 
-            if (statusResult.Success && statusResult.ReturnCode == 0 && statusResult.Data.Length >= 2)
+            int fanIndex = device switch { HpFan.GPU => 1, HpFan.Mid => 2, _ => 0 };
+            if (statusResult.Success && statusResult.ReturnCode == 0 && statusResult.Data.Length > fanIndex)
             {
-                int fanIndex = device switch { HpFan.GPU => 1, HpFan.Mid => 2, _ => 0 };
                 // Data is already a level byte (0-100 scale), return as-is
                 int rpm = statusResult.Data[fanIndex];
                 return rpm;
@@ -1661,12 +1562,6 @@ public class HpACPI
         }
     }
 
-    [Obsolete("XG Mobile is an ASUS ROG proprietary eGPU dock. Use AppConfig.GetModelCapabilities() instead.")]
-    public bool IsXGConnected()
-    {
-        return false;
-    }
-
     public bool IsAllAmdPPT()
     {
         if (_isAllAmd.HasValue) return _isAllAmd.Value;
@@ -1728,8 +1623,7 @@ public class HpACPI
             return result.Success && result.ReturnCode == 0;
         }
 
-        if (deviceId == GPUEco || deviceId == GPUEcoROG || deviceId == GPUEcoVivo
-            || deviceId == GPUMux || deviceId == GPUMuxROG || deviceId == GPUMuxVivo)
+        if (deviceId == GPUEco || deviceId == GPUMux)
         {
             var result = ExecuteBiosCommand(
                 (uint)HpBiosCommand.Legacy,

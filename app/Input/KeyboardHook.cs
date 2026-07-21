@@ -114,7 +114,6 @@ public sealed class KeyboardHook : IDisposable
     private class Window : NativeWindow, IDisposable
     {
         private static int WM_HOTKEY = 0x0312;
-        public static Keys? fakeKey;
 
         public Window()
         {
@@ -143,7 +142,7 @@ public sealed class KeyboardHook : IDisposable
             }
         }
 
-        public event EventHandler<KeyPressedEventArgs> KeyPressed;
+        public event EventHandler<KeyPressedEventArgs>? KeyPressed;
 
         #region IDisposable Members
 
@@ -166,7 +165,7 @@ public sealed class KeyboardHook : IDisposable
         _lowLevelKeyboardProc = LowLevelKeyboardCallback;
 
         // register the event of the inner native window.
-        _window.KeyPressed += delegate (object sender, KeyPressedEventArgs args)
+        _window.KeyPressed += delegate (object? sender, KeyPressedEventArgs args)
         {
             if (KeyPressed != null)
                 KeyPressed(this, args);
@@ -224,7 +223,7 @@ public sealed class KeyboardHook : IDisposable
     /// <summary>
     /// A hot key has been pressed.
     /// </summary>
-    public event EventHandler<KeyPressedEventArgs> KeyPressed;
+    public event EventHandler<KeyPressedEventArgs>? KeyPressed;
 
     #region IDisposable Members
 

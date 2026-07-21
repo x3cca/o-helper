@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>Прискорення</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>Не вдається під'єднатися до ASUS ACPI. Програма не може працювати без нього. Спробуйте встановити Asus System Control Interface</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>Перезавантажте ваш пристрій, щоб зміни набули чинності</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>Перезавантажити зараз?</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>Ally Контролер</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>Напрямок анімації</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>Швидкість Анімації</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>Аніме Матриця</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>Програма вже запущена</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>Пам'ять призначена на GPU</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>Стан батареї</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>Дихання</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>Направо</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>Зміна Кольорів</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>Комета</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>Наліво</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>Швидка</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>Підсвітка</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>Нормальна</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>Веселка</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>Випадкова</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>Реактивна</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>Повільна</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>Статична</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>Стробоскоп</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>Все</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>Док</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>Лого</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>Колесо</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>Низ</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>Автоматично</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>Старт</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>Звук завантаження</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>Яскравість</value>
@@ -503,9 +431,6 @@
   <data name="Keyboard" xml:space="preserve">
     <value>Клавіатура</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>Звук Keystone</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>Закривати додатки, що використовують GPU, під час переходу в режим Eco</value>
   </data>
@@ -545,33 +470,6 @@
   <data name="LTDeadzones" xml:space="preserve">
     <value>Лівий тригер - Deadzone</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>Аудіо візуалізатор</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>Бінарний банер</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>Яскрава</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>Годинник</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>Слабка</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>Логотип Rog</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>Середня</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>Вимкнена</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>Картинка</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>Максимальна частота оновлення для мінімізації затримок</value>
   </data>
@@ -607,12 +505,6 @@
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>Режим Швидкодії</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>Синхронізувати з мишею</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>Синхронізувати з ноутбуком</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>Мульти зона</value>
@@ -727,12 +619,6 @@
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>Масштабування</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>Зменшити яскравість Screenpad</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>Збільшити яскравість Screenpad</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Вимикання</value>

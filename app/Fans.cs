@@ -3,7 +3,6 @@ using OHelper.Gpu.NVidia;
 using OHelper.Helpers;
 using OHelper.Mode;
 using OHelper.UI;
-using OHelper.USB;
 using PawnIO;
 using System.Diagnostics;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -21,7 +20,6 @@ namespace OHelper
         Series seriesCPU;
         Series seriesGPU;
         Series seriesMid;
-        Series seriesXGM;
 
         static bool gpuVisible = true;
         static bool fanRpm = true;
@@ -96,12 +94,10 @@ namespace OHelper
             seriesCPU = chartCPU.Series.Add("CPU");
             seriesGPU = chartGPU.Series.Add("GPU");
             seriesMid = chartMid.Series.Add("Mid");
-            seriesXGM = chartXGM.Series.Add("XGM");
 
             seriesCPU.Color = colorStandard;
             seriesGPU.Color = colorTurbo;
             seriesMid.Color = colorEco;
-            seriesXGM.Color = Color.Orange;
 
             chartCPU.MouseMove += (sender, e) => ChartCPU_MouseMove(sender, e, HpFan.CPU);
             chartCPU.MouseUp += ChartCPU_MouseUp;
@@ -115,39 +111,29 @@ namespace OHelper
             chartMid.MouseUp += ChartCPU_MouseUp;
             chartMid.MouseLeave += ChartCPU_MouseLeave;
 
-            chartXGM.MouseMove += (sender, e) => ChartCPU_MouseMove(sender, e, HpFan.XGM);
-            chartXGM.MouseUp += ChartCPU_MouseUp;
-            chartXGM.MouseLeave += ChartCPU_MouseLeave;
-
             chartCPU.MouseClick += ChartCPU_MouseClick;
             chartGPU.MouseClick += ChartCPU_MouseClick;
             chartMid.MouseClick += ChartCPU_MouseClick;
-            chartXGM.MouseClick += ChartCPU_MouseClick;
 
             chartCPU.TabStop = true;
             chartGPU.TabStop = true;
             chartMid.TabStop = true;
-            chartXGM.TabStop = true;
 
             chartCPU.PreviewKeyDown += Chart_PreviewKeyDown;
             chartGPU.PreviewKeyDown += Chart_PreviewKeyDown;
             chartMid.PreviewKeyDown += Chart_PreviewKeyDown;
-            chartXGM.PreviewKeyDown += Chart_PreviewKeyDown;
 
             chartCPU.KeyDown += (s, e) => Chart_KeyDown(s, e, HpFan.CPU);
             chartGPU.KeyDown += (s, e) => Chart_KeyDown(s, e, HpFan.GPU);
             chartMid.KeyDown += (s, e) => Chart_KeyDown(s, e, HpFan.Mid);
-            chartXGM.KeyDown += (s, e) => Chart_KeyDown(s, e, HpFan.XGM);
 
             chartCPU.GotFocus += (s, e) => Chart_GotFocus(s, HpFan.CPU);
             chartGPU.GotFocus += (s, e) => Chart_GotFocus(s, HpFan.GPU);
             chartMid.GotFocus += (s, e) => Chart_GotFocus(s, HpFan.Mid);
-            chartXGM.GotFocus += (s, e) => Chart_GotFocus(s, HpFan.XGM);
 
             chartCPU.LostFocus += Chart_LostFocus;
             chartGPU.LostFocus += Chart_LostFocus;
             chartMid.LostFocus += Chart_LostFocus;
-            chartXGM.LostFocus += Chart_LostFocus;
 
             buttonReset.Click += ButtonReset_Click;
 
@@ -304,7 +290,6 @@ namespace OHelper
             chartCPU.AccessibleName = "CPU fan curve";
             chartGPU.AccessibleName = "GPU fan curve";
             chartMid.AccessibleName = "Mid fan curve";
-            chartXGM.AccessibleName = "XG Mobile fan curve";
         }
 
         private void InitRuntimeSettingsRows()
@@ -457,9 +442,6 @@ namespace OHelper
             Program.settingsForm.InitContextMenuTheme();
             Program.settingsForm.fansForm?.InitTheme();
             Program.settingsForm.extraForm?.InitTheme();
-            Program.settingsForm.updatesForm?.InitTheme();
-            Program.settingsForm.matrixForm?.InitTheme();
-            Program.settingsForm.handheldForm?.InitTheme();
         }
 
         private void CheckFanClamp_Click(object? sender, EventArgs e)
@@ -508,7 +490,6 @@ namespace OHelper
                 SetAxis(chartCPU, HpFan.CPU);
                 SetAxis(chartGPU, HpFan.GPU);
                 if (chartMid.Visible) SetAxis(chartMid, HpFan.Mid);
-                if (chartXGM.Visible) SetAxis(chartXGM, HpFan.XGM);
             }
 
         }
@@ -612,6 +593,13 @@ namespace OHelper
         public void InitUV()
         {
 
+            if (!AppConfig.SupportsUndervolt())
+            {
+                buttonAdvanced.Visible = false;
+                panelAdvanced.Visible = false;
+                return;
+            }
+
             //if (!ProcessHelper.IsUserAdministrator()) return;
 
             int cpuUV = Math.Max(trackUV.Minimum, Math.Min(trackUV.Maximum, AppConfig.GetMode("cpu_uv", 0)));
@@ -661,7 +649,7 @@ namespace OHelper
             labelUV.Text     = trackUV.Value.ToString();
             labelUViGPU.Text = trackUViGPU.Value.ToString();
 
-            labelTemp.Text = (trackTemp.Value < CpuInfo.DefaultTemp) ? TempHelper.FormatTemp(trackTemp.Value) : "Default";
+            labelTemp.Text = (trackTemp.Value < CpuInfo.DefaultTemp) ? TempHelper.FormatTemp(trackTemp.Value) : Properties.Strings.Default;
         }
         private void AdvancedScroll()
         {
@@ -910,7 +898,7 @@ namespace OHelper
             labelGPUTemp.Text = TempHelper.FormatTemp(trackGPUTemp.Value);
 
             if (trackGPUClockLimit.Value >= NvidiaGpuControl.MaxClockLimit)
-                labelGPUClockLimit.Text = "Default";
+                labelGPUClockLimit.Text = Properties.Strings.Default;
             else
                 labelGPUClockLimit.Text = $"{trackGPUClockLimit.Value} MHz";
 
@@ -1054,9 +1042,6 @@ namespace OHelper
                     break;
                 case HpFan.Mid:
                     title = Properties.Strings.FanProfileMid + scale;
-                    break;
-                case HpFan.XGM:
-                    title = "XG Mobile" + scale;
                     break;
             }
 
@@ -1237,6 +1222,14 @@ namespace OHelper
         public void InitPower()
         {
 
+            if (!AppConfig.SupportsPowerLimits())
+            {
+                panelApplyPower.Visible = false;
+                panelTitleCPU.Visible = false;
+                checkApplyPower.Checked = false;
+                return;
+            }
+
             bool modeA = Program.acpi.IsSupported(HpACPI.PPT_APUA0);
             bool modeB0 = Program.acpi.IsAllAmdPPT() && Program.acpi.IsSupported(HpACPI.PPT_CPUB0);
             bool modeC1 = Program.acpi.IsSupported(HpACPI.PPT_APUC1);
@@ -1375,22 +1368,6 @@ namespace OHelper
                 AppConfig.Set("mid_fan", 0);
             }
 
-            // XG Mobile Fan check
-#pragma warning disable CS0618 // IsXGConnected is ASUS-only
-            if (AppConfig.IsASUS() && (Program.acpi.IsXGConnected() || XGM.IsConnected()))
-#pragma warning restore CS0618
-            {
-                AppConfig.Set("xgm_fan", 1);
-                chartCount++;
-                chartXGM.Visible = true;
-                SetChart(chartXGM, HpFan.XGM);
-                LoadProfile(seriesXGM, HpFan.XGM);
-            }
-            else
-            {
-                AppConfig.Set("xgm_fan", 0);
-            }
-
             try
             {
                 if (chartCount > 2)
@@ -1419,14 +1396,12 @@ namespace OHelper
                 seriesCPU.Color = colorStandard;
                 seriesGPU.Color = colorTurbo;
                 seriesMid.Color = colorEco;
-                seriesXGM.Color = Color.Orange;
             }
             else
             {
                 seriesCPU.Color = RForm.colorGray;
                 seriesGPU.Color = RForm.colorGray;
                 seriesMid.Color = RForm.colorGray;
-                seriesXGM.Color = RForm.colorGray;
             }
 
             InitHysteresis();
@@ -1463,7 +1438,7 @@ namespace OHelper
             byte old = 0;
             for (int i = 0; i < 8; i++)
             {
-                if (curve[i] == old) curve[i]++; // preventing 2 points in same spot from default asus profiles
+                if (curve[i] == old) curve[i]++; // Prevent two inherited default points from overlapping.
                 series.Points.AddXY(curve[i], curve[i + 8]);
                 old = curve[i];
             }
@@ -1497,15 +1472,11 @@ namespace OHelper
             if (AppConfig.Is("mid_fan"))
                 LoadProfile(seriesMid, HpFan.Mid, true);
 
-            if (AppConfig.Is("xgm_fan"))
-                LoadProfile(seriesXGM, HpFan.XGM, true);
-
             checkApplyFans.Checked = false;
             checkApplyPower.Checked = false;
             seriesCPU.Color = RForm.colorGray;
             seriesGPU.Color = RForm.colorGray;
             seriesMid.Color = RForm.colorGray;
-            seriesXGM.Color = RForm.colorGray;
 
             AppConfig.SetMode("auto_apply", 0);
             AppConfig.SetMode("auto_apply_power", 0);
@@ -1520,9 +1491,6 @@ namespace OHelper
             modeControl.ResetPerformanceMode();
 
             InitPowerPlan();
-
-            XGM.Reset();
-
 
             if (gpuVisible)
             {
@@ -1571,9 +1539,6 @@ namespace OHelper
 
             if (AppConfig.Is("mid_fan"))
                 SaveProfile(seriesMid, HpFan.Mid);
-
-            if (AppConfig.Is("xgm_fan"))
-                SaveProfile(seriesXGM, HpFan.XGM);
 
             modeControl.AutoFans();
         }

@@ -169,11 +169,6 @@ namespace OHelper.Helpers
             }
         }
 
-        public static void KillSmartDisplayControl()
-        {
-            KillByName("ASUSSmartDisplayControl");
-        }
-
         public static void KillByProcess(Process process)
         {
             try

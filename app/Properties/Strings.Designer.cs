@@ -66,15 +66,6 @@ namespace OHelper.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Can't connect to the ACPI/WMI interface. Application can't function without i....
-        /// </summary>
-        internal static string ACPIError {
-            get {
-                return ResourceManager.GetString("ACPIError", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to AC.
         /// </summary>
         internal static string ACPower {
@@ -156,15 +147,6 @@ namespace OHelper.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Ally Controller.
-        /// </summary>
-        internal static string AllyController {
-            get {
-                return ResourceManager.GetString("AllyController", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Ambient mode may increase resource usage.
         /// </summary>
         internal static string AmbientModeResources {
@@ -188,15 +170,6 @@ namespace OHelper.Properties {
         internal static string AnimationSpeed {
             get {
                 return ResourceManager.GetString("AnimationSpeed", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Anime Matrix.
-        /// </summary>
-        internal static string AnimeMatrix {
-            get {
-                return ResourceManager.GetString("AnimeMatrix", resourceCulture);
             }
         }
 
@@ -260,186 +233,6 @@ namespace OHelper.Properties {
         internal static string APUMemory {
             get {
                 return ResourceManager.GetString("APUMemory", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Battery State.
-        /// </summary>
-        internal static string AuraBatteryState {
-            get {
-                return ResourceManager.GetString("AuraBatteryState", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Breathe.
-        /// </summary>
-        internal static string AuraBreathe {
-            get {
-                return ResourceManager.GetString("AuraBreathe", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Clockwise.
-        /// </summary>
-        internal static string AuraClockwise {
-            get {
-                return ResourceManager.GetString("AuraClockwise", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Color Cycle.
-        /// </summary>
-        internal static string AuraColorCycle {
-            get {
-                return ResourceManager.GetString("AuraColorCycle", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Comet.
-        /// </summary>
-        internal static string AuraComet {
-            get {
-                return ResourceManager.GetString("AuraComet", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Counterclockwise.
-        /// </summary>
-        internal static string AuraCounterClockwise {
-            get {
-                return ResourceManager.GetString("AuraCounterClockwise", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Fast.
-        /// </summary>
-        internal static string AuraFast {
-            get {
-                return ResourceManager.GetString("AuraFast", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Lighting Mode.
-        /// </summary>
-        internal static string AuraLightingMode {
-            get {
-                return ResourceManager.GetString("AuraLightingMode", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Normal.
-        /// </summary>
-        internal static string AuraNormal {
-            get {
-                return ResourceManager.GetString("AuraNormal", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Rainbow.
-        /// </summary>
-        internal static string AuraRainbow {
-            get {
-                return ResourceManager.GetString("AuraRainbow", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Random.
-        /// </summary>
-        internal static string AuraRandomColor {
-            get {
-                return ResourceManager.GetString("AuraRandomColor", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to React.
-        /// </summary>
-        internal static string AuraReact {
-            get {
-                return ResourceManager.GetString("AuraReact", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Slow.
-        /// </summary>
-        internal static string AuraSlow {
-            get {
-                return ResourceManager.GetString("AuraSlow", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Static.
-        /// </summary>
-        internal static string AuraStatic {
-            get {
-                return ResourceManager.GetString("AuraStatic", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Strobe.
-        /// </summary>
-        internal static string AuraStrobe {
-            get {
-                return ResourceManager.GetString("AuraStrobe", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to All.
-        /// </summary>
-        internal static string AuraZoneAll {
-            get {
-                return ResourceManager.GetString("AuraZoneAll", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Dock.
-        /// </summary>
-        internal static string AuraZoneDock {
-            get {
-                return ResourceManager.GetString("AuraZoneDock", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Logo.
-        /// </summary>
-        internal static string AuraZoneLogo {
-            get {
-                return ResourceManager.GetString("AuraZoneLogo", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Scrollwheel.
-        /// </summary>
-        internal static string AuraZoneScroll {
-            get {
-                return ResourceManager.GetString("AuraZoneScroll", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Underglow.
-        /// </summary>
-        internal static string AuraZoneUnderglow {
-            get {
-                return ResourceManager.GetString("AuraZoneUnderglow", resourceCulture);
             }
         }
 
@@ -647,15 +440,6 @@ namespace OHelper.Properties {
         internal static string Boot {
             get {
                 return ResourceManager.GetString("Boot", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Boot Sound.
-        /// </summary>
-        internal static string BootSound {
-            get {
-                return ResourceManager.GetString("BootSound", resourceCulture);
             }
         }
 
@@ -1335,15 +1119,6 @@ namespace OHelper.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Keystone Sound.
-        /// </summary>
-        internal static string KeystoneSound {
-            get {
-                return ResourceManager.GetString("KeystoneSound", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Stop all apps using GPU when switching to Eco.
         /// </summary>
         internal static string KillGpuApps {
@@ -1497,87 +1272,6 @@ namespace OHelper.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Audio Visualizer.
-        /// </summary>
-        internal static string MatrixAudio {
-            get {
-                return ResourceManager.GetString("MatrixAudio", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Binary Banner.
-        /// </summary>
-        internal static string MatrixBanner {
-            get {
-                return ResourceManager.GetString("MatrixBanner", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Bright.
-        /// </summary>
-        internal static string MatrixBright {
-            get {
-                return ResourceManager.GetString("MatrixBright", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Clock.
-        /// </summary>
-        internal static string MatrixClock {
-            get {
-                return ResourceManager.GetString("MatrixClock", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Dim.
-        /// </summary>
-        internal static string MatrixDim {
-            get {
-                return ResourceManager.GetString("MatrixDim", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Rog Logo.
-        /// </summary>
-        internal static string MatrixLogo {
-            get {
-                return ResourceManager.GetString("MatrixLogo", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Medium.
-        /// </summary>
-        internal static string MatrixMedium {
-            get {
-                return ResourceManager.GetString("MatrixMedium", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Off.
-        /// </summary>
-        internal static string MatrixOff {
-            get {
-                return ResourceManager.GetString("MatrixOff", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Picture.
-        /// </summary>
-        internal static string MatrixPicture {
-            get {
-                return ResourceManager.GetString("MatrixPicture", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Max Fans.
         /// </summary>
         internal static string MaxFans {
@@ -1700,24 +1394,6 @@ namespace OHelper.Properties {
         internal static string MousePerformance {
             get {
                 return ResourceManager.GetString("MousePerformance", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Synchronize with mouse.
-        /// </summary>
-        internal static string MouseSynchronize {
-            get {
-                return ResourceManager.GetString("MouseSynchronize", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Sync with laptop.
-        /// </summary>
-        internal static string MouseSyncWithAura {
-            get {
-                return ResourceManager.GetString("MouseSyncWithAura", resourceCulture);
             }
         }
 
@@ -2213,24 +1889,6 @@ namespace OHelper.Properties {
         internal static string ScalingQuality {
             get {
                 return ResourceManager.GetString("ScalingQuality", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Screenpad Brightness Down.
-        /// </summary>
-        internal static string ScreenPadDown {
-            get {
-                return ResourceManager.GetString("ScreenPadDown", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Screenpad Brightness Up.
-        /// </summary>
-        internal static string ScreenPadUp {
-            get {
-                return ResourceManager.GetString("ScreenPadUp", resourceCulture);
             }
         }
 
@@ -2811,20 +2469,29 @@ namespace OHelper.Properties {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to XG Mobile toggle works only in Standard mode.
-        /// </summary>
-        internal static string XGMobileStandardModeOnly {
-            get {
-                return ResourceManager.GetString("XGMobileStandardModeOnly", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Zoom.
         /// </summary>
         internal static string Zoom {
             get {
                 return ResourceManager.GetString("Zoom", resourceCulture);
+            }
+        }
+
+        internal static string DisplayModeRestart {
+            get {
+                return ResourceManager.GetString("DisplayModeRestart", resourceCulture);
+            }
+        }
+
+        internal static string StartupTaskCreateError {
+            get {
+                return ResourceManager.GetString("StartupTaskCreateError", resourceCulture);
+            }
+        }
+
+        internal static string StartupTaskRemoveError {
+            get {
+                return ResourceManager.GetString("StartupTaskRemoveError", resourceCulture);
             }
         }
     }

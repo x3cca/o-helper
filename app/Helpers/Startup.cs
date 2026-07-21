@@ -57,15 +57,15 @@ public class Startup
                         {
                             try
                             {
-                                var currentVer = Assembly.GetEntryAssembly().GetName().Version;
-                                var fv = FileVersionInfo.GetVersionInfo(action).FileVersion.Split('.');
+                                var currentVer = Assembly.GetEntryAssembly()?.GetName().Version;
+                                var fv = (FileVersionInfo.GetVersionInfo(action).FileVersion ?? "0.0.0.0").Split('.');
                                 var scheduledVer = new Version(
                                     int.Parse(fv[0]),
                                     fv.Length > 1 ? int.Parse(fv[1]) : 0,
                                     fv.Length > 2 ? int.Parse(fv[2]) : 0,
                                     fv.Length > 3 ? int.Parse(fv[3]) : 0
                                 );
-                                if (currentVer > scheduledVer)
+                                if (currentVer is not null && currentVer > scheduledVer)
                                 {
                                     Logger.WriteLine($"Startup file is older {scheduledVer}, current is {currentVer}");
                                     needsReschedule = true;
@@ -109,9 +109,9 @@ public class Startup
             {
                 taskService.RootFolder.DeleteTask(chargeTaskName);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.WriteLine("Can't remove charge limit task: " + e.Message);
+                Logger.WriteLine("Can't remove charge limit task: " + ex.Message);
             }
         }
     }
@@ -145,9 +145,9 @@ public class Startup
                 TaskService.Instance.RootFolder.RegisterTaskDefinition(chargeTaskName, td);
                 Logger.WriteLine("Charge limit task scheduled: " + strExeFilePath);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.WriteLine("Can't create a charge limit task: " + e.Message);
+                Logger.WriteLine("Can't create a charge limit task: " + ex.Message);
             }
         }
     }
@@ -174,10 +174,11 @@ public class Startup
             {
                 TaskService.Instance.RootFolder.RegisterTaskDefinition(taskName, td);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                Logger.WriteLine("Failed to schedule startup task: " + ex.Message);
                 if (ProcessHelper.IsUserAdministrator())
-                    MessageBox.Show("Can't create a start up task. Try running Task Scheduler by hand and manually deleting OHelper task if it exists there.", "Scheduler Error", MessageBoxButtons.OK);
+                    MessageBox.Show(OHelper.Properties.Strings.StartupTaskCreateError, OHelper.Properties.Strings.StartupError, MessageBoxButtons.OK);
                 else
                     ProcessHelper.RunAsAdmin();
             }
@@ -197,10 +198,11 @@ public class Startup
             {
                 taskService.RootFolder.DeleteTask(taskName);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                Logger.WriteLine("Failed to remove startup task: " + ex.Message);
                 if (ProcessHelper.IsUserAdministrator())
-                    MessageBox.Show("Can't remove task. Try running Task Scheduler by hand and manually deleting OHelper task if it exists there.", "Scheduler Error", MessageBoxButtons.OK);
+                    MessageBox.Show(OHelper.Properties.Strings.StartupTaskRemoveError, OHelper.Properties.Strings.StartupError, MessageBoxButtons.OK);
                 else
                     ProcessHelper.RunAsAdmin();
             }

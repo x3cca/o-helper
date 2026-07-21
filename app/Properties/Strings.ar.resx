@@ -120,9 +120,6 @@
   <data name="Acceleration" xml:space="preserve">
     <value>تسارع</value>
   </data>
-  <data name="ACPIError" xml:space="preserve">
-    <value>تعذر الاتصال بنظام الطاقة المتقدم من أسوس. لا يمكن للتطبيق العمل بدون هذا النظام. يرجى محاولة تثبيت واجهة التحكم لنظام أسوس.</value>
-  </data>
   <data name="AlertAPUMemoryRestart" xml:space="preserve">
     <value>أعد تشغيل جهازك لتطبيق التغييرات</value>
   </data>
@@ -144,17 +141,11 @@
   <data name="AlertUltimateTitle" xml:space="preserve">
     <value>إعادة التشغيل الآن؟</value>
   </data>
-  <data name="AllyController" xml:space="preserve">
-    <value>وحدة تحكم ألي</value>
-  </data>
   <data name="AnimationDirection" xml:space="preserve">
     <value>اتجاه الحركة</value>
   </data>
   <data name="AnimationSpeed" xml:space="preserve">
     <value>سرعة الحركة</value>
-  </data>
-  <data name="AnimeMatrix" xml:space="preserve">
-    <value>أنمي ماتريكس</value>
   </data>
   <data name="AppAlreadyRunning" xml:space="preserve">
     <value>التطبيق يعمل بالفعل</value>
@@ -176,66 +167,6 @@
   </data>
   <data name="APUMemory" xml:space="preserve">
     <value>الذاكرة المخصصة لوحدة معالجة الرسومات</value>
-  </data>
-  <data name="AuraBatteryState" xml:space="preserve">
-    <value>حالة البطارية</value>
-  </data>
-  <data name="AuraBreathe" xml:space="preserve">
-    <value>تنفس</value>
-  </data>
-  <data name="AuraClockwise" xml:space="preserve">
-    <value>باتجاه عقارب الساعة</value>
-  </data>
-  <data name="AuraColorCycle" xml:space="preserve">
-    <value>دورة الألوان</value>
-  </data>
-  <data name="AuraComet" xml:space="preserve">
-    <value>مذنب</value>
-  </data>
-  <data name="AuraCounterClockwise" xml:space="preserve">
-    <value>عكس عقارب الساعة</value>
-  </data>
-  <data name="AuraFast" xml:space="preserve">
-    <value>سريع</value>
-  </data>
-  <data name="AuraLightingMode" xml:space="preserve">
-    <value>وضع الإضاءة</value>
-  </data>
-  <data name="AuraNormal" xml:space="preserve">
-    <value>عادي</value>
-  </data>
-  <data name="AuraRainbow" xml:space="preserve">
-    <value>قوس قزح</value>
-  </data>
-  <data name="AuraRandomColor" xml:space="preserve">
-    <value>عشوائي</value>
-  </data>
-  <data name="AuraReact" xml:space="preserve">
-    <value>تفاعل</value>
-  </data>
-  <data name="AuraSlow" xml:space="preserve">
-    <value>بطيء</value>
-  </data>
-  <data name="AuraStatic" xml:space="preserve">
-    <value>ثابت</value>
-  </data>
-  <data name="AuraStrobe" xml:space="preserve">
-    <value>وميض</value>
-  </data>
-  <data name="AuraZoneAll" xml:space="preserve">
-    <value>الكل</value>
-  </data>
-  <data name="AuraZoneDock" xml:space="preserve">
-    <value>القاعدة</value>
-  </data>
-  <data name="AuraZoneLogo" xml:space="preserve">
-    <value>الشعار</value>
-  </data>
-  <data name="AuraZoneScroll" xml:space="preserve">
-    <value>عجلة التمرير</value>
-  </data>
-  <data name="AuraZoneUnderglow" xml:space="preserve">
-    <value>الإضاءة السفلية</value>
   </data>
   <data name="AutoApply" xml:space="preserve">
     <value>تطبيق تلقائي</value>
@@ -302,9 +233,6 @@
   </data>
   <data name="Boot" xml:space="preserve">
     <value>إقلاع</value>
-  </data>
-  <data name="BootSound" xml:space="preserve">
-    <value>صوت الإقلاع</value>
   </data>
   <data name="Brightness" xml:space="preserve">
     <value>السطوع</value>
@@ -503,9 +431,6 @@
   <data name="Keyboard" xml:space="preserve">
     <value>لوحة المفاتيح</value>
   </data>
-  <data name="KeystoneSound" xml:space="preserve">
-    <value>صوت Keystone</value>
-  </data>
   <data name="KillGpuApps" xml:space="preserve">
     <value>إيقاف جميع التطبيقات التي تستخدم وحدة معالجة الرسومات عند التبديل إلى وضع التوفير</value>
   </data>
@@ -545,33 +470,6 @@
   <data name="LTDeadzones" xml:space="preserve">
     <value>مناطق الخمول للزناد الأيسر</value>
   </data>
-  <data name="MatrixAudio" xml:space="preserve">
-    <value>مؤثرات الصوت المرئية</value>
-  </data>
-  <data name="MatrixBanner" xml:space="preserve">
-    <value>لافتة ثنائية</value>
-  </data>
-  <data name="MatrixBright" xml:space="preserve">
-    <value>ساطع</value>
-  </data>
-  <data name="MatrixClock" xml:space="preserve">
-    <value>ساعة</value>
-  </data>
-  <data name="MatrixDim" xml:space="preserve">
-    <value>خافت</value>
-  </data>
-  <data name="MatrixLogo" xml:space="preserve">
-    <value>شعار ROG</value>
-  </data>
-  <data name="MatrixMedium" xml:space="preserve">
-    <value>متوسط</value>
-  </data>
-  <data name="MatrixOff" xml:space="preserve">
-    <value>إيقاف</value>
-  </data>
-  <data name="MatrixPicture" xml:space="preserve">
-    <value>صورة</value>
-  </data>
   <data name="MaxRefreshTooltip" xml:space="preserve">
     <value>أعلى معدل تحديث لأقل تأخير</value>
   </data>
@@ -607,12 +505,6 @@
   </data>
   <data name="MousePerformance" xml:space="preserve">
     <value>أداء</value>
-  </data>
-  <data name="MouseSynchronize" xml:space="preserve">
-    <value>مزامنة مع الماوس</value>
-  </data>
-  <data name="MouseSyncWithAura" xml:space="preserve">
-    <value>مزامنة مع اللاب توب</value>
   </data>
   <data name="Multizone" xml:space="preserve">
     <value>عدة مناطق</value>
@@ -727,12 +619,6 @@
   </data>
   <data name="ScalingQuality" xml:space="preserve">
     <value>جودة التحجيم</value>
-  </data>
-  <data name="ScreenPadDown" xml:space="preserve">
-    <value>خفض سطوع ScreenPad</value>
-  </data>
-  <data name="ScreenPadUp" xml:space="preserve">
-    <value>زيادة سطوع ScreenPad</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>إيقاف التشغيل</value>
