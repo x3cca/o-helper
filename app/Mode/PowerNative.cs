@@ -99,16 +99,21 @@ namespace OHelper.Mode
                 { POWER_TURBO, "Best Performance" },
                 { PLAN_HIGH_PERFORMANCE, "High Performance Plan"},
             };
-        static Guid GetActiveScheme()
+        static bool TryGetActiveScheme(out Guid activeSchemeGuid)
         {
+            activeSchemeGuid = Guid.Empty;
             IntPtr pActiveSchemeGuid;
             var hr = PowerGetActiveScheme(IntPtr.Zero, out pActiveSchemeGuid);
             try
             {
                 if (hr != 0 || pActiveSchemeGuid == IntPtr.Zero)
-                    return Guid.Empty;
+                {
+                    Logger.WriteLine($"Failed to get active power scheme: {hr}");
+                    return false;
+                }
 
-                return Marshal.PtrToStructure<Guid>(pActiveSchemeGuid);
+                activeSchemeGuid = Marshal.PtrToStructure<Guid>(pActiveSchemeGuid);
+                return true;
             }
             finally
             {
@@ -119,9 +124,9 @@ namespace OHelper.Mode
 
         public static int GetCPUBoost()
         {
-            IntPtr AcValueIndex;
-            Guid activeSchemeGuid = GetActiveScheme();
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid)) return 0;
 
+            IntPtr AcValueIndex;
             UInt32 value = PowerReadACValueIndex(IntPtr.Zero,
                  activeSchemeGuid,
                  GUID_CPU,
@@ -133,7 +138,7 @@ namespace OHelper.Mode
 
         public static void SetCPUBoost(int boost = 0)
         {
-            Guid activeSchemeGuid = GetActiveScheme();
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid)) return;
 
             if (boost == GetCPUBoost()) return;
 
@@ -160,7 +165,9 @@ namespace OHelper.Mode
 
         public static string GetPowerMode()
         {
-            if (GetActiveScheme().ToString() == PLAN_HIGH_PERFORMANCE) return PLAN_HIGH_PERFORMANCE;
+            if (TryGetActiveScheme(out Guid activePowerPlan) && activePowerPlan.ToString() == PLAN_HIGH_PERFORMANCE)
+                return PLAN_HIGH_PERFORMANCE;
+
             PowerGetEffectiveOverlayScheme(out Guid activeScheme);
             return activeScheme.ToString();
         }
@@ -207,7 +214,9 @@ namespace OHelper.Mode
             if (overlays.Contains(scheme)) return;
 
             if (scheme is null) scheme = PLAN_BALANCED;
-            var activeScheme = GetActiveScheme().ToString();
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid)) return;
+
+            var activeScheme = activeSchemeGuid.ToString();
             if (activeScheme == scheme) return;
 
             uint status = PowerSetActiveScheme(IntPtr.Zero, new Guid(scheme));
@@ -236,7 +245,8 @@ namespace OHelper.Mode
 
         public static int GetASPM()
         {
-            Guid activeSchemeGuid = GetActiveScheme();
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid)) return 0;
+
             IntPtr activeIndex;
 
             PowerReadACValueIndex(IntPtr.Zero,
@@ -249,7 +259,8 @@ namespace OHelper.Mode
 
         public static void SetASPM(int status = 0)
         {
-            Guid activeSchemeGuid = GetActiveScheme();
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid)) return;
+
             var currentASPM = GetASPM();
             if (currentASPM == status) return;
 
@@ -266,13 +277,13 @@ namespace OHelper.Mode
 
         public static void SetBalancedASPM(int status = 0)
         {
-            if (GetActiveScheme().ToString() != PLAN_BALANCED) return;
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid) || activeSchemeGuid.ToString() != PLAN_BALANCED) return;
             SetASPM(status);
         }
 
         public static int GetLidAction(bool ac)
         {
-            Guid activeSchemeGuid = GetActiveScheme();
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid)) return 0;
 
             IntPtr activeIndex;
             if (ac)
@@ -301,7 +312,7 @@ namespace OHelper.Mode
              * 4: Shutdown
              */
 
-            Guid activeSchemeGuid = GetActiveScheme();
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid)) return;
 
             var hrAC = PowerWriteACValueIndex(
                 IntPtr.Zero,
@@ -329,7 +340,8 @@ namespace OHelper.Mode
 
         public static int GetHibernateAfter()
         {
-            Guid activeSchemeGuid = GetActiveScheme();
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid)) return 0;
+
             IntPtr seconds;
             PowerReadDCValueIndex(IntPtr.Zero,
                     activeSchemeGuid,
@@ -345,7 +357,8 @@ namespace OHelper.Mode
         {
             int seconds = minutes * 60;
 
-            Guid activeSchemeGuid = GetActiveScheme();
+            if (!TryGetActiveScheme(out Guid activeSchemeGuid)) return;
+
             var hrAC = PowerWriteDCValueIndex(
                 IntPtr.Zero,
                 activeSchemeGuid,
