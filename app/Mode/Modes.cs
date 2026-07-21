@@ -97,7 +97,10 @@ namespace OHelper.Mode
                         if (kvp.Value == "int")
                             AppConfig.Set(targetKey, AppConfig.Get(sourceKey));
                         else
-                            AppConfig.Set(targetKey, AppConfig.GetString(sourceKey));
+                        {
+                            string? value = AppConfig.GetString(sourceKey);
+                            if (value is not null) AppConfig.Set(targetKey, value);
+                        }
                     }
                 }
 
@@ -177,7 +180,7 @@ namespace OHelper.Mode
                 case 4:
                     return Properties.Strings.Unleashed;
                 default:
-                    return AppConfig.GetString("mode_name_" + mode);
+                    return AppConfig.GetString("mode_name_" + mode) ?? $"Custom {mode - 2}";
             }
         }
 

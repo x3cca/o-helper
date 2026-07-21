@@ -6,8 +6,7 @@ public enum HpFan
 {
     CPU = 0,
     GPU = 1,
-    Mid = 2,
-    XGM = 3
+    Mid = 2
 }
 
 public enum HpMode
@@ -132,8 +131,6 @@ public class HpACPI
     public const uint GPUEcoROG = 0x00090020;
     public const uint GPUEcoVivo = 0x00090120;
 
-    public const uint GPUXGConnected = 0x00090018;
-    public const uint GPUXG = 0x00090019;
 
     public const uint GPUMuxROG = 0x00090016;
     public const uint GPUMuxVivo = 0x00090026;
@@ -241,8 +238,8 @@ public class HpACPI
 
     private readonly Dictionary<uint, bool> _supportCache = new();
 
-    public static uint GPUEco => AppConfig.IsVivoZenPro() ? GPUEcoVivo : GPUEcoROG;
-    public static uint GPUMux => AppConfig.IsVivoZenPro() ? GPUMuxVivo : GPUMuxROG;
+    public const uint GPUEco = GPUEcoROG;
+    public const uint GPUMux = GPUMuxROG;
 
     public bool SupportsGpuModeSwitching()
     {
@@ -288,41 +285,6 @@ public class HpACPI
         };
     }
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    private static extern IntPtr CreateFile(
-        string lpFileName,
-        uint dwDesiredAccess,
-        uint dwShareMode,
-        IntPtr lpSecurityAttributes,
-        uint dwCreationDisposition,
-        uint dwFlagsAndAttributes,
-        IntPtr hTemplateFile
-    );
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool DeviceIoControl(
-        IntPtr hDevice,
-        uint dwIoControlCode,
-        byte[] lpInBuffer,
-        uint nInBufferSize,
-        byte[] lpOutBuffer,
-        uint nOutBufferSize,
-        ref uint lpBytesReturned,
-        IntPtr lpOverlapped
-    );
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool CloseHandle(IntPtr hObject);
-
-    private const uint GENERIC_READ = 0x80000000;
-    private const uint GENERIC_WRITE = 0x40000000;
-    private const uint OPEN_EXISTING = 3;
-    private const uint FILE_ATTRIBUTE_NORMAL = 0x80;
-    private const uint FILE_SHARE_READ = 1;
-    private const uint FILE_SHARE_WRITE = 2;
-
-    private IntPtr handle;
-    private IntPtr eventHandle;
     private bool _connected = false;
 
     #region WMI BIOS Interface
@@ -333,9 +295,9 @@ public class HpACPI
     private const string WMI_INSTANCE_NAME = @"ACPI\PNP0C14\0_0";
     private static readonly byte[] WMI_SIGN = { 0x53, 0x45, 0x43, 0x55 };
 
-    private ManagementScope _wmiScope;
-    private ManagementClass _wmiDataClass;
-    private ManagementObject _wmiMethodsObject;
+    private ManagementScope? _wmiScope;
+    private ManagementClass? _wmiDataClass;
+    private ManagementObject? _wmiMethodsObject;
     private bool _wmiInitialized;
     private bool _wmiDisabled;
     private bool _useLegacyWmi;
@@ -346,7 +308,7 @@ public class HpACPI
     private DateTime _lastErrorLog = DateTime.MinValue;
     private static readonly TimeSpan ERROR_LOG_INTERVAL = TimeSpan.FromSeconds(30);
 
-    private System.Timers.Timer _heartbeatTimer;
+    private System.Timers.Timer? _heartbeatTimer;
     private const int HEARTBEAT_INTERVAL_MS = 60000;
 
     #endregion
@@ -408,7 +370,7 @@ public class HpACPI
             {
                 foreach (ManagementObject instance in instances)
                 {
-                    string instanceName = Convert.ToString(instance["InstanceName"]);
+                    string? instanceName = Convert.ToString(instance["InstanceName"]);
                     if (string.Equals(instanceName, WMI_INSTANCE_NAME, StringComparison.OrdinalIgnoreCase))
                     {
                         _wmiMethodsObject = instance;
@@ -453,7 +415,7 @@ public class HpACPI
             {
                 foreach (ManagementObject instance in instances)
                 {
-                    string instanceName = Convert.ToString(instance["InstanceName"]);
+                    string? instanceName = Convert.ToString(instance["InstanceName"]);
                     if (string.Equals(instanceName, WMI_INSTANCE_NAME, StringComparison.OrdinalIgnoreCase))
                     {
                         _wmiMethodsObject?.Dispose();
@@ -479,7 +441,7 @@ public class HpACPI
         }
     }
 
-    public WmiBiosResult ExecuteBiosCommand(uint command, int commandType, byte[] inputData, int returnDataSize)
+    public WmiBiosResult ExecuteBiosCommand(uint command, int commandType, byte[]? inputData, int returnDataSize)
     {
         TryRecoverWmiAfterCooldown();
         if (_wmiDisabled)
@@ -496,7 +458,7 @@ public class HpACPI
         {
             try
             {
-                using (ManagementObject input = _wmiDataClass.CreateInstance())
+                using (ManagementObject input = _wmiDataClass!.CreateInstance())
                 {
                     input["Sign"] = WMI_SIGN;
                     input["Command"] = (uint)command;
@@ -505,11 +467,11 @@ public class HpACPI
                     input["hpqBData"] = inputData ?? Array.Empty<byte>();
 
                     string methodName = GetWmiMethodName(returnDataSize);
-                    ManagementBaseObject inParams = _wmiMethodsObject.GetMethodParameters(methodName);
+                    ManagementBaseObject inParams = _wmiMethodsObject!.GetMethodParameters(methodName);
                     inParams["InData"] = input;
 
-                    ManagementBaseObject outParams = _wmiMethodsObject.InvokeMethod(methodName, inParams, null);
-                    ManagementBaseObject outData = outParams?["OutData"] as ManagementBaseObject;
+                    ManagementBaseObject? outParams = _wmiMethodsObject.InvokeMethod(methodName, inParams, null);
+                    ManagementBaseObject? outData = outParams?["OutData"] as ManagementBaseObject;
 
                     if (outData == null)
                     {
@@ -675,6 +637,8 @@ public class HpACPI
     {
         _heartbeatTimer?.Dispose();
         _heartbeatTimer = null;
+        _fanSettingsTimer?.Dispose();
+        _fanSettingsTimer = null;
 
         _wmiInitialized = false;
         try { _wmiMethodsObject?.Dispose(); } catch { }
@@ -717,9 +681,6 @@ public class HpACPI
         if (DeviceID == GPUEco || DeviceID == GPUEcoROG || DeviceID == GPUEcoVivo
             || DeviceID == GPUMux || DeviceID == GPUMuxROG || DeviceID == GPUMuxVivo)
             return SetGpuModeValue(Status);
-
-        if (DeviceID == GPUXG)
-            return SetGpuXg(Status);
 
         if (DeviceID == StatusMode)
             return 1;
@@ -805,11 +766,6 @@ public class HpACPI
             || DeviceID == GPUMux || DeviceID == GPUMuxROG || DeviceID == GPUMuxVivo)
             return GetGpuMode();
 
-        if (DeviceID == GPUXG)
-#pragma warning disable CS0618
-            return IsXGConnected() ? 1 : 0;
-#pragma warning restore CS0618
-
         if (DeviceID == Temp_CPU)
             return GetCpuTemp();
 
@@ -864,6 +820,12 @@ public class HpACPI
 
     private int SetPerformanceMode(int modeValue)
     {
+        if (!AppConfig.SupportsPerformanceModes())
+        {
+            Logger.WriteLine("HpACPI SetPerformanceMode skipped: model capability is not confirmed");
+            return 0;
+        }
+
         byte modeByte;
         switch (modeValue)
         {
@@ -1118,12 +1080,6 @@ public class HpACPI
         return success ? 1 : 0;
     }
 
-    private int SetGpuXg(int status)
-    {
-        Logger.WriteLine("SetGpuXg unsupported on HP Omen; XG Mobile is ASUS-only");
-        return 0;
-    }
-
     #endregion
 
     #region Fan Control
@@ -1161,7 +1117,7 @@ public class HpACPI
 
     public int GetFan(HpFan device)
     {
-        if (!IsWmiReady()) return -1;
+        if (!AppConfig.SupportsRpmReadback() || !IsWmiReady()) return -1;
 
         try
         {
@@ -1659,12 +1615,6 @@ public class HpACPI
             _isNvidiaGpu = false;
             _isAllAmd = false;
         }
-    }
-
-    [Obsolete("XG Mobile is an ASUS ROG proprietary eGPU dock. Use AppConfig.GetModelCapabilities() instead.")]
-    public bool IsXGConnected()
-    {
-        return false;
     }
 
     public bool IsAllAmdPPT()

@@ -137,8 +137,9 @@ public class NvidiaGpuControl : IGpuControl
 
         if (_lastTemp is null) return true;
 
-        var cpuTemp = (float)HardwareControl.GetCPUTemp();
-        var delta = _lastTemp.Value - cpuTemp;
+        var cpuTemp = HardwareControl.GetCPUTemp();
+        if (cpuTemp is null) return true;
+        var delta = _lastTemp.Value - cpuTemp.Value;
 
         if (delta < deltaMin) return false;
 

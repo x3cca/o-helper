@@ -2827,5 +2827,23 @@ namespace OHelper.Properties {
                 return ResourceManager.GetString("Zoom", resourceCulture);
             }
         }
+
+        internal static string DisplayModeRestart {
+            get {
+                return ResourceManager.GetString("DisplayModeRestart", resourceCulture);
+            }
+        }
+
+        internal static string StartupTaskCreateError {
+            get {
+                return ResourceManager.GetString("StartupTaskCreateError", resourceCulture);
+            }
+        }
+
+        internal static string StartupTaskRemoveError {
+            get {
+                return ResourceManager.GetString("StartupTaskRemoveError", resourceCulture);
+            }
+        }
     }
 }

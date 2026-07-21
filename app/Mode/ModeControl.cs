@@ -1,6 +1,5 @@
 using OHelper.Gpu;
 using OHelper.Helpers;
-using OHelper.USB;
 using PawnIO;
 
 namespace OHelper.Mode
@@ -12,7 +11,7 @@ namespace OHelper.Mode
 
         private static bool customFans = false;
         private static int customPower = 0;
-        private static bool _fanMaxActive = false;
+        private static volatile bool _fanMaxActive = false;
         private static System.Timers.Timer? fanCurveTimer;
         private static readonly object fanCurveLock = new();
         private static int lastCpuFanLevel = -1;
@@ -215,8 +214,7 @@ namespace OHelper.Mode
 
                     SetModeLabel();
 
-                    // Workaround for not properly resetting limits on G14 2024
-                    if (reset)
+                    if (reset && AppConfig.SupportsPerformanceModes())
                     {
                         Program.acpi.DeviceSet(HpACPI.PerformanceMode, (Modes.GetBase(oldMode) != 1) ? HpACPI.PerformanceTurbo : HpACPI.PerformanceBalanced, "ModeReset");
                         await Task.Delay(TimeSpan.FromMilliseconds(1500), ct);
@@ -224,10 +222,12 @@ namespace OHelper.Mode
 
                     ct.ThrowIfCancellationRequested();
 
-                    if (AppConfig.Is("status_mode")) Program.acpi.DeviceSet(HpACPI.StatusMode, [0x00, Modes.GetBase(mode) == HpACPI.PerformanceSilent ? (byte)0x02 : (byte)0x03], "StatusMode");
-                    int status = Program.acpi.DeviceSet(HpACPI.PerformanceMode, AppConfig.IsManualModeRequired() ? HpACPI.PerformanceManual : Modes.GetBase(mode), "Mode");
-                    // Vivobook fallback — retry the same command on failure
-                    if (status != 1) Program.acpi.DeviceSet(HpACPI.PerformanceMode, AppConfig.IsManualModeRequired() ? HpACPI.PerformanceManual : Modes.GetBase(mode), "Mode retry");
+                    if (AppConfig.SupportsPerformanceModes())
+                    {
+                        if (AppConfig.Is("status_mode")) Program.acpi.DeviceSet(HpACPI.StatusMode, [0x00, Modes.GetBase(mode) == HpACPI.PerformanceSilent ? (byte)0x02 : (byte)0x03], "StatusMode");
+                        int status = Program.acpi.DeviceSet(HpACPI.PerformanceMode, AppConfig.IsManualModeRequired() ? HpACPI.PerformanceManual : Modes.GetBase(mode), "Mode");
+                        if (status != 1) Program.acpi.DeviceSet(HpACPI.PerformanceMode, AppConfig.IsManualModeRequired() ? HpACPI.PerformanceManual : Modes.GetBase(mode), "Mode retry");
+                    }
 
                     SetGPUClocks();
 
@@ -248,6 +248,10 @@ namespace OHelper.Mode
                 {
                     Logger.WriteLine($"SetPerformanceMode cancelled (mode {mode})");
                 }
+                catch (Exception ex)
+                {
+                    Logger.WriteLine($"SetPerformanceMode failed (mode {mode}): {ex}");
+                }
             }, ct);
 
             if (notify) Toast();
@@ -265,7 +269,7 @@ namespace OHelper.Mode
         {
             if (AppConfig.Is("skip_powermode") || AppConfig.Is("no_windows_power_mode")) return;
 
-            string powerMode = AppConfig.GetString("powermode_" + mode);
+            string? powerMode = AppConfig.GetString("powermode_" + mode);
             PowerNative.SetPowerMode(powerMode ?? PowerNative.GetDefaultPowerMode(mode));
 
             if (AppConfig.IsAutoASPM()) PowerNative.SetBalancedASPM();
@@ -343,15 +347,6 @@ namespace OHelper.Mode
             if (applyCustomCurve || monitorUnleashedThermals || force)
             {
 
-                bool xgmFan = false;
-                if (AppConfig.IsASUS() && AppConfig.Is("xgm_fan"))
-                {
-                    XGM.SetFan(AppConfig.GetFanConfig(HpFan.XGM));
-#pragma warning disable CS0618 // IsXGConnected is ASUS-only
-                    xgmFan = Program.acpi.IsXGConnected();
-#pragma warning restore CS0618
-                }
-
                 if (AppConfig.SupportsFirmwareFanCurves())
                 {
                     int cpuResult = Program.acpi.SetFanCurve(HpFan.CPU, AppConfig.GetFanConfig(HpFan.CPU));
@@ -399,8 +394,7 @@ namespace OHelper.Mode
                 if (hystUp > 0 && hystDown > 0)
                     Program.acpi.SetFanHysteresis(hystUp, hystDown);
 
-                // force set PPTs for missbehaving bios on FX507/517 series
-                if ((AppConfig.IsPowerRequired() || xgmFan) && !AppConfig.IsApplyPower())
+                if (AppConfig.IsPowerRequired() && !AppConfig.IsApplyPower())
                 {
                     Task.Run(async () =>
                     {
@@ -413,7 +407,6 @@ namespace OHelper.Mode
             } else
             {
                 StopFanCurveLoop(true);
-                XGM.Reset();
             }
 
             SetModeLabel();
@@ -480,7 +473,13 @@ namespace OHelper.Mode
 
             try
             {
-                ApplySoftwareFanCurveCore();
+                // Serialize a curve tick with max-fan activation. SetFanMaxActive(true)
+                // stops the timer under this same lock, so an in-flight temperature
+                // update must finish before the user's max-fan command is sent.
+                lock (fanCurveLock)
+                {
+                    ApplySoftwareFanCurveCore();
+                }
             }
             finally
             {
@@ -658,6 +657,12 @@ namespace OHelper.Mode
 
             customPower = 0;
 
+            if (!AppConfig.SupportsPowerLimits())
+            {
+                SetGPUPower();
+                return;
+            }
+
             bool applyPower = AppConfig.IsApplyPower();
             bool applyFans = AppConfig.IsApplyFans();
 
@@ -707,6 +712,7 @@ namespace OHelper.Mode
 
         public void SetPower(bool launchAsAdmin = false)
         {
+            if (!AppConfig.SupportsPowerLimits()) return;
 
             bool allAMD = Program.acpi.IsAllAmdPPT();
             bool isAMD = CpuInfo.IsAMD;
@@ -871,6 +877,8 @@ namespace OHelper.Mode
 
         public string SetRyzen(bool launchAsAdmin = false)
         {
+            if (!AppConfig.SupportsUndervolt()) return string.Empty;
+
             if (!ProcessHelper.IsUserAdministrator())
             {
                 if (launchAsAdmin) ProcessHelper.RunAsAdmin("uv");
@@ -948,7 +956,7 @@ namespace OHelper.Mode
 
         public void AutoRyzen()
         {
-            if (!CpuInfo.IsAMD) return;
+            if (!CpuInfo.IsAMD || !AppConfig.SupportsUndervolt()) return;
 
             if (AppConfig.IsApplyUV()) SetRyzen();
             else ResetRyzen();

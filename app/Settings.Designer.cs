@@ -77,7 +77,6 @@ namespace OHelper
             buttonStopGPU = new RButton();
             buttonEco = new RButton();
             buttonStandard = new RButton();
-            buttonXGM = new RButton();
             buttonOptimized = new RButton();
             buttonUltimate = new RButton();
             panelGPUTitle = new Panel();
@@ -934,7 +933,6 @@ namespace OHelper
             tableGPU.Controls.Add(buttonStopGPU, 0, 0);
             tableGPU.Controls.Add(buttonEco, 0, 0);
             tableGPU.Controls.Add(buttonStandard, 1, 0);
-            tableGPU.Controls.Add(buttonXGM, 2, 0);
             tableGPU.Controls.Add(buttonOptimized, 2, 0);
             tableGPU.Controls.Add(buttonUltimate, 2, 0);
             tableGPU.Dock = DockStyle.Top;
@@ -1015,29 +1013,6 @@ namespace OHelper
             buttonStandard.Text = Properties.Strings.StandardMode;
             buttonStandard.TextImageRelation = TextImageRelation.ImageAboveText;
             buttonStandard.UseVisualStyleBackColor = false;
-            // 
-            // buttonXGM
-            // 
-            buttonXGM.Activated = false;
-            buttonXGM.BackColor = RForm.buttonMain;
-            buttonXGM.BorderColor = Color.Transparent;
-            buttonXGM.BorderRadius = 5;
-            buttonXGM.Dock = DockStyle.Top;
-            buttonXGM.FlatAppearance.BorderSize = 0;
-            buttonXGM.FlatStyle = FlatStyle.Flat;
-            buttonXGM.ForeColor = SystemColors.ControlText;
-            buttonXGM.Image = Properties.Resources.icons8_video_48;
-            buttonXGM.ImageAlign = ContentAlignment.BottomCenter;
-            buttonXGM.Location = new Point(200, 132);
-            buttonXGM.Margin = new Padding(4);
-            buttonXGM.Name = "buttonXGM";
-            buttonXGM.Secondary = false;
-            buttonXGM.Size = new Size(188, 120);
-            buttonXGM.TabIndex = 8;
-            buttonXGM.Text = "XG Mobile";
-            buttonXGM.TextImageRelation = TextImageRelation.ImageAboveText;
-            buttonXGM.UseVisualStyleBackColor = false;
-            buttonXGM.Visible = false;
             // 
             // buttonOptimized
             // 
@@ -2188,11 +2163,8 @@ namespace OHelper
             Controls.Add(panelVersion);
             Controls.Add(panelStartup);
             Controls.Add(panelBattery);
-            Controls.Add(panelPeripherals);
             Controls.Add(panelKeyboard);
             Controls.Add(panelRearLight);
-            Controls.Add(panelAlly);
-            Controls.Add(panelMatrix);
             Controls.Add(panelGamma);
             Controls.Add(panelScreen);
             Controls.Add(panelGPU);
@@ -2296,7 +2268,6 @@ namespace OHelper
         private RButton buttonSilent;
         private Panel panelGPU;
         private TableLayoutPanel tableGPU;
-        private RButton buttonXGM;
         private RButton buttonUltimate;
         private RButton buttonStandard;
         private RButton buttonEco;

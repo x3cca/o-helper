@@ -30,15 +30,15 @@ namespace OHelper.UI
         private float scale;
         private float hue, sat, val;
 
-        private SVPanel svPanel;
-        private HuePanel huePanel;
-        private Panel preview;
-        private RTextBox hexBox;
-        private Label rgbLabel;
+        private SVPanel svPanel = default!;
+        private HuePanel huePanel = default!;
+        private Panel preview = default!;
+        private RTextBox hexBox = default!;
+        private Label rgbLabel = default!;
         private Swatch? active;
 
         private readonly List<Color> customColors = new();
-        private Swatch[] customSwatches;
+        private Swatch[] customSwatches = Array.Empty<Swatch>();
         private bool suppressHex;
 
         private int S(int v) => (int)Math.Round(v * scale);

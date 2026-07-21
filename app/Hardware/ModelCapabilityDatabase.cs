@@ -13,8 +13,7 @@ public enum OmenModelFamily
 public enum BatteryChargeLimitBackendKind
 {
     None = 0,
-    HpBatteryCare,
-    AsusRegistry
+    HpBatteryCare
 }
 
 public class ModelCapabilities
@@ -83,21 +82,25 @@ public static class ModelCapabilityDatabase
     {
         ProductId = "DEFAULT",
         ModelName = "Unknown OMEN",
-        ModelYear = 2023,
+        ModelYear = 0,
         Family = OmenModelFamily.Unknown,
-        SupportsFanControlWmi = true,
-        SupportsFanControlEc = true,
-        SupportsFanCurves = true,
-        SupportsIndependentFanCurves = true,
+        SupportsFanControlWmi = false,
+        SupportsFanControlEc = false,
+        SupportsFanCurves = false,
+        SupportsSoftwareFanCurves = false,
+        SupportsIndependentFanCurves = false,
         SupportsRpmReadback = true,
-        FanZoneCount = 2,
-        MaxFanLevel = 55,
-        SupportsPerformanceModes = true,
-        PerformanceModes = new[] { "Default", "Performance", "Cool" },
-        SupportsGpuPowerBoost = true,
-        HasKeyboardBacklight = true,
-        HasFourZoneRgb = true,
-        Notes = "Default configuration - some features may not work on your model"
+        FanZoneCount = 0,
+        MaxFanLevel = null,
+        SupportsPerformanceModes = false,
+        PerformanceModes = Array.Empty<string>(),
+        SupportsGpuPowerBoost = false,
+        HasKeyboardBacklight = false,
+        HasFourZoneRgb = false,
+        HasPerKeyRgb = false,
+        SupportsUndervolt = false,
+        SupportsPowerLimits = false,
+        Notes = "Unknown model: write-capable hardware features remain disabled until explicitly confirmed"
     };
 
     private static void EnsureInitialized()

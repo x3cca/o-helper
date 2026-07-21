@@ -7,20 +7,22 @@ O-Helper is a lightweight Windows Forms tray application for supported HP OMEN s
 ## Current Scope
 
 - Performance mode switching for HP OMEN firmware modes.
-- Fan, power, GPU, display, keyboard lighting, overlay, and peripheral controls where confirmed HP paths exist.
+- Fan, power, GPU, display, keyboard lighting, and overlay controls where confirmed HP paths exist.
 - Graceful fallback or hidden UI for unsupported hardware features.
 - Configuration in `%APPDATA%\OHelper\config.json`.
 
 ## Build
 
 ```powershell
-dotnet build app/OHelper.sln
+dotnet restore app/OHelper.sln --locked-mode
+dotnet build app/OHelper.sln --no-restore
 ```
 
 Release publish:
 
 ```powershell
-dotnet publish app/OHelper.sln --configuration Release --runtime win-x64 -p:PublishSingleFile=true --no-self-contained
+dotnet restore app/OHelper.sln --locked-mode --runtime win-x64
+dotnet publish app/OHelper.sln --configuration Release --runtime win-x64 --no-restore -p:PublishSingleFile=true --no-self-contained
 ```
 
 ## Runtime Requirements

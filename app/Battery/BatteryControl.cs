@@ -1,5 +1,4 @@
 using OHelper.Helpers;
-using Microsoft.Win32;
 using System.Diagnostics;
 
 namespace OHelper.Battery
@@ -83,21 +82,6 @@ namespace OHelper.Battery
             else SetBatteryChargeLimit();
         }
 
-        public static void SetAsusChargeLimit(int value)
-        {
-            if (!ProcessHelper.IsUserAdministrator()) return;
-            const string keyPath = @"SOFTWARE\ASUS\ASUS System Control Interface\AsusOptimization\ASUS Keyboard Hotkeys";
-            try
-            {
-                using var key = Registry.LocalMachine.OpenSubKey(keyPath, writable: true);
-                key.SetValue("ChargingRate", value, RegistryValueKind.DWord);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLine($"Failed to set ChargingRate: {ex.Message}");
-            }
-        }
-
         public static void SetBatteryChargeLimit(int setLimit = -1)
         {
             var backend = AppConfig.GetBatteryChargeLimitBackend();
@@ -124,21 +108,6 @@ namespace OHelper.Battery
                 return;
             }
 
-            if (AppConfig.IsChargeLimit6080())
-            {
-                if (limit > 85) limit = 100;
-                else if (limit >= 80) limit = 80;
-                else if (limit < 60) limit = 60;
-            }
-
-            if (setLimit > 0 && AppConfig.IsASUS()) SetAsusChargeLimit(limit);
-
-            Program.acpi.DeviceSet(HpACPI.BatteryLimit, limit, "BatteryLimit");
-
-            AppConfig.Set("charge_limit", limit);
-            chargeFull = false;
-
-            Program.settingsForm.VisualiseBattery(limit);
         }
 
         public static void BatteryReport()

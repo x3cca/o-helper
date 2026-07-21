@@ -1,4 +1,3 @@
-using OHelper.Ally;
 using OHelper.Battery;
 using OHelper.Display;
 using OHelper.Gpu;
@@ -6,8 +5,6 @@ using OHelper.Helpers;
 using OHelper.Input;
 using OHelper.Mode;
 using OHelper.Overlay;
-using OHelper.Peripherals;
-using OHelper.USB;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Globalization;
@@ -20,17 +17,16 @@ namespace OHelper
 
     static class Program
     {
-        public static NotifyIcon trayIcon;
-        public static HpACPI acpi;
+        public static NotifyIcon trayIcon = default!;
+        public static HpACPI acpi = default!;
 
-        public static SettingsForm settingsForm;
+        public static SettingsForm settingsForm = default!;
 
-        public static ModeControl modeControl;
-        public static GPUModeControl gpuControl;
-        public static AllyControl allyControl;
-        public static ClamshellModeControl clamshellControl;
+        public static ModeControl modeControl = default!;
+        public static GPUModeControl gpuControl = default!;
+        public static ClamshellModeControl clamshellControl = default!;
 
-        public static ToastForm toast;
+        public static ToastForm toast = default!;
 
         public static HardwareOverlay? hardwareOverlay;
 
@@ -38,7 +34,7 @@ namespace OHelper
         public static int WM_TASKBARCREATED = 0;
 
         private static long lastAuto;
-        public static InputDispatcher? inputDispatcher;
+        public static InputDispatcher inputDispatcher = default!;
         private static int _isExiting;
         internal static bool IsExiting => Volatile.Read(ref _isExiting) != 0;
 
@@ -46,6 +42,7 @@ namespace OHelper
         public static void Main(string[] args)
         {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.EnableVisualStyles();
             Application.ApplicationExit += OnExit;
 
             string action = "";
@@ -64,7 +61,7 @@ namespace OHelper
                 return;
             }
 
-            string language = AppConfig.GetString("language");
+            string? language = AppConfig.GetString("language");
             try
             {
                 if (language != null && language.Length > 0)
@@ -81,12 +78,11 @@ namespace OHelper
             }
 
             Logger.WriteLine("----------------------");
-            Logger.WriteLine("App launched: " + AppConfig.GetModel() + " :" + Assembly.GetExecutingAssembly().GetName().Version.ToString() + CultureInfo.CurrentUICulture + (ProcessHelper.IsUserAdministrator() ? "." : ""));
+            Logger.WriteLine("App launched: " + AppConfig.GetModel() + " :" + Assembly.GetExecutingAssembly().GetName().Version + CultureInfo.CurrentUICulture + (ProcessHelper.IsUserAdministrator() ? "." : ""));
 
             settingsForm = new SettingsForm();
             modeControl = new ModeControl();
             gpuControl = new GPUModeControl(settingsForm);
-            allyControl = new AllyControl(settingsForm);
             clamshellControl = new ClamshellModeControl();
             toast = new ToastForm();
 
@@ -102,25 +98,8 @@ namespace OHelper
             Logger.WriteLine("Start Count: " + startCount);
 
             acpi = new HpACPI();
+            settingsForm.InitMaxFans();
             HardwareMonitor.Start();
-
-            // ACPI hardware is optional on HP Omen (graceful WMI no-op fallback),
-            // but required on legacy ASUS models where the app can't function without it
-            if (!acpi.IsConnected() && AppConfig.IsASUS())
-            {
-                DialogResult dialogResult = MessageBox.Show(Properties.Strings.ACPIError, Properties.Strings.StartupError, MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
-                {
-                    Process.Start(new ProcessStartInfo("https://support.hp.com/products/laptops") { UseShellExecute = true });
-                }
-
-                Application.Exit();
-                return;
-            }
-
-            if (AppConfig.IsASUS()) ProcessHelper.KillSmartDisplayControl();
-
-            Application.EnableVisualStyles();
 
             HardwareControl.RecreateGpuControl();
 
@@ -145,8 +124,7 @@ namespace OHelper
 
             inputDispatcher = new InputDispatcher();
 
-            settingsForm.InitAura();
-            settingsForm.InitMatrix();
+            settingsForm.InitKeyboardLighting();
 
             SetAutoModes(init: true);
 
@@ -168,12 +146,6 @@ namespace OHelper
             unRegSuspendResume = NativeMethods.RegisterSuspendResumeNotification(settingsForm.Handle, NativeMethods.DEVICE_NOTIFY_WINDOW_HANDLE);
 
 
-            if (AppConfig.IsASUS())
-            {
-                Task task = Task.Run((Action)PeripheralsProvider.DetectAllAsusMice);
-                PeripheralsProvider.RegisterForDeviceEvents();
-            }
-
             if (Environment.CurrentDirectory.Trim('\\') == Application.StartupPath.Trim('\\') || action.Length > 0)
             {
                 SettingsToggle(false);
@@ -193,7 +165,7 @@ namespace OHelper
                     modeControl.SetGPUPower();
                     break;
                 case "services":
-                    Logger.WriteLine("Services action ignored: ASUS service management is not part of O-Helper");
+                    Logger.WriteLine("Services action ignored: vendor service management is not part of O-Helper");
                     break;
                 case "uv":
                     Startup.ReScheduleAdmin();
@@ -201,14 +173,7 @@ namespace OHelper
                     modeControl.SetRyzen();
                     break;
                 case "colors":
-                    Task.Run(async () =>
-                    {
-                        await ColorProfileHelper.InstallProfile();
-                        settingsForm.Invoke(delegate
-                        {
-                            settingsForm.InitVisual();
-                        });
-                    });
+                    Logger.WriteLine("Colors action ignored: HP display gamut control is not implemented");
                     break;
                 default:
                     Task.Run(Startup.StartupCheck);
@@ -237,20 +202,16 @@ namespace OHelper
             if (e.Reason == SessionSwitchReason.SessionLogon || e.Reason == SessionSwitchReason.SessionUnlock)
             {
                 Logger.WriteLine("Session:" + e.Reason.ToString());
-                if (AppConfig.IsASUS()) ProcessHelper.KillSmartDisplayControl();
-                bool wasLocked = Aura.sessionLock;
-                Aura.sessionLock = false;
                 ScreenControl.AutoScreen();
-                if (wasLocked) Task.Delay(2000).ContinueWith(_ =>
+                Task.Delay(2000).ContinueWith(_ =>
                 {
-                    if (Math.Abs(DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastAuto) < 10000) return;
-                    modeControl.AutoCPUTemp();
+                    if (Math.Abs(DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastAuto) >= 10000)
+                        modeControl.AutoCPUTemp();
                 });
             }
             if (e.Reason == SessionSwitchReason.SessionLock)
             {
                 Logger.WriteLine("Session:" + e.Reason.ToString());
-                Aura.sessionLock = true;
             }
         }
 
@@ -278,15 +239,6 @@ namespace OHelper
                     if (settingsForm.extraForm is not null && settingsForm.extraForm.Text != "")
                         settingsForm.extraForm.InitTheme();
 
-                    if (settingsForm.updatesForm is not null && settingsForm.updatesForm.Text != "")
-                        settingsForm.updatesForm.InitTheme();
-
-                    if (settingsForm.matrixForm is not null && settingsForm.matrixForm.Text != "")
-                        settingsForm.matrixForm.InitTheme();
-
-                    if (settingsForm.handheldForm is not null && settingsForm.handheldForm.Text != "")
-                        settingsForm.handheldForm.InitTheme();
-
                     break;
             }
         }
@@ -307,7 +259,6 @@ namespace OHelper
             Logger.WriteLine("AutoSetting for " + SystemInformation.PowerStatus.PowerLineStatus.ToString());
 
             BatteryControl.AutoBattery(init);
-            if (init) InputDispatcher.InitScreenpad();
             DynamicLightingHelper.Init();
             ScreenControl.InitOptimalBrightness();
 
@@ -319,16 +270,8 @@ namespace OHelper
             else
                 modeControl.AutoPerformance(powerChanged);
 
-            settingsForm.matrixControl.SetDevice(true);
             InputDispatcher.InitStatusLed();
-            if (AppConfig.IsAlly())
-            {
-                allyControl.Init();
-            }
-            else
-            {
-                InputDispatcher.AutoKeyboard();
-            }
+            InputDispatcher.AutoKeyboard();
 
             bool switched = gpuControl.AutoGPUMode(delay: 1000);
             if (!switched)
@@ -441,10 +384,7 @@ namespace OHelper
 
                 settingsForm.Left = screen.WorkingArea.Width - 10 - settingsForm.Width;
 
-                if (AppConfig.IsAlly())
-                    settingsForm.Top = Math.Max(10, screen.Bounds.Height - 110 - settingsForm.Height);
-                else
-                    settingsForm.Top = screen.WorkingArea.Height - 10 - settingsForm.Height;
+                settingsForm.Top = screen.WorkingArea.Height - 10 - settingsForm.Height;
 
                 settingsForm.VisualiseGPUMode();
             }
@@ -459,10 +399,10 @@ namespace OHelper
 
         static void TrayIcon_MouseMove(object? sender, MouseEventArgs e)
         {
-            settingsForm.RefreshSensors();
+            _ = settingsForm.RefreshSensors();
         }
 
-        static void OnExit(object sender, EventArgs e)
+        static void OnExit(object? sender, EventArgs e)
         {
             if (Interlocked.Exchange(ref _isExiting, 1) != 0) return;
 
@@ -472,13 +412,13 @@ namespace OHelper
             TryExitCleanup(() => SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch, "session events");
             TryExitCleanup(() => SystemEvents.SessionEnding -= SystemEvents_SessionEnding, "session ending events");
             TryExitCleanup(() => hardwareOverlay?.StopOverlay(), "overlay");
+            TryExitCleanup(() => settingsForm?.Shutdown(), "settings");
             TryExitCleanup(() => modeControl?.Stop(), "mode control");
             TryExitCleanup(() => inputDispatcher?.Dispose(), "input dispatcher");
             TryExitCleanup(HardwareControl.DisposeGpuControl, "GPU control");
             TryExitCleanup(HardwareControl.Dispose, "hardware control");
             TryExitCleanup(HardwareMonitor.Stop, "hardware monitor");
             TryExitCleanup(() => acpi?.Close(), "ACPI");
-            TryExitCleanup(PeripheralsProvider.UnregisterForDeviceEvents, "device events");
             TryExitCleanup(() => clamshellControl?.UnregisterDisplayEvents(), "display events");
             TryExitCleanup(() => NativeMethods.UnregisterPowerSettingNotification(unRegPowerNotify), "display power notification");
             TryExitCleanup(() => NativeMethods.UnregisterPowerSettingNotification(unRegPowerNotifyLid), "lid power notification");
@@ -488,7 +428,7 @@ namespace OHelper
             {
                 TryExitCleanup(() => { trayIcon.Visible = false; trayIcon.Dispose(); }, "tray icon");
             }
-            TryExitCleanup(AppConfig.Flush, "configuration flush");
+            TryExitCleanup(AppConfig.Shutdown, "configuration");
         }
 
         private static void TryExitCleanup(Action cleanup, string name)
@@ -520,10 +460,6 @@ namespace OHelper
                         AppConfig.Set("charge_limit", fullCharge ? BatteryControl.FullChargeLimit : BatteryControl.HpBatteryCareLimit);
                         AppConfig.Set("charge_full", fullCharge ? 1 : 0);
                         AppConfig.Flush();
-                    }
-                    else if (backend == BatteryChargeLimitBackendKind.AsusRegistry && limit < BatteryControl.FullChargeLimit)
-                    {
-                        acpi.DeviceSet(HpACPI.BatteryLimit, limit, "Limit");
                     }
                 }
             }

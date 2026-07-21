@@ -1048,4 +1048,13 @@ Recommended if you experience random hangs or unresponsive hardware.</value>
   <data name="XGMobileStandardModeOnly" xml:space="preserve">
     <value>XG Mobile toggle works only in Standard mode</value>
   </data>
+  <data name="DisplayModeRestart" xml:space="preserve">
+    <value>Changing display mode requires a system restart.</value>
+  </data>
+  <data name="StartupTaskCreateError" xml:space="preserve">
+    <value>Can't create the startup task. Open Task Scheduler, remove any existing OHelper task, and try again.</value>
+  </data>
+  <data name="StartupTaskRemoveError" xml:space="preserve">
+    <value>Can't remove the startup task. Open Task Scheduler and remove the OHelper task manually.</value>
+  </data>
 </root>

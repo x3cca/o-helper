@@ -3,40 +3,62 @@ using OHelper.Helpers;
 
 public static class Logger
 {
-    public static string appPath = Environment.GetFolderPath(ProcessHelper.IsRunningAsSystem() ? Environment.SpecialFolder.CommonApplicationData : Environment.SpecialFolder.ApplicationData) + "\\OHelper";
-    public static string logFile = appPath + "\\log.txt";
+    private const int MaximumLines = 2000;
+    private const long CleanupThresholdBytes = 1024 * 1024;
+    private static readonly object Sync = new();
 
-    private static readonly Random _random = new Random();
+    public static readonly string appPath = Path.Combine(
+        Environment.GetFolderPath(ProcessHelper.IsRunningAsSystem()
+            ? Environment.SpecialFolder.CommonApplicationData
+            : Environment.SpecialFolder.ApplicationData),
+        "OHelper");
+
+    public static readonly string logFile = Path.Combine(appPath, "log.txt");
 
     public static void WriteLine(string logMessage)
     {
-        Debug.WriteLine($"{DateTime.Now}: {logMessage}");
-        if (!Directory.Exists(appPath)) Directory.CreateDirectory(appPath);
+        string line = $"{DateTime.Now:O}: {logMessage}";
+        Debug.WriteLine(line);
 
-        try
+        lock (Sync)
         {
-            using (StreamWriter w = File.AppendText(logFile))
+            try
             {
-                w.WriteLine($"{DateTime.Now}: {logMessage}");
-                w.Close();
+                Directory.CreateDirectory(appPath);
+                File.AppendAllText(logFile, line + Environment.NewLine);
+
+                if (new FileInfo(logFile).Length >= CleanupThresholdBytes)
+                    CleanupCore();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Logger failure: {ex.Message}");
             }
         }
-        catch { }
-
-        if (_random.Next(100) == 1) Cleanup();
-
-
     }
 
     public static void Cleanup()
     {
-        try
+        lock (Sync)
         {
-            var file = File.ReadAllLines(logFile);
-            int skip = Math.Max(0, file.Count() - 2000);
-            File.WriteAllLines(logFile, file.Skip(skip).ToArray());
+            try
+            {
+                CleanupCore();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Logger cleanup failure: {ex.Message}");
+            }
         }
-        catch { }
     }
 
+    private static void CleanupCore()
+    {
+        if (!File.Exists(logFile)) return;
+
+        string[] lines = File.ReadAllLines(logFile);
+        if (lines.Length <= MaximumLines) return;
+
+        File.WriteAllLines(logFile, lines[^MaximumLines..]);
+    }
 }

@@ -45,7 +45,7 @@ namespace OHelper.UI
         public List<int> supportedValues = new();
         public bool SnapToSupportedValues { get; set; }
 
-        public event EventHandler ValueChanged;
+        public event EventHandler? ValueChanged;
 
         public Slider()
         {

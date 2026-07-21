@@ -7,7 +7,6 @@ namespace OHelper.Fan
         public const int DEFAULT_FAN_MIN = 18;
         public const int DEFAULT_FAN_MAX = 58;
 
-        public const int XGM_FAN_MAX = 72;
 
         public const int INADEQUATE_MAX = 104;
 
@@ -16,7 +15,7 @@ namespace OHelper.Fan
         Fans fansForm;
         ModeControl modeControl = Program.modeControl;
 
-        static int[] measuredMax;
+        static int[] measuredMax = Array.Empty<int>();
         static int sameCount = 0;
 
         static System.Timers.Timer timer = default!;
@@ -95,7 +94,6 @@ namespace OHelper.Fan
 
         public static int GetFanMax(HpFan device)
         {
-            if (device == HpFan.XGM) return XGM_FAN_MAX;
 
             if (_fanMax[(int)device] < 0 || _fanMax[(int)device] > INADEQUATE_MAX)
                 SetFanMax(device, DEFAULT_FAN_MAX);
@@ -105,7 +103,6 @@ namespace OHelper.Fan
 
         public static int GetFanMin(HpFan device)
         {
-            if (device == HpFan.XGM) return DEFAULT_FAN_MIN;
             return _fanMin[(int)device];
         }
 
@@ -128,7 +125,7 @@ namespace OHelper.Fan
             }
         }
 
-        public static string FormatFan(HpFan device, int value)
+        public static string? FormatFan(HpFan device, int value)
         {
             if (value < 0) return null;
 

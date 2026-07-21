@@ -55,6 +55,9 @@ namespace OHelper.Mode
         [DllImport("PowrProf.dll", CharSet = CharSet.Unicode)]
         static extern UInt32 PowerGetActiveScheme(IntPtr UserPowerKey, out IntPtr ActivePolicyGuid);
 
+        [DllImport("kernel32.dll")]
+        static extern IntPtr LocalFree(IntPtr hMem);
+
         static readonly Guid GUID_CPU = new Guid("54533251-82be-4824-96c1-47b60b740d00");
         static readonly Guid GUID_BOOST = new Guid("be337238-0d82-4146-a960-4f3749d470c7");
 
@@ -100,8 +103,14 @@ namespace OHelper.Mode
         {
             IntPtr pActiveSchemeGuid;
             var hr = PowerGetActiveScheme(IntPtr.Zero, out pActiveSchemeGuid);
-            Guid activeSchemeGuid = (Guid)Marshal.PtrToStructure(pActiveSchemeGuid, typeof(Guid));
-            return activeSchemeGuid;
+            try
+            {
+                return Marshal.PtrToStructure<Guid>(pActiveSchemeGuid);
+            }
+            finally
+            {
+                LocalFree(pActiveSchemeGuid);
+            }
         }
 
         public static int GetCPUBoost()
@@ -163,7 +172,7 @@ namespace OHelper.Mode
             else
             {
                 // Power plan from config or defaulting to balanced
-                string plan = AppConfig.GetModeString("scheme");
+                string plan = AppConfig.GetModeString("scheme") ?? PLAN_BALANCED;
                 if (Program.currentSource == Program.PowerSource.USBC && AppConfig.GetModeString("scheme_usbc") is string usbc) plan = usbc;
                 SetPowerPlan(plan);            
             }
