@@ -1074,11 +1074,10 @@ public class HpACPI
                 new byte[4],
                 128);
 
-            if (result.Success && result.ReturnCode == 0 && result.Data.Length >= 4)
+            int fanIndex = device switch { HpFan.GPU => 1, HpFan.Mid => 2, _ => 0 };
+            int offset = fanIndex * 2;
+            if (result.Success && result.ReturnCode == 0 && result.Data.Length >= offset + 2)
             {
-                int fanIndex = device switch { HpFan.GPU => 1, HpFan.Mid => 2, _ => 0 };
-                int offset = fanIndex * 2;
-                
                 // Handle endianness detection - try little-endian first, then big-endian
                 int rpm = result.Data[offset] | (result.Data[offset + 1] << 8);
                 
@@ -1110,9 +1109,9 @@ public class HpACPI
                 new byte[4],
                 128);
 
-            if (statusResult.Success && statusResult.ReturnCode == 0 && statusResult.Data.Length >= 2)
+            int fanIndex = device switch { HpFan.GPU => 1, HpFan.Mid => 2, _ => 0 };
+            if (statusResult.Success && statusResult.ReturnCode == 0 && statusResult.Data.Length > fanIndex)
             {
-                int fanIndex = device switch { HpFan.GPU => 1, HpFan.Mid => 2, _ => 0 };
                 // Data is already a level byte (0-100 scale), return as-is
                 int rpm = statusResult.Data[fanIndex];
                 return rpm;

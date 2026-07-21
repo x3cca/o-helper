@@ -91,6 +91,7 @@ namespace OHelper.AutoUpdate
         {
             var client = new HttpClient();
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("O-Helper", "1.0"));
+            client.Timeout = TimeSpan.FromMinutes(10);
             return client;
         }
 

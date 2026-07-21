@@ -105,11 +105,15 @@ namespace OHelper.Mode
             var hr = PowerGetActiveScheme(IntPtr.Zero, out pActiveSchemeGuid);
             try
             {
+                if (hr != 0 || pActiveSchemeGuid == IntPtr.Zero)
+                    return Guid.Empty;
+
                 return Marshal.PtrToStructure<Guid>(pActiveSchemeGuid);
             }
             finally
             {
-                LocalFree(pActiveSchemeGuid);
+                if (pActiveSchemeGuid != IntPtr.Zero)
+                    LocalFree(pActiveSchemeGuid);
             }
         }
 

@@ -167,8 +167,6 @@ namespace OHelper.UI
                 }
                 using (var brush = new SolidBrush(Parent?.BackColor ?? BackColor))
                     pevent.Graphics.FillRectangle(brush, rect);
-                using (var brush = new SolidBrush(BackColor))
-                    pevent.Graphics.FillRectangle(brush, rect);
                 TextFormatFlags flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.WordBreak;
                 TextRenderer.DrawText(pevent.Graphics, Text, Font, rect, Color.FromArgb(150, ForeColor), flags);
             }

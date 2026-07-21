@@ -605,14 +605,7 @@ namespace OHelper
 
         private void ButtonUpdates_Click(object? sender, EventArgs e)
         {
-            try
-            {
-                Process.Start(new ProcessStartInfo("https://github.com/CoolDotty/o-helper/releases") { UseShellExecute = true });
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLine("Failed to open releases page:" + ex.Message);
-            }
+            updateControl.LoadReleases();
         }
 
         protected override void WndProc(ref Message m)
@@ -634,44 +627,44 @@ namespace OHelper
 
             if (m.Msg == NativeMethods.WM_POWERBROADCAST && m.WParam == (IntPtr)NativeMethods.PBT_POWERSETTINGCHANGE)
             {
-                if (m.GetLParam(typeof(NativeMethods.POWERBROADCAST_SETTING)) is not NativeMethods.POWERBROADCAST_SETTING settings)
-                    return;
-                if (settings.PowerSetting == NativeMethods.PowerSettingGuid.LIDSWITCH_STATE_CHANGE)
+                if (m.GetLParam(typeof(NativeMethods.POWERBROADCAST_SETTING)) is NativeMethods.POWERBROADCAST_SETTING settings)
                 {
-                    switch (settings.Data)
+                    if (settings.PowerSetting == NativeMethods.PowerSettingGuid.LIDSWITCH_STATE_CHANGE)
                     {
-                        case 0:
-                            Logger.WriteLine("Lid Closed");
-                            BatteryControl.AutoBattery();
-                            InputDispatcher.lidClose = true;
-                            break;
-                        case 1:
-                            Logger.WriteLine("Lid Open");
-                            InputDispatcher.InitFNLock();
-                            InputDispatcher.lidClose = false;
-                            break;
+                        switch (settings.Data)
+                        {
+                            case 0:
+                                Logger.WriteLine("Lid Closed");
+                                BatteryControl.AutoBattery();
+                                InputDispatcher.lidClose = true;
+                                break;
+                            case 1:
+                                Logger.WriteLine("Lid Open");
+                                InputDispatcher.InitFNLock();
+                                InputDispatcher.lidClose = false;
+                                break;
+                        }
                     }
-
-                }
-                else
-                {
-                    switch (settings.Data)
+                    else
                     {
-                        case 0:
-                            Logger.WriteLine("Monitor Power Off");
-                            Program.hardwareOverlay?.SuspendForDisplayOff();
-                            break;
-                        case 1:
-                            Logger.WriteLine("Monitor Power On");
-                            BatteryControl.AutoBattery();
-                            Program.hardwareOverlay?.ResumeForDisplayOn();
-                            break;
-                        case 2:
-                            Logger.WriteLine("Monitor Dimmed");
-                            break;
+                        switch (settings.Data)
+                        {
+                            case 0:
+                                Logger.WriteLine("Monitor Power Off");
+                                Program.hardwareOverlay?.SuspendForDisplayOff();
+                                break;
+                            case 1:
+                                Logger.WriteLine("Monitor Power On");
+                                BatteryControl.AutoBattery();
+                                Program.hardwareOverlay?.ResumeForDisplayOn();
+                                break;
+                            case 2:
+                                Logger.WriteLine("Monitor Dimmed");
+                                break;
+                        }
                     }
+                    m.Result = (IntPtr)1;
                 }
-                m.Result = (IntPtr)1;
             }
 
             if (m.Msg == Program.WM_TASKBARCREATED)

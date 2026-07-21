@@ -47,6 +47,7 @@ jobs:
       with:
         ref: refs/tags/${{ steps.release-version.outputs.release_tag }}
         fetch-depth: 0
+        persist-credentials: false
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
