@@ -10,7 +10,14 @@ public class Startup
     static string taskName = "OHelper";
     static string chargeTaskName = taskName + "Charge";
     static string strExeFilePath = Application.ExecutablePath.Trim();
-    static string userTaskName = taskName + "_" + WindowsIdentity.GetCurrent().User.Value;
+    static string userSid = GetCurrentUserSid();
+    static string userTaskName = taskName + "_" + userSid;
+
+    static string GetCurrentUserSid()
+    {
+        using var identity = WindowsIdentity.GetCurrent();
+        return identity.User?.Value ?? Environment.UserName;
+    }
 
     static Microsoft.Win32.TaskScheduler.Task? GetUserTask(TaskService taskService)
     {
@@ -21,7 +28,7 @@ public class Startup
 
             var legacy = taskService.GetTask(taskName);
             var owner = legacy?.Definition.Principal.UserId ?? "";
-            if (owner == WindowsIdentity.GetCurrent().User.Value ||
+            if (owner == userSid ||
                 string.Equals(owner.Split('\\').Last(), Environment.UserName, StringComparison.OrdinalIgnoreCase))
                 return legacy;
         }

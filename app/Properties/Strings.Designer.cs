@@ -1855,7 +1855,7 @@ namespace OHelper.Properties {
                 return ResourceManager.GetString("RestartingNVServices", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to RPM.
         /// </summary>
