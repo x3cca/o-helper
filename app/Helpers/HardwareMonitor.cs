@@ -24,10 +24,13 @@ internal class UpdateVisitor : IVisitor
 
 public static class HardwareMonitor
 {
+    private const long StartRetryCooldownMilliseconds = 60_000;
+
     private static Computer? _computer;
     private static readonly object _lock = new();
     private static bool _startRequested;
     private static int _generation;
+    private static long _nextStartAttempt;
     private static long _lastCpuTempLog;
 
     private static void EnsureStarted()
@@ -36,7 +39,9 @@ public static class HardwareMonitor
 
         lock (_lock)
         {
-            if (_startRequested || Program.IsExiting) return;
+            if (_computer != null || _startRequested || Program.IsExiting) return;
+            if (Environment.TickCount64 < _nextStartAttempt) return;
+
             _startRequested = true;
             generation = ++_generation;
         }
@@ -82,6 +87,15 @@ public static class HardwareMonitor
         }
         catch (Exception ex)
         {
+            lock (_lock)
+            {
+                if (generation == _generation && _computer == null)
+                {
+                    _startRequested = false;
+                    _nextStartAttempt = Environment.TickCount64 + StartRetryCooldownMilliseconds;
+                }
+            }
+
             Logger.WriteLine($"HardwareMonitor: Failed to start: {ex.Message}");
         }
         finally
@@ -106,6 +120,7 @@ public static class HardwareMonitor
             }
 
             _startRequested = false;
+            _nextStartAttempt = 0;
         }
     }
 
