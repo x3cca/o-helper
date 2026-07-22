@@ -232,9 +232,8 @@ namespace OHelper.UI
             Focus();
 
             AnimateInner(InnerPressed);
-            _calculateValue(e);
-
             _moving = true;
+            _calculateValue(e);
         }
 
         private void _calculateValue(MouseEventArgs e)

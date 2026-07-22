@@ -890,8 +890,7 @@ namespace OHelper.Input
             else
                 AppConfig.Set("keyboard_brightness", backlight);
 
-            var extraForm = Program.settingsForm.extraForm;
-            if (extraForm != null && extraForm.Text != "") extraForm.VisualiseBacklight(backlight);
+            Program.settingsForm.extraForm?.VisualiseBacklight(backlight);
 
             if (AppConfig.IsOmenKeyboardSupported())
             {

@@ -10,8 +10,8 @@ public class Startup
     static string taskName = "OHelper";
     static string chargeTaskName = taskName + "Charge";
     static string strExeFilePath = Application.ExecutablePath.Trim();
-    static string userSid = GetCurrentUserSid();
-    static string userTaskName = taskName + "_" + userSid;
+    static string _userSid = GetCurrentUserSid();
+    static string _userTaskName = taskName + "_" + _userSid;
 
     static string GetCurrentUserSid()
     {
@@ -23,12 +23,12 @@ public class Startup
     {
         try
         {
-            var task = taskService.GetTask(userTaskName);
+            var task = taskService.GetTask(_userTaskName);
             if (task != null) return task;
 
             var legacy = taskService.GetTask(taskName);
             var owner = legacy?.Definition.Principal.UserId ?? "";
-            if (owner == userSid ||
+            if (owner == _userSid ||
                 string.Equals(owner.Split('\\').Last(), Environment.UserName, StringComparison.OrdinalIgnoreCase))
                 return legacy;
         }
@@ -203,7 +203,7 @@ public class Startup
 
             try
             {
-                TaskService.Instance.RootFolder.RegisterTaskDefinition(userTaskName, td);
+                TaskService.Instance.RootFolder.RegisterTaskDefinition(_userTaskName, td);
                 Logger.WriteLine("Startup task scheduled: " + strExeFilePath);
             }
             catch (Exception ex)
@@ -227,7 +227,7 @@ public class Startup
         {
             try
             {
-                taskService.RootFolder.DeleteTask(userTaskName, false);
+                taskService.RootFolder.DeleteTask(_userTaskName, false);
                 if (GetUserTask(taskService) != null) taskService.RootFolder.DeleteTask(taskName);
                 removeChargeTask = !taskService.RootFolder.AllTasks.Any(t =>
                     t.Name == taskName || t.Name.StartsWith(taskName + "_", StringComparison.Ordinal));

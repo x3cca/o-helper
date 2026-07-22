@@ -470,7 +470,13 @@ namespace OHelper
 
         public void VisualiseBacklight(int backlight)
         {
-            if (InvokeRequired) { Invoke(() => VisualiseBacklight(backlight)); return; }
+            if (IsDisposed || Disposing || !IsHandleCreated) return;
+            if (InvokeRequired)
+            {
+                try { BeginInvoke(() => VisualiseBacklight(backlight)); }
+                catch (InvalidOperationException) { }
+                return;
+            }
             sliderBrightness.ValueChanged -= SliderBrightness_ValueChanged;
             sliderBrightness.Value = backlight;
             sliderBrightness.AccessibleName = Properties.Strings.LaptopBacklight + ": " + sliderBrightness.Value;
