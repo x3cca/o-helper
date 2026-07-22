@@ -226,7 +226,7 @@ namespace OHelper
                 case UserPreferenceCategory.General:
                     bool changed = settingsForm.InitTheme();
                     settingsForm.InitContextMenuTheme();
-                    settingsForm.VisualiseIcon();
+                    settingsForm.VisualiseIcon(true);
                     settingsForm.VisualiseFnLock();
                     settingsForm.VisualiseBatteryFull();
 

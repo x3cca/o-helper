@@ -591,7 +591,6 @@ namespace OHelper
                 updateControl.CheckForUpdates();
                 BeginInvoke(new Action(() =>
                 {
-                    ScreenControl.InitScreen();
                     buttonEnergySaver.Visible = PowerNative.GetBatterySaverStatus();
                 }));
             }
@@ -1914,17 +1913,25 @@ namespace OHelper
         }
 
 
-        public void VisualiseIcon()
+        private (int Mode, bool IsDark, bool IsBlackAndWhite)? _lastIcon;
+        private bool _isDark = CheckSystemDarkModeStatus();
+
+        public void VisualiseIcon(bool themeChange = false)
         {
             if (Program.trayIcon is null) return;
+            if (themeChange) _isDark = CheckSystemDarkModeStatus();
+
             int GPUMode = AppConfig.Get("gpu_mode");
-            bool isDark = CheckSystemDarkModeStatus();
+            bool blackAndWhite = AppConfig.IsBWIcon();
+
+            if (_lastIcon == (GPUMode, _isDark, blackAndWhite)) return;
+            _lastIcon = (GPUMode, _isDark, blackAndWhite);
 
             Icon newIcon = GPUMode switch
             {
-                HpACPI.GPUModeEco => AppConfig.IsBWIcon() ? (!isDark ? Properties.Resources.dark_eco : Properties.Resources.light_eco) : Properties.Resources.eco,
-                HpACPI.GPUModeUltimate => AppConfig.IsBWIcon() ? (!isDark ? Properties.Resources.dark_standard : Properties.Resources.light_standard) : Properties.Resources.ultimate,
-                _ => AppConfig.IsBWIcon() ? (!isDark ? Properties.Resources.dark_standard : Properties.Resources.light_standard) : Properties.Resources.standard,
+                HpACPI.GPUModeEco => blackAndWhite ? (_isDark ? Properties.Resources.light_eco : Properties.Resources.dark_eco) : Properties.Resources.eco,
+                HpACPI.GPUModeUltimate => blackAndWhite ? (_isDark ? Properties.Resources.light_standard : Properties.Resources.dark_standard) : Properties.Resources.ultimate,
+                _ => blackAndWhite ? (_isDark ? Properties.Resources.light_standard : Properties.Resources.dark_standard) : Properties.Resources.standard,
             };
 
             Icon? oldIcon = Program.trayIcon.Icon;
