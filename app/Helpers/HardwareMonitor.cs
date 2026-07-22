@@ -26,36 +26,69 @@ public static class HardwareMonitor
 {
     private static Computer? _computer;
     private static readonly object _lock = new();
-    private static bool _initialized;
+    private static bool _startRequested;
+    private static int _generation;
     private static long _lastCpuTempLog;
 
-    public static void Start()
+    private static void EnsureStarted()
     {
+        int generation;
+
         lock (_lock)
         {
-            if (_initialized) return;
-            _initialized = true;
+            if (_startRequested || Program.IsExiting) return;
+            _startRequested = true;
+            generation = ++_generation;
+        }
 
-            try
+        // Computer.Open() probes every enabled hardware backend and can take a long
+        // time on some systems. Run it only when a sensor is first requested, and do
+        // not make that first sensor read wait for discovery to finish.
+        _ = Task.Run(() => Start(generation));
+    }
+
+    private static void Start(int generation)
+    {
+        Computer? computer = null;
+        bool started = false;
+
+        try
+        {
+            computer = new Computer
             {
-                _computer = new Computer
+                IsCpuEnabled = true,
+                IsGpuEnabled = true,
+                IsMemoryEnabled = false,
+                IsStorageEnabled = false,
+                IsMotherboardEnabled = false,
+                IsNetworkEnabled = false,
+                IsBatteryEnabled = false,
+                IsControllerEnabled = false
+            };
+            computer.Open();
+
+            lock (_lock)
+            {
+                if (generation == _generation && !Program.IsExiting)
                 {
-                    IsCpuEnabled = true,
-                    IsGpuEnabled = true,
-                    IsMemoryEnabled = false,
-                    IsStorageEnabled = false,
-                    IsMotherboardEnabled = false,
-                    IsNetworkEnabled = false,
-                    IsBatteryEnabled = false,
-                    IsControllerEnabled = false
-                };
-                _computer.Open();
-                Logger.WriteLine("HardwareMonitor: LibreHardwareMonitor started");
+                    Volatile.Write(ref _computer, computer);
+                    computer = null;
+                    started = true;
+                }
             }
-            catch (Exception ex)
+
+            if (started)
+                Logger.WriteLine("HardwareMonitor: LibreHardwareMonitor started");
+        }
+        catch (Exception ex)
+        {
+            Logger.WriteLine($"HardwareMonitor: Failed to start: {ex.Message}");
+        }
+        finally
+        {
+            if (computer != null)
             {
-                Logger.WriteLine($"HardwareMonitor: Failed to start: {ex.Message}");
-                _computer = null;
+                try { computer.Close(); } catch { }
             }
         }
     }
@@ -64,22 +97,29 @@ public static class HardwareMonitor
     {
         lock (_lock)
         {
+            ++_generation;
+
             if (_computer != null)
             {
                 try { _computer.Close(); } catch { }
-                _computer = null;
+                Volatile.Write(ref _computer, null);
             }
-            _initialized = false;
+
+            _startRequested = false;
         }
     }
 
     public static float? GetCpuTemperature()
     {
-        var hw = _computer;
+        EnsureStarted();
+
+        var hw = Volatile.Read(ref _computer);
         if (hw == null) return null;
 
         lock (_lock)
         {
+            if (!ReferenceEquals(hw, _computer)) return null;
+
             try
             {
                 foreach (IHardware hardware in hw.Hardware)
@@ -162,11 +202,15 @@ public static class HardwareMonitor
 
     public static float? GetGpuTemperature()
     {
-        var hw = _computer;
+        EnsureStarted();
+
+        var hw = Volatile.Read(ref _computer);
         if (hw == null) return null;
 
         lock (_lock)
         {
+            if (!ReferenceEquals(hw, _computer)) return null;
+
             try
             {
                 foreach (IHardware hardware in hw.Hardware)
