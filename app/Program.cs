@@ -99,7 +99,6 @@ namespace OHelper
 
             acpi = new HpACPI();
             settingsForm.InitMaxFans();
-            HardwareMonitor.Start();
 
             HardwareControl.RecreateGpuControl();
 
