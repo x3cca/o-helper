@@ -64,6 +64,7 @@ jobs:
     - name: Prepare unsigned release files
       shell: pwsh
       run: |
+        $ErrorActionPreference = 'Stop'
         $source = 'app/bin/x64/Release/net8.0-windows/win-x64/publish/OHelper.exe'
         if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
           throw "Published executable was not found at '$source'."
