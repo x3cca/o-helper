@@ -61,59 +61,45 @@ jobs:
       run: |
         dotnet publish app/OHelper.sln --configuration Release --runtime win-x64 --no-restore -p:Platform=x64 -p:PublishSingleFile=true --no-self-contained -p:AssemblyVersion=$env:RELEASE_VERSION -p:FileVersion=$env:RELEASE_VERSION -p:Version=$env:RELEASE_VERSION
 
-    - name: Upload unsigned EXE
-      id: upload-unsigned
+    - name: Prepare unsigned release files
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = 'Stop'
+        $source = 'app/bin/x64/Release/net8.0-windows/win-x64/publish/OHelper.exe'
+        if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+          throw "Published executable was not found at '$source'."
+        }
+
+        New-Item -ItemType Directory -Path release -Force | Out-Null
+        Copy-Item -LiteralPath $source -Destination release/OHelper.exe -Force
+        Compress-Archive -LiteralPath release/OHelper.exe -DestinationPath release/OHelper.zip -Force
+
+        $exeHash = (Get-FileHash -Algorithm SHA256 -LiteralPath release/OHelper.exe).Hash.ToLowerInvariant()
+        $zipHash = (Get-FileHash -Algorithm SHA256 -LiteralPath release/OHelper.zip).Hash.ToLowerInvariant()
+        @(
+          "$exeHash  OHelper.exe"
+          "$zipHash  OHelper.zip"
+        ) | Set-Content -LiteralPath release/SHA256SUMS.txt -Encoding ascii
+
+    - name: Upload unsigned workflow artifact
       uses: actions/upload-artifact@v4
       with:
-        path: app/bin/x64/Release/net8.0-windows/win-x64/publish/OHelper.exe
-
-    - name: Detect signing configuration
-      id: detect-signing
-      shell: pwsh
-      env:
-        SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
-        SIGNPATH_ORG_ID: ${{ secrets.SIGNPATH_ORG_ID }}
-        SIGNPATH_PROJECT: ${{ secrets.SIGNPATH_PROJECT }}
-        SIGNPATH_POLICY: ${{ secrets.SIGNPATH_POLICY }}
-      run: |
-        $hasSignPath = -not [string]::IsNullOrWhiteSpace($env:SIGNPATH_API_TOKEN) `
-          -and -not [string]::IsNullOrWhiteSpace($env:SIGNPATH_ORG_ID) `
-          -and -not [string]::IsNullOrWhiteSpace($env:SIGNPATH_PROJECT) `
-          -and -not [string]::IsNullOrWhiteSpace($env:SIGNPATH_POLICY)
-        "has_signpath=$($hasSignPath.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-
-    - name: Require signing configuration
-      if: ${{ steps.detect-signing.outputs.has_signpath != 'true' }}
-      shell: pwsh
-      run: throw "Release signing is not configured. Refusing to publish unsigned administrator-level binaries."
-
-    - id: sign-exe
-      if: ${{ steps.detect-signing.outputs.has_signpath == 'true' }}
-      uses: signpath/github-action-submit-signing-request@v1.1
-      with:
-        api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
-        organization-id: ${{ secrets.SIGNPATH_ORG_ID }}
-        project-slug: ${{ secrets.SIGNPATH_PROJECT }}
-        signing-policy-slug: ${{ secrets.SIGNPATH_POLICY }}
-        github-artifact-id: ${{ steps.upload-unsigned.outputs.artifact-id }}
-        wait-for-completion: true
-        output-artifact-directory: './signed'
-
-    - name: Create ZIP from signed EXE
-      if: ${{ steps.detect-signing.outputs.has_signpath == 'true' && steps.sign-exe.outcome == 'success' }}
-      run: powershell Compress-Archive ./signed/OHelper.exe ./signed/OHelper.zip
-
-    - name: Upload signed EXE and ZIP
-      if: ${{ steps.detect-signing.outputs.has_signpath == 'true' && steps.sign-exe.outcome == 'success' }}
-      env:
-        GH_TOKEN: ${{ github.token }}
-      run: |
-        gh release upload "$env:RELEASE_TAG" ./signed/OHelper.exe ./signed/OHelper.zip --clobber
+        name: OHelper-unsigned-${{ steps.release-version.outputs.release_tag }}
+        path: release/
 
     - name: Generate SLSA build provenance attestation
-      if: ${{ steps.detect-signing.outputs.has_signpath == 'true' && steps.sign-exe.outcome == 'success' }}
       uses: actions/attest-build-provenance@v2
       with:
         subject-path: |
-          ./signed/OHelper.exe
-          ./signed/OHelper.zip
+          release/OHelper.exe
+          release/OHelper.zip
+
+    - name: Upload unsigned release files
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh release upload "$env:RELEASE_TAG" `
+          release/OHelper.exe `
+          release/OHelper.zip `
+          release/SHA256SUMS.txt `
+          --clobber
