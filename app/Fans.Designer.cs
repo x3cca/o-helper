@@ -1549,6 +1549,7 @@ namespace OHelper
             panelGPUPower.Name = "panelGPUPower";
             panelGPUPower.Size = new Size(520, 124);
             panelGPUPower.TabIndex = 4;
+            panelGPUPower.Visible = false;
             // 
             // labelGPUPower
             // 
