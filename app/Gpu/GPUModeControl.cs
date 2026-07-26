@@ -255,7 +255,8 @@ namespace OHelper.Gpu
 
         public void CaptureNvBootState()
         {
-            nvRestartPending = Program.acpi.GetGpuMode() == HpACPI.GPUModeEco;
+            nvRestartPending = Program.acpi.IsNVidiaGPU()
+                && Program.acpi.GetGpuMode() == HpACPI.GPUModeEco;
         }
 
         public void StandardModeFix()
