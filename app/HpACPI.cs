@@ -1215,20 +1215,11 @@ public class HpACPI
             if (cpuLevel == 0 && gpuLevel == 0)
             {
                 Logger.WriteLine("HpACPI SetFanLevel(0,0): restoring BIOS auto fan control instead of writing manual zero");
-                SetFanMax(false);
                 int result = SetFanMode(0x30);
                 Logger.WriteLine($"HpACPI SetFanLevel result={result} path=auto");
                 return result;
             }
 
-            if (cpuLevel >= MaxFanLevel && gpuLevel >= MaxFanLevel)
-            {
-                int result = SetFanMax(true);
-                Logger.WriteLine($"HpACPI SetFanLevel result={result} path=max");
-                return result;
-            }
-
-            SetFanMax(false);
             var directResult = SetFanTargetDirect(cpuLevel, gpuLevel);
             bool directSuccess = directResult.Success && directResult.ReturnCode == 0;
             Logger.WriteLine($"HpACPI SetFanLevel path=direct 0x2E cpu={cpuLevel} gpu={gpuLevel} approxRpm={cpuLevel * 100}/{gpuLevel * 100} success={directResult.Success} rc={directResult.ReturnCode}");
