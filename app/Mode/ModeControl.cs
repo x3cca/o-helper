@@ -438,7 +438,7 @@ namespace OHelper.Mode
                 lastGpuFanLevel = -1;
                 cpuFanAnchorTemp = null;
                 gpuFanAnchorTemp = null;
-                // Force one auto write on the first tick to restore BIOS control
+                // Force one auto write on the first evaluation to restore BIOS control
                 // when the current curve has no manual RPM target.
                 softwareFanCurveAutoMode = false;
                 Volatile.Write(ref cpuHotSampleCount, 0);
