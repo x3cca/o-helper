@@ -438,7 +438,8 @@ namespace OHelper.Mode
                 lastGpuFanLevel = -1;
                 cpuFanAnchorTemp = null;
                 gpuFanAnchorTemp = null;
-                // Force one auto write on the first tick to clear any stale max-fan latch.
+                // Force one auto write on the first tick to restore BIOS control
+                // when the current curve has no manual RPM target.
                 softwareFanCurveAutoMode = false;
                 Volatile.Write(ref cpuHotSampleCount, 0);
             }
@@ -529,8 +530,8 @@ namespace OHelper.Mode
                     if (!softwareFanCurveAutoMode)
                     {
                         Program.acpi.SetFanLevel(0, 0);
-                        // HP firmware can retain the last direct RPM target even after
-                        // max-fan is disabled and the automatic fan mode is requested.
+                        // HP firmware can retain the last direct RPM target after
+                        // automatic fan mode is requested.
                         // Reapplying the active performance mode clears that target and
                         // hands fan control back to the BIOS curve.
                         Program.acpi.DeviceSet(HpACPI.PerformanceMode, Modes.GetCurrentBase(), "Software Fan Auto Restore");
@@ -615,7 +616,6 @@ namespace OHelper.Mode
 
             if (cpuTemp.Value >= CpuFanMaxTemp)
             {
-                // HP's dedicated maximum-fan command is used only when both targets are maxed.
                 cpuLevel = maxLevel;
                 gpuLevel = maxLevel;
                 return true;
