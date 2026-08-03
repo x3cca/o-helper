@@ -153,6 +153,7 @@ namespace OHelper
             buttonUltimate.Click += ButtonUltimate_Click;
             buttonOptimized.Click += ButtonOptimized_Click;
             buttonStopGPU.Click += ButtonStopGPU_Click;
+            pictureGPU.Click += PictureGPU_Click;
 
             VisibleChanged += SettingsForm_VisibleChanged;
 
@@ -1857,6 +1858,7 @@ namespace OHelper
             if (toolTip.GetToolTip(pictureGPU) != (GPUModeControl.gpuError ?? ""))
             {
                 pictureGPU.BackgroundImage = GPUModeControl.gpuError is null ? Properties.Resources.icons8_video_card_32 : SystemIcons.Warning.ToBitmap();
+                pictureGPU.Cursor = GPUModeControl.gpuError is null ? Cursors.Default : Cursors.Hand;
                 toolTip.SetToolTip(pictureGPU, GPUModeControl.gpuError);
             }
             ButtonEnabled(buttonOptimized, true);
@@ -1944,6 +1946,12 @@ namespace OHelper
             Icon? oldIcon = Program.trayIcon.Icon;
             Program.trayIcon.Icon = newIcon;
             oldIcon?.Dispose();
+        }
+
+        private void PictureGPU_Click(object? sender, EventArgs e)
+        {
+            if (GPUModeControl.gpuError is not null)
+                Process.Start(new ProcessStartInfo("devmgmt.msc") { UseShellExecute = true });
         }
 
         private void ButtonSilent_Click(object? sender, EventArgs e)
