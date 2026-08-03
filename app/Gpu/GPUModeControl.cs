@@ -67,6 +67,8 @@ namespace OHelper.Gpu
             settings.VisualiseGPUMode(gpuMode);
             RefreshFansGpuTab();
 
+            Task.Run(CheckGpuError);
+
         }
 
 
@@ -266,6 +268,20 @@ namespace OHelper.Gpu
 
             Logger.WriteLine("Forcing Standard Mode on shutdown");
             Program.acpi.DeviceSet(HpACPI.GPUEco, HpACPI.GPUModeStandard, "GPUEco Standard Fix");
+        }
+
+        public static string? gpuError = null;
+
+        void CheckGpuError()
+        {
+            string? error = DeviceHelper.GetGpuError();
+
+            if (gpuError != error)
+            {
+                gpuError = error;
+                if (error != null) Logger.WriteLine(error);
+                settings.VisualiseGPUMode();
+            }
         }
 
     }

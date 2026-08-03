@@ -30,6 +30,8 @@ namespace OHelper
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            toolTip = new ToolTip(components);
             panelBattery = new Panel();
             buttonBatteryFull = new RButton();
             sliderBattery = new Slider();
@@ -1817,6 +1819,7 @@ namespace OHelper
         private Slider sliderBattery;
         private Panel panelGPUTitle;
         private PictureBox pictureGPU;
+        private ToolTip toolTip;
         private Label labelGPU;
         private Label labelGPUFan;
         private Panel panelCPUTitle;
