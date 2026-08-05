@@ -139,6 +139,7 @@ namespace OHelper
 
             checkGpuApps.Text = Properties.Strings.KillGpuApps;
             checkAspm.Text = Properties.Strings.DisablePCIeASPM;
+            checkStandbyNetworking.Text = Properties.Strings.DisableStandbyNetworking;
             checkNVPlatform.Text = Properties.Strings.StopStartNVServices;
             labelHibernateAfter.Text = Properties.Strings.HibernateAfter;
             numericHibernateAfter.OffText = Properties.Strings.Off;
@@ -289,10 +290,13 @@ namespace OHelper
             checkAspm.Checked = AppConfig.IsAutoASPM();
             checkAspm.CheckedChanged += CheckAspm_CheckedChanged;
 
+            checkStandbyNetworking.Checked = AppConfig.IsAutoStandbyNetworking();
+            checkStandbyNetworking.CheckedChanged += CheckStandbyNetworking_CheckedChanged;
 
             toolTip.SetToolTip(checkAutoToggleClamshellMode, Properties.Strings.ClamshellModeTooltip);
             toolTip.SetToolTip(checkNVPlatform, Properties.Strings.NVPlatformTooltip);
             toolTip.SetToolTip(checkAspm, Properties.Strings.DisablePCIeASPMTooltip);
+            toolTip.SetToolTip(checkStandbyNetworking, Properties.Strings.DisableStandbyNetworkingTooltip);
 
             panelServices.Visible = false;
 
@@ -307,6 +311,13 @@ namespace OHelper
         {
             AppConfig.Set("aspm", (checkAspm.Checked ? 1 : 0));
             PowerNative.SetBalancedASPM(checkAspm.Checked ? 0 : 2);
+        }
+
+        private void CheckStandbyNetworking_CheckedChanged(object? sender, EventArgs e)
+        {
+            AppConfig.Set("standby_networking", (checkStandbyNetworking.Checked ? 1 : 0));
+            if (checkStandbyNetworking.Checked) PowerNative.SetConnectivityInStandby(0, 0);
+            else PowerNative.SetConnectivityInStandby(1, 2);
         }
 
         private void CheckNVPlatform_CheckedChanged(object? sender, EventArgs e)

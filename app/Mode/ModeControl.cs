@@ -279,6 +279,7 @@ namespace OHelper.Mode
             PowerNative.SetPowerMode(powerMode ?? PowerNative.GetDefaultPowerMode(mode));
 
             if (AppConfig.IsAutoASPM()) PowerNative.SetBalancedASPM();
+            if (AppConfig.IsAutoStandbyNetworking()) PowerNative.SetConnectivityInStandby();
         }
 
 

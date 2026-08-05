@@ -850,4 +850,11 @@
   <data name="Eco" xml:space="preserve">
     <value>Еко</value>
   </data>
+  <data name="DisableStandbyNetworking" xml:space="preserve">
+    <value>Вимкнути мережу в режимі Modern Standby</value>
+  </data>
+  <data name="DisableStandbyNetworkingTooltip" xml:space="preserve">
+    <value>Не дозволяє фоновим завданням, як-от Windows Update,
+нагрівати сплячий ноутбук і розряджати акумулятор.</value>
+  </data>
 </root>

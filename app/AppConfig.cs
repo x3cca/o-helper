@@ -769,5 +769,10 @@ public static class AppConfig
         return IsNotFalse("aspm");
     }
 
+    public static bool IsAutoStandbyNetworking()
+    {
+        return IsNotFalse("standby_networking");
+    }
+
 
 }

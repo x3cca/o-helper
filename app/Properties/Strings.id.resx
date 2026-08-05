@@ -850,4 +850,11 @@ Direkomendasikan jika Anda mengalami hang acak atau perangkat keras tidak respon
   <data name="Eco" xml:space="preserve">
     <value>Eco</value>
   </data>
+  <data name="DisableStandbyNetworking" xml:space="preserve">
+    <value>Nonaktifkan jaringan saat Modern Standby</value>
+  </data>
+  <data name="DisableStandbyNetworkingTooltip" xml:space="preserve">
+    <value>Mencegah tugas latar belakang seperti Windows Update
+memanaskan laptop yang tertidur dan menguras baterai.</value>
+  </data>
 </root>

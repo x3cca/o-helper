@@ -117,6 +117,7 @@ namespace OHelper
             checkNVPlatform = new CheckBox();
             checkStatusLed = new CheckBox();
             checkAspm = new CheckBox();
+            checkStandbyNetworking = new CheckBox();
             panelPower = new Panel();
             numericHibernateAfter = new NumericUpDownWithUnit();
             labelHibernateAfter = new Label();
@@ -1171,6 +1172,7 @@ namespace OHelper
             panelSettings.Controls.Add(checkGpuApps);
             panelSettings.Controls.Add(checkNVPlatform);
             panelSettings.Controls.Add(checkStatusLed);
+            panelSettings.Controls.Add(checkStandbyNetworking);
             panelSettings.Controls.Add(checkAspm);
             panelSettings.Dock = DockStyle.Top;
             panelSettings.Location = new Point(15, 1252);
@@ -1283,6 +1285,20 @@ namespace OHelper
             checkAspm.Text = "Disable PCIe Link State Management (plugged in)";
             checkAspm.UseVisualStyleBackColor = true;
             checkAspm.Visible = true;
+            //
+            // checkStandbyNetworking
+            //
+            checkStandbyNetworking.AutoSize = true;
+            checkStandbyNetworking.Dock = DockStyle.Top;
+            checkStandbyNetworking.Location = new Point(21, 47);
+            checkStandbyNetworking.Margin = new Padding(5, 3, 5, 3);
+            checkStandbyNetworking.Name = "checkStandbyNetworking";
+            checkStandbyNetworking.Padding = new Padding(3);
+            checkStandbyNetworking.Size = new Size(917, 42);
+            checkStandbyNetworking.TabIndex = 1;
+            checkStandbyNetworking.Text = "Disable networking in Modern Standby";
+            checkStandbyNetworking.UseVisualStyleBackColor = true;
+            checkStandbyNetworking.Visible = true;
             // 
             // panelPower
             // 
@@ -1764,6 +1780,7 @@ namespace OHelper
         private Label labelACPITitle;
         private CheckBox checkStatusLed;
         private CheckBox checkAspm;
+        private CheckBox checkStandbyNetworking;
         private CheckBox checkBatteryLogo;
         private CheckBox checkBattery;
         private CheckBox checkBatteryLid;

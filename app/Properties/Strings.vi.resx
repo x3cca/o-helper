@@ -850,4 +850,11 @@ Khuyến nghị nếu bạn gặp tình trạng treo ngẫu nhiên hoặc phần
   <data name="Eco" xml:space="preserve">
     <value>Tiết kiệm</value>
   </data>
+  <data name="DisableStandbyNetworking" xml:space="preserve">
+    <value>Tắt mạng khi ở Modern Standby</value>
+  </data>
+  <data name="DisableStandbyNetworkingTooltip" xml:space="preserve">
+    <value>Ngăn các tác vụ nền như Windows Update
+làm nóng máy khi ngủ và làm cạn pin.</value>
+  </data>
 </root>

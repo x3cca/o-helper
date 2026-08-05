@@ -850,4 +850,11 @@
   <data name="Eco" xml:space="preserve">
     <value>إيكو</value>
   </data>
+  <data name="DisableStandbyNetworking" xml:space="preserve">
+    <value>تعطيل الشبكة في وضع Modern Standby</value>
+  </data>
+  <data name="DisableStandbyNetworkingTooltip" xml:space="preserve">
+    <value>يمنع مهام الخلفية مثل Windows Update
+من تسخين الجهاز أثناء السكون واستنزاف البطارية.</value>
+  </data>
 </root>
