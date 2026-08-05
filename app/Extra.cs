@@ -367,7 +367,6 @@ namespace OHelper
             if (pCoresMax == 0) pCoresMax = 6;
 
             eCoresMax = Math.Max(4, eCoresMax);
-            pCoresMax = Math.Max(4, pCoresMax);
 
             panelCores.Visible = true;
 
