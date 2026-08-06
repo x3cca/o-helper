@@ -43,6 +43,7 @@ namespace OHelper.Gpu
             Logger.WriteLine($"GPU mode: {mode} (switching supported: {switchingSupported}, eco: {showEco}, std: {showStandard}, ultimate: {showUltimate})");
 
             gpuMode = mode;
+            Task.Run(CheckGpuError);
 
             if (switchingSupported)
             {
@@ -66,8 +67,6 @@ namespace OHelper.Gpu
             AppConfig.Set("gpu_mode", gpuMode);
             settings.VisualiseGPUMode(gpuMode);
             RefreshFansGpuTab();
-
-            Task.Run(CheckGpuError);
 
         }
 
