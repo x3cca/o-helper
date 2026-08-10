@@ -12,9 +12,9 @@ namespace OHelper.AutoUpdate
 {
     public class AutoUpdateControl
     {
-        const string Repository = "CoolDotty/o-helper";
-        const string ReleasesUrl = "https://github.com/CoolDotty/o-helper/releases";
-        const string LatestReleaseApiUrl = "https://api.github.com/repos/CoolDotty/o-helper/releases/latest";
+        const string Repository = "x3cca/o-helper";
+        const string ReleasesUrl = "https://github.com/x3cca/o-helper/releases";
+        const string LatestReleaseApiUrl = "https://api.github.com/repos/x3cca/o-helper/releases/latest";
         const string ExecutableAssetName = "OHelper.exe";
         const string ArchiveAssetName = "OHelper.zip";
         const long MaximumUpdateSize = 500L * 1024 * 1024;

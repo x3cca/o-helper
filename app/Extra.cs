@@ -512,7 +512,7 @@ namespace OHelper
 
         private void PictureHelp_Click(object? sender, EventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://github.com/CoolDotty/o-helper") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo("https://github.com/x3cca/o-helper") { UseShellExecute = true });
         }
 
         private void CheckNoOverdrive_CheckedChanged(object? sender, EventArgs e)
