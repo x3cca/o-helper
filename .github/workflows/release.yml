@@ -43,14 +43,14 @@ jobs:
       run: |
         gh api "repos/$env:GITHUB_REPOSITORY/git/ref/tags/$env:RELEASE_TAG" --silent
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         ref: refs/tags/${{ steps.release-version.outputs.release_tag }}
         fetch-depth: 0
         persist-credentials: false
 
     - name: Setup dotnet
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: '10.0.301'
 
@@ -82,13 +82,13 @@ jobs:
         ) | Set-Content -LiteralPath release/SHA256SUMS.txt -Encoding ascii
 
     - name: Upload unsigned workflow artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: OHelper-unsigned-${{ steps.release-version.outputs.release_tag }}
         path: release/
 
     - name: Generate SLSA build provenance attestation
-      uses: actions/attest-build-provenance@v2
+      uses: actions/attest-build-provenance@v4
       with:
         subject-path: |
           release/OHelper.exe
