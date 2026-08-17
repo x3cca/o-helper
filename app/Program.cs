@@ -204,9 +204,9 @@ namespace OHelper
             if (e.Reason == SessionSwitchReason.SessionLogon || e.Reason == SessionSwitchReason.SessionUnlock || e.Reason == SessionSwitchReason.ConsoleConnect)
             {
                 Logger.WriteLine("Session:" + e.Reason.ToString());
-                ScreenControl.AutoScreen();
                 Task.Delay(2000).ContinueWith(_ =>
                 {
+                    ScreenControl.AutoScreen();
                     if (Math.Abs(DateTimeOffset.Now.ToUnixTimeMilliseconds() - lastAuto) >= 10000)
                         modeControl.AutoCPUTemp();
                 });
