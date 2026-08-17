@@ -804,7 +804,7 @@
     <value>电池电量</value>
   </data>
   <data name="IntervalOff" xml:space="preserve">
-    <value>Interval Off</value>
+    <value>无间隔</value>
   </data>
   <data name="IntervalSeconds" xml:space="preserve">
     <value>间隔 {0}秒</value>
@@ -839,10 +839,10 @@
 如遇随机卡死或硬件无响应，建议启用。</value>
   </data>
   <data name="Overlay" xml:space="preserve">
-    <value>Overlay</value>
+    <value>屏幕叠加</value>
   </data>
   <data name="OverlayOnlyInGames" xml:space="preserve">
-    <value>Overlay only in games</value>
+    <value>仅在游戏内显示叠加界面</value>
   </data>
   <data name="Unleashed" xml:space="preserve">
     <value>释放</value>

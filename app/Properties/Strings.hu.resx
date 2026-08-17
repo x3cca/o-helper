@@ -588,7 +588,7 @@ Folytatni szeretnéd?</value>
     <value>A Teljesítménykorlát egy kísérleti funkció. Használja körültekintően és saját felelősségére!</value>
   </data>
   <data name="PrintScreen" xml:space="preserve">
-    <value>PrintScreen</value>
+    <value>Képernyő-másolás</value>
   </data>
   <data name="Profile" xml:space="preserve">
     <value>Profil</value>
