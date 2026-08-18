@@ -608,6 +608,7 @@ namespace OHelper
             if (m.Msg == NativeMethods.WM_POWERBROADCAST && m.WParam == (IntPtr)NativeMethods.PBT_APMSUSPEND)
             {
                 Logger.WriteLine("System Suspend");
+                GPUModeControl.suspended = true;
                 Program.modeControl.SleepReset();
                 m.Result = (IntPtr)1;
             }
@@ -615,6 +616,7 @@ namespace OHelper
             if (m.Msg == NativeMethods.WM_POWERBROADCAST && m.WParam == (IntPtr)NativeMethods.PBT_APMRESUMEAUTOMATIC)
             {
                 Logger.WriteLine("System Resume");
+                GPUModeControl.suspended = false;
                 BatteryControl.AutoBattery();
                 m.Result = (IntPtr)1;
             }
@@ -649,6 +651,7 @@ namespace OHelper
                                 break;
                             case 1:
                                 Logger.WriteLine("Monitor Power On");
+                                GPUModeControl.suspended = false;
                                 BatteryControl.AutoBattery();
                                 Program.hardwareOverlay?.ResumeForDisplayOn();
                                 break;
