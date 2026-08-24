@@ -1,4 +1,5 @@
 using OHelper;
+using System.Collections.Concurrent;
 using System.Management;
 using System.Runtime.InteropServices;
 
@@ -194,7 +195,7 @@ public class HpACPI
     public const int PCoreMin = 4;
     public const int ECoreMin = 0;
 
-    private readonly Dictionary<uint, bool> _supportCache = new();
+    private readonly ConcurrentDictionary<uint, bool> _supportCache = new();
 
     public bool SupportsGpuModeSwitching()
     {
