@@ -178,13 +178,16 @@ namespace OHelper.Gpu
                             await Task.Delay(TimeSpan.FromSeconds(2));
                         }
                         settings.Invoke(RefreshFansGpuTab);
-                        Program.modeControl.SetGPUClocks(false);
                     }
 
                     if (AppConfig.IsModeReapplyRequired())
                     {
                         await Task.Delay(TimeSpan.FromMilliseconds(3000));
                         Program.modeControl.AutoPerformance();
+                    }
+                    else if (eco == 0)
+                    {
+                        Program.modeControl.SetGPUClocks(false);
                     }
                 }
                 catch (Exception ex)
