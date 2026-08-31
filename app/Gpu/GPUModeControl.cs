@@ -178,6 +178,7 @@ namespace OHelper.Gpu
                             await Task.Delay(TimeSpan.FromSeconds(2));
                         }
                         settings.Invoke(RefreshFansGpuTab);
+                        CheckGpuError();
                     }
 
                     if (AppConfig.IsModeReapplyRequired())
