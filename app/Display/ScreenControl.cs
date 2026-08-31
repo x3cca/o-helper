@@ -307,7 +307,7 @@ namespace OHelper.Display
             bool screenAuto = AppConfig.Is("screen_auto");
             bool overdriveSetting = Program.acpi.IsOverdriveSupported() && !AppConfig.IsNoOverdrive();
 
-            int overdrive = AppConfig.IsNoOverdrive() ? 0 : Program.acpi.DeviceGet(HpACPI.ScreenOverdrive);
+            int overdrive = overdriveSetting ? Program.acpi.DeviceGet(HpACPI.ScreenOverdrive) : 0;
 
             int miniled1 = Program.acpi.DeviceGet(HpACPI.ScreenMiniled1);
             int miniled2 = Program.acpi.DeviceGet(HpACPI.ScreenMiniled2);
